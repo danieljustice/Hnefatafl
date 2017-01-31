@@ -1,7 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'application'
 
-mainClassName = "Hnefatafl.Hnefatafl"
+mainClassName = "Hnefatafl"
 
 repositories {
    mavenCentral()
@@ -10,3 +10,4 @@ repositories {
 dependencies {
   testCompile 'junit:junit:4.12'
 }
+
