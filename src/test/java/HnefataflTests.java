@@ -1,6 +1,10 @@
 import static org.junit.Assert.*;
 import javax.swing.JButton;
 import org.junit.Test;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 public class HnefataflTests extends Hnefatafl{
     private Hnefatafl game = new Hnefatafl();

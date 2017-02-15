@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 public class Hnefatafl {
     JFrame _frame = new JFrame("Hnefatafl");
@@ -17,6 +18,8 @@ public class Hnefatafl {
 
     JButton _firstClick = null;
     JButton _secondClick = null;
+    ImageIcon firstClickImageIcon = null;
+    ImageIcon secondClickImageIcon = null;
     boolean isFirstPlayer = true;
     
     public Hnefatafl() {
@@ -131,31 +134,36 @@ public class Hnefatafl {
         public void actionPerformed(ActionEvent e) {
         	
         	JButton temp = (JButton) e.getSource();
-            ImageIcon currentImageIcon = (ImageIcon)source.getIcon();
+            ImageIcon currentImageIcon = (ImageIcon)temp.getIcon();
+
         	if(_firstClick == null && currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())){
         		//Spit out some error message saying there is no game piece here       		
         	}
         	else{
 	            if(_firstClick == null){
 	            	_firstClick = (JButton) e.getSource();
-                    ImageIcon firstClickImageIcon = (ImageIcon)_firstClick.getIcon();
+                    firstClickImageIcon = (ImageIcon)_firstClick.getIcon();
 	            	if(isFirstPlayer){
-	            		if(firstClickImageIcon.getDescription().equals(defenseIcon.getDescription()))
+	            		if(firstClickImageIcon.getDescription().equals(defenseIcon.getDescription())){
 	            			_firstClick = null;
-	            		//Might want to add more functionality later. To have a pop up telling user it is not their turn.
+                            //Might want to add more functionality later. To have a pop up telling user it is not their turn.
+
+                        }
 	            	}	
 	            	else if(!isFirstPlayer){	
-	            		if(firstClickImageIcon.getDescription().equals(axeIcon.getDescription()))
-	            		//Might want to add more functionality later. To have a pop up telling user it is not their turn.
-	            	}
+	            		if(firstClickImageIcon.getDescription().equals(axeIcon.getDescription())){
+                            _firstClick = null;
+                             //Might want to add more functionality later. To have a pop up telling user it is not their turn.
+                        }
+                    }
 	            	
 	            }	
 	            else{
 	            	_secondClick = (JButton) e.getSource();
-                    ImageIcon secondClickImageIcon = (ImageIcon)_secondClick.getIcon();
+                    secondClickImageIcon = (ImageIcon)_secondClick.getIcon();
 	            	if(isValidMove(getXandY(_firstClick), getXandY(_secondClick)) ){
 	            		if(firstClickImageIcon.getDescription().equals(axeIcon.getDescription())) {		
-	                		_secondClick.setIcon(axeIcon);               		
+	                		_secondClick.setIcon(axeIcon); 
 	                		isFirstPlayer=false;
 	            		}
 	    	            else if(firstClickImageIcon.getDescription().equals(defenseIcon.getDescription())) {
@@ -163,7 +171,7 @@ public class Hnefatafl {
 	    	            	isFirstPlayer=true;
 	    	            }
 	            		_firstClick.setIcon(emptyImageIcon);
-	            		_firstClick = null;
+	            		_firstClick = null;  
 	                	_secondClick = null;     
 	            	}
 	            	else
