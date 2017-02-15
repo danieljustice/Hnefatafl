@@ -7,8 +7,10 @@ public class Hnefatafl {
     JPanel _ttt = new JPanel();
     JPanel _newPanel = new JPanel();
     JButton[][] _buttons = new JButton[11][11];
-    int CLICKS = 0;
-
+    JButton _firstClick = null;
+    JButton _secondClick = null;
+    boolean isFirstPlayer = true;
+    
     public Hnefatafl() {
     }
 
@@ -90,6 +92,7 @@ public class Hnefatafl {
 
     }
     
+    
     public static void main(String[] args) {
         Hnefatafl game = new Hnefatafl();
         game.drawBoard();
@@ -101,18 +104,81 @@ public class Hnefatafl {
         // the following action.
 
         public void actionPerformed(ActionEvent e) {
-            JButton source = (JButton) e.getSource();
-            String currentText = source.getText();
-            if (currentText.equals("_")) {
-                if(CLICKS % 2 == 0)
-                    source.setText("X");
-                else
-                    source.setText("0");
-                CLICKS++;
-            } else {
-                source.setText("_");
-            }
+        	
+        	JButton temp = (JButton) e.getSource();
+        	if(_firstClick == null && temp.getText() == "_"){
+        		//Spit out some error message saying there is no game piece here       		
+        	}
+        	else{
+	            if(_firstClick == null){
+	            	_firstClick = (JButton) e.getSource();
+	            	if(isFirstPlayer){
+	            		if(_firstClick.getText() == "O")
+	            			_firstClick = null;
+	            		//Might want to add more functionality later. To have a pop up telling user it is not their turn.
+	            	}	
+	            	else if(!isFirstPlayer){	
+	            		if(_firstClick.getText() == "X")
+	            			_firstClick = null;
+	            		//Might want to add more functionality later. To have a pop up telling user it is not their turn.
+	            	}
+	            	
+	            }	
+	            else{
+	            	_secondClick = (JButton) e.getSource();
+	            	if(isValidMove(getXandY(_firstClick), getXandY(_secondClick)) ){
+	            		if(_firstClick.getText() == "X"){		
+	                		_secondClick.setText("X");               		
+	                		isFirstPlayer=false;
+	            		}
+	    	            else if(_firstClick.getText() == "O") {
+	    	            	_secondClick.setText("O");
+	    	            	isFirstPlayer=true;
+	    	            }
+	            		_firstClick.setText("_");
+	            		_firstClick = null;
+	                	_secondClick = null;     
+	            	}
+	            	else
+	            		_firstClick = null;
+	            		_secondClick = null;
+	            }
+	        }
         }
     }
-
+    
+    /**
+     * Returns integer array contains xy coordinates for button pressed.
+     * 
+     * @param jb	JButton that holds the current pushed button
+     * @return	returns an integer array that contains, the buttons location as (x,y) = ([0],[1]) 
+     */
+    public int[] getXandY(JButton jb){
+    	int[] xyCord = new int[2]; 
+    	for(int i=0; i <11; i++){
+    		for(int j=0; j <11;j++){
+    			if(jb ==_buttons[j][i]){
+    				xyCord[0] = j;
+    				xyCord[1] = i;
+    				return xyCord;
+    			}
+    		}
+    	}
+    	return new int[2];
+    }
+    
+    /**
+     * Returns whether a move is valid based on input arrays which store x and y locations
+     * 
+     * @param start	an integer array with 2 values, [0] index is x, [1] is y
+     * @param destination	an integer array with 2 values, [0] index is x, [1] is y
+     * @return	returns true if valid move, false if not
+     */
+    public boolean isValidMove(int[] start, int[] destination){
+    	if(start[0] == destination[0] && start[1] == destination[1] )    	
+    		return false;
+    	else if(start[0] == destination[0] || start[1] == destination[1])
+    		return true;
+    	return false;    		
+    }
 }
