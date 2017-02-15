@@ -14,6 +14,11 @@ public class Hnefatafl {
     public ImageIcon defenseIcon;
     public ImageIcon axeIcon;
     public ImageIcon emptyImageIcon;
+
+    JButton _firstClick = null;
+    JButton _secondClick = null;
+    boolean isFirstPlayer = true;
+    
     public Hnefatafl() {
         //pull in images for icons on the buttons
     	try{
@@ -112,6 +117,7 @@ public class Hnefatafl {
 
     }
     
+    
     public static void main(String[] args) {
         Hnefatafl game = new Hnefatafl();
         game.drawBoard();
@@ -123,22 +129,83 @@ public class Hnefatafl {
         // the following action.
 
         public void actionPerformed(ActionEvent e) {
-            JButton source = (JButton) e.getSource();
-            ImageIcon currentText = (ImageIcon)source.getIcon();
-            //compares the description of the ImageIcon on the button clicked to see if it is an
-            //empty space
-            if (currentText.getDescription().compareTo(emptyImageIcon.getDescription()) == 0) {
-                //if it is an empty space, set ImageIcon to axe or shield based off of # of clicks
-                if(CLICKS % 2 == 0)
-                    source.setIcon(axeIcon);
-                else
-                    source.setIcon(defenseIcon);
-                CLICKS++;
-            } else {
-                //if not an empty button, make it an empty button
-                source.setIcon(emptyImageIcon);
-            }
+        	
+        	JButton temp = (JButton) e.getSource();
+            ImageIcon currentImageIcon = (ImageIcon)source.getIcon();
+        	if(_firstClick == null && currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())){
+        		//Spit out some error message saying there is no game piece here       		
+        	}
+        	else{
+	            if(_firstClick == null){
+	            	_firstClick = (JButton) e.getSource();
+                    ImageIcon firstClickImageIcon = (ImageIcon)_firstClick.getIcon();
+	            	if(isFirstPlayer){
+	            		if(firstClickImageIcon.getDescription().equals(defenseIcon.getDescription()))
+	            			_firstClick = null;
+	            		//Might want to add more functionality later. To have a pop up telling user it is not their turn.
+	            	}	
+	            	else if(!isFirstPlayer){	
+	            		if(firstClickImageIcon.getDescription().equals(axeIcon.getDescription()))
+	            		//Might want to add more functionality later. To have a pop up telling user it is not their turn.
+	            	}
+	            	
+	            }	
+	            else{
+	            	_secondClick = (JButton) e.getSource();
+                    ImageIcon secondClickImageIcon = (ImageIcon)_secondClick.getIcon();
+	            	if(isValidMove(getXandY(_firstClick), getXandY(_secondClick)) ){
+	            		if(firstClickImageIcon.getDescription().equals(axeIcon.getDescription())) {		
+	                		_secondClick.setIcon(axeIcon);               		
+	                		isFirstPlayer=false;
+	            		}
+	    	            else if(firstClickImageIcon.getDescription().equals(defenseIcon.getDescription())) {
+	    	            	_secondClick.setIcon(defenseIcon);
+	    	            	isFirstPlayer=true;
+	    	            }
+	            		_firstClick.setIcon(emptyImageIcon);
+	            		_firstClick = null;
+	                	_secondClick = null;     
+	            	}
+	            	else
+	            		_firstClick = null;
+	            		_secondClick = null;
+	            }
+	        }
         }
     }
-
+    
+    /**
+     * Returns integer array contains xy coordinates for button pressed.
+     * 
+     * @param jb	JButton that holds the current pushed button
+     * @return	returns an integer array that contains, the buttons location as (x,y) = ([0],[1]) 
+     */
+    public int[] getXandY(JButton jb){
+    	int[] xyCord = new int[2]; 
+    	for(int i=0; i <11; i++){
+    		for(int j=0; j <11;j++){
+    			if(jb ==_buttons[j][i]){
+    				xyCord[0] = j;
+    				xyCord[1] = i;
+    				return xyCord;
+    			}
+    		}
+    	}
+    	return new int[2];
+    }
+    
+    /**
+     * Returns whether a move is valid based on input arrays which store x and y locations
+     * 
+     * @param start	an integer array with 2 values, [0] index is x, [1] is y
+     * @param destination	an integer array with 2 values, [0] index is x, [1] is y
+     * @return	returns true if valid move, false if not
+     */
+    public boolean isValidMove(int[] start, int[] destination){
+    	if(start[0] == destination[0] && start[1] == destination[1] )    	
+    		return false;
+    	else if(start[0] == destination[0] || start[1] == destination[1])
+    		return true;
+    	return false;    		
+    }
 }

@@ -1,21 +1,10 @@
+import static org.junit.Assert.*;
+import javax.swing.JButton;
 import org.junit.Test;
-import org.junit.Before;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import javax.imageio.ImageIO;
-import static junit.framework.Assert.*;
 
-public class HnefataflTests {
-    private Hnefatafl game;
-
-    @Before
-    public void beforeTests(){
-    	game = new Hnefatafl();
-    }
-    @Test
+public class HnefataflTests extends Hnefatafl{
+    private Hnefatafl game = new Hnefatafl();
+	 @Test
     public void testInstanceOfHnefatafl(){
     	assertTrue(game != null);
     	assertTrue(game instanceof Hnefatafl);
@@ -27,8 +16,6 @@ public class HnefataflTests {
     	assertTrue(game.axeIcon != null);
     	assertTrue(game.emptyImageIcon != null);
     }
-
-
     @Test
     public void testBoardDraws(){
         // Test that the board draws without error
@@ -44,6 +31,7 @@ public class HnefataflTests {
     	String testDescription = testImageIcon.getDescription();
     	assertTrue(testDescription.equals("empty"));
     }
+    /*
     @Test
     //EXPECT THIS TO BECOME OBSOLETE AT ONE POINT
     public void testClickCycle(){
@@ -73,4 +61,59 @@ public class HnefataflTests {
     	assertTrue(testDescription.equals("shield"));
 
     }
+    */
+
+
+    //Verifies 
+	@Test
+	public void GetXYTest() {
+		Hnefatafl h = new Hnefatafl();
+		JButton jbutton = h._buttons[0][0];
+		int[] xy = getXandY(jbutton);
+		int[] testvalues = new int[]{ 0, 0 };
+		assertEquals(xy[0],testvalues[0]);
+		assertEquals(xy[1],testvalues[1]);
+	}
+	
+	@Test
+	public void IsValidMoveSameLocationTest(){
+		int[] start = new int[] { 0, 0 };
+		int[] dest = new int[] { 0, 0 };
+		assertFalse(isValidMove(start, dest));
+	}
+	
+	@Test
+	public void IsValidMoveDiagonalMoveTest(){
+		int[] start = new int[] { 0, 0 };
+		int[] dest = new int[] { 1, 1 };
+		assertFalse(isValidMove(start, dest));
+	}
+	
+	@Test
+	public void IsValidMoveLeftMoveTest(){
+		int[] start = new int[] { 0, 0 };
+		int[] dest = new int[] { 1, 0 };
+		assertTrue(isValidMove(start, dest));
+	}
+	
+	@Test
+	public void IsValidMoveRightMoveTest(){
+		int[] start = new int[] { 1, 0 };
+		int[] dest = new int[] { 0, 0 };
+		assertTrue(isValidMove(start, dest));
+	}
+	
+	@Test
+	public void IsValidMoveDownMoveTest(){
+		int[] start = new int[] { 0, 1 };
+		int[] dest = new int[] { 0, 0 };
+		assertTrue(isValidMove(start, dest));
+	}
+	
+	@Test
+	public void IsValidMoveUpMoveTest(){
+		int[] start = new int[] { 0, 0 };
+		int[] dest = new int[] { 0, 1 };
+		assertTrue(isValidMove(start, dest));
+	}
 }
