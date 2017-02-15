@@ -1,20 +1,48 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 public class Hnefatafl {
     JFrame _frame = new JFrame("Hnefatafl");
     JPanel _ttt = new JPanel();
     JPanel _newPanel = new JPanel();
-    JButton[][] _buttons = new JButton[11][11];
+    public JButton[][] _buttons = new JButton[11][11];
+    int CLICKS = 0;
+    public ImageIcon defenseIcon;
+    public ImageIcon axeIcon;
+    public ImageIcon emptyImageIcon;
+
     JButton _firstClick = null;
     JButton _secondClick = null;
+    ImageIcon firstClickImageIcon = null;
+    ImageIcon secondClickImageIcon = null;
     boolean isFirstPlayer = true;
     
     public Hnefatafl() {
+        //pull in images for icons on the buttons
+    	try{
+            //ImageIcons are public so we can test them in unit tests
+    		defenseIcon = new ImageIcon(ImageIO.read(new File("src/First Shield.png")));
+            axeIcon = new ImageIcon(ImageIO.read(new File("src/First Axe.png")));
+      		emptyImageIcon =new ImageIcon(ImageIO.read(new File("src/empty.png")));
+
+            //give each icon a description so we can compare them later
+      		defenseIcon.setDescription("shield");
+      		axeIcon.setDescription("axe");
+      		emptyImageIcon.setDescription("empty");
+        }catch(Exception e){
+            //woops just in case we cant pull in a file
+            //Note: path for file we read must be relative to src/ folder
+        	System.out.println("WOOPS " + e);
+        }
     }
 
     public boolean drawBoard(){
+    	
         _frame = new JFrame("Hnefatafl");
         _frame.setSize(850, 850);
         _frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -53,27 +81,27 @@ public class Hnefatafl {
             for (int j=0; j<11 ; j++) {
                 if((i == 0 && (j > 2 && j < 8)) || (i == 1 && (j == 5))){ 
                     //top black pieces
-                    _buttons[i][j] = new JButton("X");
+                    _buttons[i][j] = new JButton(axeIcon);
                 }
                 else if((j == 0 && (i > 2 && i < 8)) || (i == 5 && (j == 1))){ 
                     //left black pieces
-                    _buttons[i][j] = new JButton("X");
+                    _buttons[i][j] = new JButton(axeIcon);
                 }
                 else if((j == 10 && (i > 2 && i < 8)) || (i == 5 && (j == 9))){ 
                     //right black pieces
-                    _buttons[i][j] = new JButton("X");
+                    _buttons[i][j] = new JButton(axeIcon);
                 }
                 else if((i == 10 && (j > 2 && j < 8)) || (i == 9 && (j == 5))){ 
                     //bottom black pieces
-                    _buttons[i][j] = new JButton("X");
+                    _buttons[i][j] = new JButton(axeIcon);
                 }
                 else if((i == 3 && j == 5) || (i == 4 && (j > 3 && j <7)) || (i == 5 && (j > 2 && j <8)) || (i == 6 && (j > 3 && j <7)) || (i == 7 && j == 5)){
                     //center white pieces
-                    _buttons[i][j] = new JButton("O");
+                    _buttons[i][j] = new JButton(defenseIcon);
                 }
                 else{
                     // Make a new button in the array location with text "_"
-                    _buttons[i][j] = new JButton("_");
+                    _buttons[i][j] = new JButton(emptyImageIcon);
                 }
                 // Associate a new ButtonListener to the button (see below)
                 ActionListener buttonListener = new ButtonListener();
@@ -106,37 +134,44 @@ public class Hnefatafl {
         public void actionPerformed(ActionEvent e) {
         	
         	JButton temp = (JButton) e.getSource();
-        	if(_firstClick == null && temp.getText() == "_"){
+            ImageIcon currentImageIcon = (ImageIcon)temp.getIcon();
+
+        	if(_firstClick == null && currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())){
         		//Spit out some error message saying there is no game piece here       		
         	}
         	else{
 	            if(_firstClick == null){
 	            	_firstClick = (JButton) e.getSource();
+                    firstClickImageIcon = (ImageIcon)_firstClick.getIcon();
 	            	if(isFirstPlayer){
-	            		if(_firstClick.getText() == "O")
+	            		if(firstClickImageIcon.getDescription().equals(defenseIcon.getDescription())){
 	            			_firstClick = null;
-	            		//Might want to add more functionality later. To have a pop up telling user it is not their turn.
+                            //Might want to add more functionality later. To have a pop up telling user it is not their turn.
+
+                        }
 	            	}	
 	            	else if(!isFirstPlayer){	
-	            		if(_firstClick.getText() == "X")
-	            			_firstClick = null;
-	            		//Might want to add more functionality later. To have a pop up telling user it is not their turn.
-	            	}
+	            		if(firstClickImageIcon.getDescription().equals(axeIcon.getDescription())){
+                            _firstClick = null;
+                             //Might want to add more functionality later. To have a pop up telling user it is not their turn.
+                        }
+                    }
 	            	
 	            }	
 	            else{
 	            	_secondClick = (JButton) e.getSource();
+                    secondClickImageIcon = (ImageIcon)_secondClick.getIcon();
 	            	if(isValidMove(getXandY(_firstClick), getXandY(_secondClick)) ){
-	            		if(_firstClick.getText() == "X"){		
-	                		_secondClick.setText("X");               		
+	            		if(firstClickImageIcon.getDescription().equals(axeIcon.getDescription())) {		
+	                		_secondClick.setIcon(axeIcon); 
 	                		isFirstPlayer=false;
 	            		}
-	    	            else if(_firstClick.getText() == "O") {
-	    	            	_secondClick.setText("O");
+	    	            else if(firstClickImageIcon.getDescription().equals(defenseIcon.getDescription())) {
+	    	            	_secondClick.setIcon(defenseIcon);
 	    	            	isFirstPlayer=true;
 	    	            }
-	            		_firstClick.setText("_");
-	            		_firstClick = null;
+	            		_firstClick.setIcon(emptyImageIcon);
+	            		_firstClick = null;  
 	                	_secondClick = null;     
 	            	}
 	            	else
