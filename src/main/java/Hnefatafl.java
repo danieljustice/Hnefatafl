@@ -31,7 +31,7 @@ public class Hnefatafl {
             axeIcon = new ImageIcon(ImageIO.read(new File("src/First Axe.png")));
             emptyImageIcon =new ImageIcon(ImageIO.read(new File("src/empty.png")));
 
-            //give each icon a description so we can compare them later
+           //give each icon a description so we can compare them later
             defenseIcon.setDescription("shield");
             axeIcon.setDescription("axe");
             emptyImageIcon.setDescription("empty");
@@ -115,6 +115,10 @@ public class Hnefatafl {
                 _buttons[i][j].addActionListener(buttonListener);
                 // Set the font on the button
                 _buttons[i][j].setFont(new Font("Courier", Font.PLAIN, 48));
+                //set button tranparent for cool background
+                _buttons[i][j].setOpaque(false);
+                _buttons[i][j].setContentAreaFilled(false);
+                //_buttons[i][j].setBorderPainted(false);
                 // Add this button to the _ttt panel
                 _ttt.add(_buttons[i][j]);
             }
