@@ -1,12 +1,16 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package hnefatafl;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import javafx.scene.layout.Border;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.border.LineBorder;
 
 public class Hnefatafl {
     JFrame _frame = new JFrame("Hnefatafl");
@@ -204,10 +208,10 @@ public class Hnefatafl {
                             else{
                                 _secondClick.setIcon(defenseIcon);
                             }
-                            if(((getXandY(_secondClick)[0] == 0 && getXandY(_secondClick)[0] == 0) 
-                                    || (getXandY(_secondClick)[0] == 0 && getXandY(_secondClick)[0] == 10)
-                                    || (getXandY(_secondClick)[0] == 10 && getXandY(_secondClick)[0] == 0)
-                                    || (getXandY(_secondClick)[0] == 10 && getXandY(_secondClick)[0] == 10)) 
+                            if(((getXandY(_secondClick)[0] == 0 && getXandY(_secondClick)[1] == 0) 
+                                    || (getXandY(_secondClick)[0] == 0 && getXandY(_secondClick)[1] == 10)
+                                    || (getXandY(_secondClick)[0] == 10 && getXandY(_secondClick)[1] == 0)
+                                    || (getXandY(_secondClick)[0] == 10 && getXandY(_secondClick)[1] == 10)) 
                                     && firstClickImageIcon.getDescription().equals("K"))
                             {
                                 turn.setText("Shield Wins!");
