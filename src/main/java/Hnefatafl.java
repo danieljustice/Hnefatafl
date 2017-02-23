@@ -54,9 +54,6 @@ public class Hnefatafl {
      * Draws the board panel itself and then calls the method to set the initial game state.
      */
     public boolean drawBoard(){
-        _firstClick = null;
-        _secondClick = null;
-        isFirstPlayer = true;
         _frame = new JFrame("Hnefatafl");
         _frame.setSize(frameWidth, frameHeight);
         _frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -70,6 +67,7 @@ public class Hnefatafl {
             public void actionPerformed(ActionEvent e) {
                 _frame.dispose();
                 _buttons = new JButton[gameWidth][gameHeight];
+                isFirstPlayer = true;
                 drawBoard();
             }
         };
@@ -105,9 +103,6 @@ public class Hnefatafl {
      * Initializes the assumed-drawn board with the start state
      */
     public void setupGame(){
-        _firstClick = null;
-        _secondClick = null;
-        isFirstPlayer = true;
         //reinitialize the panels for new games
         _ttt = new JPanel();
         _ttt.setLayout(new GridLayout(gameWidth, gameHeight));
@@ -143,12 +138,12 @@ public class Hnefatafl {
                         // Make a new button in the array location with text "_"
                         _buttons[i][j] = new JButton(emptyImageIcon);
                     }
-                    // Associate a new ButtonListener to the button (see below)
-                    ActionListener buttonListener = new ButtonListener();
-                    _buttons[i][j].addActionListener(buttonListener);
-                    // Set the font on the button
-                    _buttons[i][j].setFont(new Font("Courier", Font.PLAIN, 48));
                 }
+                // Associate a new ButtonListener to the button (see below)
+                ActionListener buttonListener = new ButtonListener();
+                _buttons[i][j].addActionListener(buttonListener);
+                // Set the font on the button
+                _buttons[i][j].setFont(new Font("Courier", Font.PLAIN, 48));
                 // Add this button to the _ttt panel
                 _ttt.add(_buttons[i][j]);
             }
@@ -162,12 +157,51 @@ public class Hnefatafl {
     }
 
     /**
+     * Returns integer array contains xy coordinates for button pressed.
+     *
+     * @param jb    JButton that holds the current pushed button
+     * @return  returns an integer array that contains, the buttons location as (x,y) = ([0],[1])
+     */
+    public int[] getXandY(JButton jb){
+        int[] xyCord = new int[2];
+        for(int i=0; i <gameWidth; i++){
+            for(int j=0; j <gameHeight;j++){
+                if(jb ==_buttons[j][i]){
+                    xyCord[0] = j;
+                    xyCord[1] = i;
+                    return xyCord;
+                }
+            }
+        }
+        return new int[2];
+    }
+
+    /**
+     * Returns whether a move is valid based on input arrays which store x and y locations
+     *
+     * @param start an integer array with 2 values, [0] index is x, [1] is y
+     * @param destination   an integer array with 2 values, [0] index is x, [1] is y
+     * @return  returns true if valid move, false if not
+     */
+    public boolean isValidMove(int[] start, int[] destination){
+        if(start[0] == destination[0] && start[1] == destination[1] )
+            return false;
+        else if(start[0] == destination[0] || start[1] == destination[1])
+            return true;
+        return false;
+    }
+
+    /**
      * Main method
      */
     public static void main(String[] args) {
         Hnefatafl game = new Hnefatafl();
         game.drawBoard();
     }
+
+    // #################################################################
+    // Button Listeners
+    // #################################################################
 
     private class ButtonListener implements ActionListener {
 
@@ -226,41 +260,6 @@ public class Hnefatafl {
         }
     }
 
-    /**
-     * Returns integer array contains xy coordinates for button pressed.
-     *
-     * @param jb    JButton that holds the current pushed button
-     * @return  returns an integer array that contains, the buttons location as (x,y) = ([0],[1])
-     */
-    public int[] getXandY(JButton jb){
-        int[] xyCord = new int[2];
-        for(int i=0; i <gameWidth; i++){
-            for(int j=0; j <gameHeight;j++){
-                if(jb ==_buttons[j][i]){
-                    xyCord[0] = j;
-                    xyCord[1] = i;
-                    return xyCord;
-                }
-            }
-        }
-        return new int[2];
-    }
-
-    /**
-     * Returns whether a move is valid based on input arrays which store x and y locations
-     *
-     * @param start an integer array with 2 values, [0] index is x, [1] is y
-     * @param destination   an integer array with 2 values, [0] index is x, [1] is y
-     * @return  returns true if valid move, false if not
-     */
-    public boolean isValidMove(int[] start, int[] destination){
-        if(start[0] == destination[0] && start[1] == destination[1] )
-            return false;
-        else if(start[0] == destination[0] || start[1] == destination[1])
-            return true;
-        return false;
-    }
-
     private class SaveButtonListener implements ActionListener{
         public void actionPerformed(ActionEvent e) {
             try{
@@ -269,9 +268,10 @@ public class Hnefatafl {
 
                 for(int i=0; i < gameWidth; i++){
                     for(int j=0; j < gameHeight;j++){
-                        oos.writeObject(_buttons[j][i]);
+                        oos.writeObject(_buttons[i][j]);
                     }
                 }
+                oos.writeObject(isFirstPlayer);
                 oos.close();
                 fos.close();
             } catch(IOException ex) {
@@ -289,9 +289,10 @@ public class Hnefatafl {
 
                 for(int i=0; i < gameWidth; i++){
                     for(int j=0; j < gameHeight;j++){
-                        _buttons[j][i] = (JButton) oip.readObject();
+                        _buttons[i][j] = (JButton) oip.readObject();
                     }
                 }
+                isFirstPlayer = (boolean) oip.readObject();
                 oip.close();
                 fip.close();
                 reloadBoard();
