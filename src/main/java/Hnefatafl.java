@@ -46,10 +46,6 @@ public class Hnefatafl {
         }
     }
 
-    private void initVariables() {
-
-    }
-
     /**
      * Draws the board panel itself and then calls the method to set the initial game state.
      */
@@ -61,17 +57,11 @@ public class Hnefatafl {
         JToolBar tools = new JToolBar();
         tools.setFloatable(false);
         _frame.add(tools, BorderLayout.PAGE_START);
-        Action newGameAction = new AbstractAction("New") {
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                _frame.dispose();
-                _buttons = new JButton[gameWidth][gameHeight];
-                isFirstPlayer = true;
-                drawBoard();
-            }
-        };
-        tools.add(newGameAction);
+        JButton newButton = new JButton("New"); //no functions
+        ActionListener newButtonListener = new NewButtonListener();
+        newButton.addActionListener(newButtonListener);
+        tools.add(newButton);
         tools.addSeparator();
 
         JButton saveButton = new JButton("Save"); //no functions
@@ -156,6 +146,10 @@ public class Hnefatafl {
 
     }
 
+    // #################################################################
+    // Utility methods
+    // #################################################################
+
     /**
      * Returns integer array contains xy coordinates for button pressed.
      *
@@ -200,7 +194,7 @@ public class Hnefatafl {
     }
 
     // #################################################################
-    // Button Listeners
+    // Button listeners
     // #################################################################
 
     private class ButtonListener implements ActionListener {
@@ -260,7 +254,17 @@ public class Hnefatafl {
         }
     }
 
+    private class NewButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            _buttons = new JButton[gameWidth][gameHeight];
+            isFirstPlayer = true;
+            reloadBoard();
+        }
+    }
+
     private class SaveButtonListener implements ActionListener{
+        @Override
         public void actionPerformed(ActionEvent e) {
             try{
                 FileOutputStream fos = new FileOutputStream("saves.ser");
@@ -281,6 +285,7 @@ public class Hnefatafl {
     }
 
     private class LoadButtonListener implements ActionListener{
+        @Override
         public void actionPerformed(ActionEvent e) {
 
             try{
