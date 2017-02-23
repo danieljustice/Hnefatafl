@@ -11,29 +11,29 @@ public class Hnefatafl {
     private int gameHeight = 11;
     private int frameWidth = 850;
     private int frameHeight = 850;
-    JFrame _frame = new JFrame("Hnefatafl");
-    JPanel _ttt = new JPanel();
-    JPanel _newPanel = new JPanel();
-    public JButton[][] _buttons = new JButton[gameWidth][gameHeight];
-    int CLICKS = 0;
+    private JFrame _frame = new JFrame("Hnefatafl");
+    private JPanel _ttt = new JPanel();
+    private JPanel _newPanel = new JPanel();
+    private int CLICKS = 0;
 
+    private JButton _firstClick = null;
+    private JButton _secondClick = null;
+    private boolean isFirstPlayer = true;
+    private ImageIcon firstClickImageIcon = null;
+    private ImageIcon secondClickImageIcon = null;
+
+    public JButton[][] _buttons = new JButton[gameWidth][gameHeight];
     public ImageIcon defenseIcon;
     public ImageIcon axeIcon;
     public ImageIcon emptyImageIcon;
-
-    JButton _firstClick = null;
-    JButton _secondClick = null;
-    boolean isFirstPlayer = true;
-    ImageIcon firstClickImageIcon = null;
-    ImageIcon secondClickImageIcon = null;
 
     public Hnefatafl() {
         //pull in images for icons on the buttons
         try{
             //ImageIcons are public so we can test them in unit tests
-            defenseIcon = new ImageIcon(ImageIO.read(new File("src/First Shield.png")));
-            axeIcon = new ImageIcon(ImageIO.read(new File("src/First Axe.png")));
-            emptyImageIcon =new ImageIcon(ImageIO.read(new File("src/empty.png")));
+            defenseIcon = new ImageIcon(ImageIO.read(new File("src/assets/First Shield.png")));
+            axeIcon = new ImageIcon(ImageIO.read(new File("src/assets/First Axe.png")));
+            emptyImageIcon =new ImageIcon(ImageIO.read(new File("src/assets/empty.png")));
 
             //give each icon a description so we can compare them later
             defenseIcon.setDescription("shield");
