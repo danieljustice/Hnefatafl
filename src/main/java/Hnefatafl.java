@@ -8,28 +8,35 @@ package hnefatafl;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import java.io.File;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 public class Hnefatafl {
-    JFrame _frame = new JFrame("Hnefatafl");
-    JLabel turn = new JLabel();
-    JPanel _ttt = new JPanel();
-    JPanel _newPanel = new JPanel();
+  
     public JButton[][] _buttons = new JButton[11][11];
-    int CLICKS = 0;
+    private int gameWidth = 11;
+    private int gameHeight = 11;
+    private int frameWidth = 850;
+    private int frameHeight = 850;
+    private JFrame _frame = new JFrame("Hnefatafl");
+    private JPanel _ttt = new JPanel();
+    JLabel turn = new JLabel();
+    private JPanel _newPanel = new JPanel();
+    private int CLICKS = 0;
 
+    private JButton _firstClick = null;
+    private JButton _secondClick = null;
+    private boolean isFirstPlayer = true;
+    private ImageIcon firstClickImageIcon = null;
+    private ImageIcon secondClickImageIcon = null;
+
+    public JButton[][] _buttons = new JButton[gameWidth][gameHeight];
     public ImageIcon defenseIcon;
     public ImageIcon axeIcon;
     public ImageIcon kingIcon;
     public ImageIcon emptyImageIcon;
-
-    JButton _firstClick = null;
-    JButton _secondClick = null;
-    ImageIcon firstClickImageIcon = null;
-    ImageIcon secondClickImageIcon = null;
-    boolean isFirstPlayer = true;
 
     public Hnefatafl() {
         //pull in images for icons on the buttons
@@ -57,26 +64,33 @@ public class Hnefatafl {
      * Draws the board panel itself and then calls the method to set the initial game state.
      */
     public boolean drawBoard(){
-
         _frame = new JFrame("Hnefatafl");
-        _frame.setSize(850, 850);
+        _frame.setSize(frameWidth, frameHeight);
         _frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         JToolBar tools = new JToolBar();
         tools.setFloatable(false);
         _frame.add(tools, BorderLayout.PAGE_START);
-        Action newGameAction = new AbstractAction("New") {
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                _frame.dispose();
-                isFirstPlayer = true;
-                drawBoard();
-            }
-        };
-        tools.add(newGameAction);
-        tools.add(new JButton("Save")); //no functions
+
+        JButton newButton = new JButton("New"); //no functions
+        ActionListener newButtonListener = new NewButtonListener();
+        newButton.addActionListener(newButtonListener);
+        tools.add(newButton);
         tools.addSeparator();
+
+        JButton saveButton = new JButton("Save"); //no functions
+        ActionListener saveButtonListener = new SaveButtonListener();
+        saveButton.addActionListener(saveButtonListener);
+        tools.add(saveButton);
+        tools.addSeparator();
+
+        JButton loadButton = new JButton("Load"); //no functions
+        ActionListener loadButtonListener = new LoadButtonListener();
+        loadButton.addActionListener(loadButtonListener);
+        tools.add(loadButton);
+        tools.addSeparator();
+
         tools.add(new JButton("Resign")); //no functions
         tools.addSeparator();
         tools.addSeparator();
@@ -93,13 +107,18 @@ public class Hnefatafl {
         return(true);
     }
 
+    public void reloadBoard() {
+        _frame.dispose();
+        drawBoard();
+    }
+
     /**
      * Initializes the assumed-drawn board with the start state
      */
     public void setupGame(){
         //reinitialize the panels for new games
         _ttt = new JPanel();
-        _ttt.setLayout(new GridLayout(11, 11));
+        _ttt.setLayout(new GridLayout(gameWidth, gameHeight));
 
 
         _newPanel = new JPanel();
@@ -132,6 +151,7 @@ public class Hnefatafl {
                 else{
                     // Make a new button in the array location with text "_"
                     _buttons[i][j] = new JButton(emptyImageIcon);
+
                 }
                 // Associate a new ButtonListener to the button (see below)
                 ActionListener buttonListener = new ButtonListener();
@@ -154,6 +174,45 @@ public class Hnefatafl {
 
     }
 
+    // #################################################################
+    // Utility methods
+    // #################################################################
+
+    /**
+     * Returns integer array contains xy coordinates for button pressed.
+     *
+     * @param jb    JButton that holds the current pushed button
+     * @return  returns an integer array that contains, the buttons location as (x,y) = ([0],[1])
+     */
+    public int[] getXandY(JButton jb){
+        int[] xyCord = new int[2];
+        for(int i=0; i <gameWidth; i++){
+            for(int j=0; j <gameHeight;j++){
+                if(jb ==_buttons[j][i]){
+                    xyCord[0] = j;
+                    xyCord[1] = i;
+                    return xyCord;
+                }
+            }
+        }
+        return new int[2];
+    }
+
+    /**
+     * Returns whether a move is valid based on input arrays which store x and y locations
+     *
+     * @param start an integer array with 2 values, [0] index is x, [1] is y
+     * @param destination   an integer array with 2 values, [0] index is x, [1] is y
+     * @return  returns true if valid move, false if not
+     */
+    public boolean isValidMove(int[] start, int[] destination){
+        if(start[0] == destination[0] && start[1] == destination[1] )
+            return false;
+        else if(start[0] == destination[0] || start[1] == destination[1])
+            return true;
+        return false;
+    }
+
     /**
      * Main method
      */
@@ -162,7 +221,11 @@ public class Hnefatafl {
         game.drawBoard();
     }
 
-    class ButtonListener implements ActionListener {
+    // #################################################################
+    // Button listeners
+    // #################################################################
+
+    private class ButtonListener implements ActionListener {
 
         // Every time we click the button, it will perform
         // the following action.
@@ -243,38 +306,75 @@ public class Hnefatafl {
         }
     }
 
-    /**
-     * Returns integer array contains xy coordinates for button pressed.
-     *
-     * @param jb    JButton that holds the current pushed button
-     * @return  returns an integer array that contains, the buttons location as (x,y) = ([0],[1])
-     */
-    public int[] getXandY(JButton jb){
-        int[] xyCord = new int[2];
-        for(int i=0; i <11; i++){
-            for(int j=0; j <11;j++){
-                if(jb ==_buttons[j][i]){
-                    xyCord[0] = j;
-                    xyCord[1] = i;
-                    return xyCord;
-                }
-            }
+    private class NewButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            _buttons = new JButton[gameWidth][gameHeight];
+            isFirstPlayer = true;
+            reloadBoard();
         }
-        return new int[2];
     }
 
-    /**
-     * Returns whether a move is valid based on input arrays which store x and y locations
-     *
-     * @param start an integer array with 2 values, [0] index is x, [1] is y
-     * @param destination   an integer array with 2 values, [0] index is x, [1] is y
-     * @return  returns true if valid move, false if not
-     */
-    public boolean isValidMove(int[] start, int[] destination){
-        if(start[0] == destination[0] && start[1] == destination[1] )
-            return false;
-        else if(start[0] == destination[0] || start[1] == destination[1])
-            return true;
-        return false;
+    private class SaveButtonListener implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try{
+                JFileChooser fileChooser = new JFileChooser();
+                if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+                    File file = fileChooser.getSelectedFile();
+                    FileOutputStream fos = new FileOutputStream(file);
+                    ObjectOutputStream oos = new ObjectOutputStream(fos);
+
+                    for(int i=0; i < gameWidth; i++){
+                        for(int j=0; j < gameHeight;j++){
+                            oos.writeObject(_buttons[i][j]);
+                        }
+                    }
+                    oos.writeObject(isFirstPlayer);
+                    oos.close();
+                    fos.close();
+                    JOptionPane.showMessageDialog(null, "File saved!");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Operation canceled.");
+                }
+            } catch(IOException ex) {
+                System.out.println("File Writing Error!");
+            }
+        }
+    }
+
+    private class LoadButtonListener implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            try{
+                JFileChooser fileChooser = new JFileChooser();
+                if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                    File file = fileChooser.getSelectedFile();
+                  // load from file
+
+                    FileInputStream fip = new FileInputStream(file);
+                    ObjectInputStream oip = new ObjectInputStream(fip);
+
+                    for(int i=0; i < gameWidth; i++){
+                        for(int j=0; j < gameHeight;j++){
+                            _buttons[i][j] = (JButton) oip.readObject();
+                        }
+                    }
+                    isFirstPlayer = (boolean) oip.readObject();
+                    oip.close();
+                    fip.close();
+                    JOptionPane.showMessageDialog(null, "File loaded!");
+                    reloadBoard();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Operation canceled.");
+                }
+
+            }catch(IOException ex) {
+                System.out.println("File Reading Error!");
+            } catch(ClassNotFoundException cex) {
+                System.out.println("Class Not Found!");
+            }
+        }
     }
 }
