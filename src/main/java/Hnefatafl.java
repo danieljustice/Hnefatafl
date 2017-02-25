@@ -7,7 +7,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 public class Hnefatafl {
-  
+
     private int gameWidth = 11;
     private int gameHeight = 11;
     private int frameWidth = 850;
@@ -15,6 +15,7 @@ public class Hnefatafl {
     private JFrame _frame = new JFrame("Hnefatafl");
     private JPanel _ttt = new JPanel();
     JLabel turn = new JLabel();
+    private String turnText = "Axe Moves";
     private JPanel _newPanel = new JPanel();
     private int CLICKS = 0;
 
@@ -38,7 +39,7 @@ public class Hnefatafl {
             axeIcon = new ImageIcon(ImageIO.read(new File("src/First Axe.png")));
             kingIcon = new ImageIcon(ImageIO.read(new File("src/Crown.png")));
             emptyImageIcon = new ImageIcon(ImageIO.read(new File("src/empty.png")));
-            
+
             //give each icon a description so we can compare them later
 
             defenseIcon.setDescription("shield");
@@ -59,7 +60,7 @@ public class Hnefatafl {
         _frame = new JFrame("Hnefatafl");
         _frame.setSize(frameWidth, frameHeight);
         _frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
+
         JToolBar tools = new JToolBar();
         tools.setFloatable(false);
         _frame.add(tools, BorderLayout.PAGE_START);
@@ -92,7 +93,7 @@ public class Hnefatafl {
         tools.addSeparator();
         tools.addSeparator();
         tools.addSeparator();
-        turn = new JLabel("Axe Moves");
+        turn = new JLabel(turnText);
         tools.add(turn);
         setupGame();
         _frame.setVisible(true);
@@ -261,19 +262,19 @@ public class Hnefatafl {
                             isFirstPlayer=false;
                             turn.setText("Shield Moves");
                         }
-                        else if(firstClickImageIcon.getDescription().equals(defenseIcon.getDescription()) 
-                                || firstClickImageIcon.getDescription().equals(kingIcon.getDescription())) 
-                        {   
+                        else if(firstClickImageIcon.getDescription().equals(defenseIcon.getDescription())
+                                || firstClickImageIcon.getDescription().equals(kingIcon.getDescription()))
+                        {
                             if(firstClickImageIcon.getDescription().equals(kingIcon.getDescription())){
                                 _secondClick.setIcon(kingIcon);
                             }
                             else{
                                 _secondClick.setIcon(defenseIcon);
                             }
-                            if(((getXandY(_secondClick)[0] == 0 && getXandY(_secondClick)[1] == 0) 
+                            if(((getXandY(_secondClick)[0] == 0 && getXandY(_secondClick)[1] == 0)
                                     || (getXandY(_secondClick)[0] == 0 && getXandY(_secondClick)[1] == 10)
                                     || (getXandY(_secondClick)[0] == 10 && getXandY(_secondClick)[1] == 0)
-                                    || (getXandY(_secondClick)[0] == 10 && getXandY(_secondClick)[1] == 10)) 
+                                    || (getXandY(_secondClick)[0] == 10 && getXandY(_secondClick)[1] == 10))
                                     && firstClickImageIcon.getDescription().equals("K"))
                             {
                                 turn.setText("Shield Wins!");
@@ -305,6 +306,7 @@ public class Hnefatafl {
         public void actionPerformed(ActionEvent e) {
             _buttons = new JButton[gameWidth][gameHeight];
             isFirstPlayer = true;
+            turnText = "Axe Moves";
             reloadBoard();
         }
     }
@@ -325,6 +327,7 @@ public class Hnefatafl {
                         }
                     }
                     oos.writeObject(isFirstPlayer);
+                    oos.writeObject(turn.getText());
                     oos.close();
                     fos.close();
                     JOptionPane.showMessageDialog(null, "File saved!");
@@ -356,6 +359,7 @@ public class Hnefatafl {
                         }
                     }
                     isFirstPlayer = (boolean) oip.readObject();
+                    turnText = (String) oip.readObject();
                     oip.close();
                     fip.close();
                     JOptionPane.showMessageDialog(null, "File loaded!");
