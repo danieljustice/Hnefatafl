@@ -7,12 +7,15 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 public class Hnefatafl {
+
     private int gameWidth = 11;
     private int gameHeight = 11;
     private int frameWidth = 850;
     private int frameHeight = 850;
     private JFrame _frame = new JFrame("Hnefatafl");
     private JPanel _ttt = new JPanel();
+    JLabel turn = new JLabel();
+    private String turnText = "Axe Moves";
     private JPanel _newPanel = new JPanel();
     private int CLICKS = 0;
 
@@ -25,20 +28,24 @@ public class Hnefatafl {
     public JButton[][] _buttons = new JButton[gameWidth][gameHeight];
     public ImageIcon defenseIcon;
     public ImageIcon axeIcon;
+    public ImageIcon kingIcon;
     public ImageIcon emptyImageIcon;
 
     public Hnefatafl() {
         //pull in images for icons on the buttons
         try{
             //ImageIcons are public so we can test them in unit tests
-            defenseIcon = new ImageIcon(ImageIO.read(new File("src/assets/First Shield.png")));
-            axeIcon = new ImageIcon(ImageIO.read(new File("src/assets/First Axe.png")));
-            emptyImageIcon =new ImageIcon(ImageIO.read(new File("src/assets/empty.png")));
+            defenseIcon = new ImageIcon(ImageIO.read(new File("src/First Shield.png")));
+            axeIcon = new ImageIcon(ImageIO.read(new File("src/First Axe.png")));
+            kingIcon = new ImageIcon(ImageIO.read(new File("src/Crown.png")));
+            emptyImageIcon = new ImageIcon(ImageIO.read(new File("src/empty.png")));
 
-           //give each icon a description so we can compare them later
+            //give each icon a description so we can compare them later
+
             defenseIcon.setDescription("shield");
             axeIcon.setDescription("axe");
             emptyImageIcon.setDescription("empty");
+            kingIcon.setDescription("K");
         }catch(Exception e){
             //woops just in case we cant pull in a file
             //Note: path for file we read must be relative to src/ folder
@@ -57,6 +64,7 @@ public class Hnefatafl {
         JToolBar tools = new JToolBar();
         tools.setFloatable(false);
         _frame.add(tools, BorderLayout.PAGE_START);
+
 
         JButton newButton = new JButton("New"); //no functions
         ActionListener newButtonListener = new NewButtonListener();
@@ -78,7 +86,15 @@ public class Hnefatafl {
 
         tools.add(new JButton("Resign")); //no functions
         tools.addSeparator();
-
+        tools.addSeparator();
+        tools.addSeparator();
+        tools.addSeparator();
+        tools.addSeparator();
+        tools.addSeparator();
+        tools.addSeparator();
+        tools.addSeparator();
+        turn = new JLabel(turnText);
+        tools.add(turn);
         setupGame();
         _frame.setVisible(true);
         return(true);
@@ -102,7 +118,6 @@ public class Hnefatafl {
         _newPanel.setLayout(new FlowLayout());
         for(int i=0; i<gameWidth; i++){
             for (int j=0; j<gameHeight ; j++) {
-
                 if(_buttons[i][j] == null) {
                     if((i == 0 && (j > 2 && j < 8)) || (i == 1 && (j == 5))){
                         //top black pieces
@@ -120,6 +135,9 @@ public class Hnefatafl {
                         //bottom black pieces
                         _buttons[i][j] = new JButton(axeIcon);
                     }
+                    else if(i == 5 && j == 5){
+                        _buttons[i][j] = new JButton(kingIcon);
+                    }
                     else if((i == 3 && j == 5) || (i == 4 && (j > 3 && j <7)) || (i == 5 && (j > 2 && j <8)) || (i == 6 && (j > 3 && j <7)) || (i == 7 && j == 5)){
                         //center white pieces
                         _buttons[i][j] = new JButton(defenseIcon);
@@ -127,6 +145,7 @@ public class Hnefatafl {
                     else{
                         // Make a new button in the array location with text "_"
                         _buttons[i][j] = new JButton(emptyImageIcon);
+
                     }
                 }
                 // Associate a new ButtonListener to the button (see below)
@@ -241,10 +260,34 @@ public class Hnefatafl {
                         if(firstClickImageIcon.getDescription().equals(axeIcon.getDescription())) {
                             _secondClick.setIcon(axeIcon);
                             isFirstPlayer=false;
+                            turn.setText("Shield Moves");
                         }
-                        else if(firstClickImageIcon.getDescription().equals(defenseIcon.getDescription())) {
-                            _secondClick.setIcon(defenseIcon);
-                            isFirstPlayer=true;
+                        else if(firstClickImageIcon.getDescription().equals(defenseIcon.getDescription())
+                                || firstClickImageIcon.getDescription().equals(kingIcon.getDescription()))
+                        {
+                            if(firstClickImageIcon.getDescription().equals(kingIcon.getDescription())){
+                                _secondClick.setIcon(kingIcon);
+                            }
+                            else{
+                                _secondClick.setIcon(defenseIcon);
+                            }
+                            if(((getXandY(_secondClick)[0] == 0 && getXandY(_secondClick)[1] == 0)
+                                    || (getXandY(_secondClick)[0] == 0 && getXandY(_secondClick)[1] == 10)
+                                    || (getXandY(_secondClick)[0] == 10 && getXandY(_secondClick)[1] == 0)
+                                    || (getXandY(_secondClick)[0] == 10 && getXandY(_secondClick)[1] == 10))
+                                    && firstClickImageIcon.getDescription().equals("K"))
+                            {
+                                turn.setText("Shield Wins!");
+                                for(int i = 0; i < 11; i++){
+                                    for(int j = 0; j < 11; j++){
+                                        _buttons[i][j].setEnabled(false);
+                                    }
+                                }
+                            }
+                            else{
+                                isFirstPlayer=true;
+                                turn.setText("Axe Moves");
+                            }
                         }
                         _firstClick.setIcon(emptyImageIcon);
                         _firstClick = null;
@@ -263,6 +306,7 @@ public class Hnefatafl {
         public void actionPerformed(ActionEvent e) {
             _buttons = new JButton[gameWidth][gameHeight];
             isFirstPlayer = true;
+            turnText = "Axe Moves";
             reloadBoard();
         }
     }
@@ -283,6 +327,7 @@ public class Hnefatafl {
                         }
                     }
                     oos.writeObject(isFirstPlayer);
+                    oos.writeObject(turn.getText());
                     oos.close();
                     fos.close();
                     JOptionPane.showMessageDialog(null, "File saved!");
@@ -314,6 +359,7 @@ public class Hnefatafl {
                         }
                     }
                     isFirstPlayer = (boolean) oip.readObject();
+                    turnText = (String) oip.readObject();
                     oip.close();
                     fip.close();
                     JOptionPane.showMessageDialog(null, "File loaded!");
