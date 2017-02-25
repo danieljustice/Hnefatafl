@@ -1,10 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package hnefatafl;
-
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -15,7 +8,6 @@ import javax.swing.ImageIcon;
 
 public class Hnefatafl {
   
-    public JButton[][] _buttons = new JButton[11][11];
     private int gameWidth = 11;
     private int gameHeight = 11;
     private int frameWidth = 850;
