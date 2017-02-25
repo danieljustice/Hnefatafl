@@ -267,17 +267,24 @@ public class Hnefatafl {
         @Override
         public void actionPerformed(ActionEvent e) {
             try{
-                FileOutputStream fos = new FileOutputStream("saves.ser");
-                ObjectOutputStream oos = new ObjectOutputStream(fos);
+                JFileChooser fileChooser = new JFileChooser();
+                if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+                    File file = fileChooser.getSelectedFile();
+                    FileOutputStream fos = new FileOutputStream(file);
+                    ObjectOutputStream oos = new ObjectOutputStream(fos);
 
-                for(int i=0; i < gameWidth; i++){
-                    for(int j=0; j < gameHeight;j++){
-                        oos.writeObject(_buttons[i][j]);
+                    for(int i=0; i < gameWidth; i++){
+                        for(int j=0; j < gameHeight;j++){
+                            oos.writeObject(_buttons[i][j]);
+                        }
                     }
+                    oos.writeObject(isFirstPlayer);
+                    oos.close();
+                    fos.close();
+                    JOptionPane.showMessageDialog(null, "File saved!");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Operation canceled.");
                 }
-                oos.writeObject(isFirstPlayer);
-                oos.close();
-                fos.close();
             } catch(IOException ex) {
                 System.out.println("File Writing Error!");
             }
@@ -289,18 +296,27 @@ public class Hnefatafl {
         public void actionPerformed(ActionEvent e) {
 
             try{
-                FileInputStream fip = new FileInputStream("saves.ser");
-                ObjectInputStream oip = new ObjectInputStream(fip);
+                JFileChooser fileChooser = new JFileChooser();
+                if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                    File file = fileChooser.getSelectedFile();
+                  // load from file
 
-                for(int i=0; i < gameWidth; i++){
-                    for(int j=0; j < gameHeight;j++){
-                        _buttons[i][j] = (JButton) oip.readObject();
+                    FileInputStream fip = new FileInputStream(file);
+                    ObjectInputStream oip = new ObjectInputStream(fip);
+
+                    for(int i=0; i < gameWidth; i++){
+                        for(int j=0; j < gameHeight;j++){
+                            _buttons[i][j] = (JButton) oip.readObject();
+                        }
                     }
+                    isFirstPlayer = (boolean) oip.readObject();
+                    oip.close();
+                    fip.close();
+                    JOptionPane.showMessageDialog(null, "File loaded!");
+                    reloadBoard();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Operation canceled.");
                 }
-                isFirstPlayer = (boolean) oip.readObject();
-                oip.close();
-                fip.close();
-                reloadBoard();
 
             }catch(IOException ex) {
                 System.out.println("File Reading Error!");
