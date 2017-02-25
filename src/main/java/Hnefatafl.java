@@ -268,17 +268,70 @@ public class Hnefatafl {
     */
     public int piecesLeft(){
         ImageIcon currentImageIcon;
-        int shieldPieces = 0;
+        int surroundedKingSides = 0;
         int attackPieces = 0;
         for(int i=0; i <gameWidth; i++){
             for(int j=0; j <gameHeight;j++){
                 currentImageIcon = (ImageIcon)_buttons[i][j].getIcon();
                 if(currentImageIcon.getDescription().equals(axeIcon.getDescription())){
+                    //see if there are pieces left for axes
                     attackPieces++;
                 }
-                else if(currentImageIcon.getDescription().equals(defenseIcon.getDescription())
-                        || currentImageIcon.getDescription().equals(kingIcon.getDescription())){
-                    shieldPieces++;
+                else if(currentImageIcon.getDescription().equals(kingIcon.getDescription())){
+                    //check if king is surrounded
+                    //testing for surrounding area
+                    //i+-1 j+-1
+                    //check the pieces east north south and west
+                    ImageIcon surroundingImageIcon;
+
+                    if(i - 1 > 0){
+                        //north
+                        surroundingImageIcon = (ImageIcon)_buttons[i - 1][j].getIcon();
+                        if(surroundingImageIcon.getDescription().equals(axeIcon.getDescription())){
+                            surroundedKingSides++;
+                        }
+                    }
+                    else{
+                        //on edge
+                        surroundedKingSides++;
+                    }
+
+                    if(i + 1 < 11){
+                        //south
+
+                        surroundingImageIcon = (ImageIcon)_buttons[i + 1][j].getIcon();
+                        if(surroundingImageIcon.getDescription().equals(axeIcon.getDescription())){
+                            surroundedKingSides++;
+                        }
+                    }
+                    else{
+                        //on edge
+                        surroundedKingSides++;
+                    }
+                    if(j - 1 >= 0){
+                        //west
+
+                        surroundingImageIcon = (ImageIcon)_buttons[i][j - 1].getIcon();
+                        if(surroundingImageIcon.getDescription().equals(axeIcon.getDescription())){
+                            surroundedKingSides++;
+                        }
+                    }
+                    else{
+                        //on edge
+                        surroundedKingSides++;
+                    }
+                    if(j + 1 < 11){
+                        //east
+
+                        surroundingImageIcon = (ImageIcon)_buttons[i][j + 1].getIcon();
+                        if(surroundingImageIcon.getDescription().equals(axeIcon.getDescription())){
+                            surroundedKingSides++;
+                        }
+                    }
+                    else{
+                        //on edge
+                        surroundedKingSides++;
+                    }
                 }
             }
         }
@@ -286,8 +339,8 @@ public class Hnefatafl {
             //axe defeated
             return 1;
         }
-        else if(shieldPieces == 0){
-            //shield defeated
+        else if(surroundedKingSides == 4){
+            //shield defeated since king is surrounded
             return 2;
         }
         else{
