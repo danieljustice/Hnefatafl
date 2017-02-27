@@ -280,7 +280,7 @@ public class Hnefatafl {
                     //check the pieces east north south and west
                     ImageIcon surroundingImageIcon;
 
-                    if(i - 1 > 0){
+                    if(i - 1 >= 0){
                         //north
                         surroundingImageIcon = (ImageIcon)_buttons[i - 1][j].getIcon();
                         if(surroundingImageIcon.getDescription().equals(axeIcon.getDescription())){
