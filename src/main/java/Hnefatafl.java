@@ -7,7 +7,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 public class Hnefatafl {
-  
+
     private int gameWidth = 11;
     private int gameHeight = 11;
     private int frameWidth = 850;
@@ -38,7 +38,7 @@ public class Hnefatafl {
             axeIcon = new ImageIcon(ImageIO.read(new File("src/First Axe.png")));
             kingIcon = new ImageIcon(ImageIO.read(new File("src/Crown.png")));
             emptyImageIcon = new ImageIcon(ImageIO.read(new File("src/empty.png")));
-            
+
             //give each icon a description so we can compare them later
 
             defenseIcon.setDescription("shield");
@@ -59,7 +59,7 @@ public class Hnefatafl {
         _frame = new JFrame("Hnefatafl");
         _frame.setSize(frameWidth, frameHeight);
         _frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
+
         JToolBar tools = new JToolBar();
         tools.setFloatable(false);
         _frame.add(tools, BorderLayout.PAGE_START);
@@ -191,7 +191,7 @@ public class Hnefatafl {
         }
         return new int[2];
     }
-    
+
     /*
     *
     * kill pieces as they are surrounded Othello style (King is an exception)
@@ -205,61 +205,61 @@ public class Hnefatafl {
         ImageIcon currentImageIcon = (ImageIcon)piecePlacement.getIcon();
         ImageIcon surroundingImageIcon;
         ImageIcon victimPiece;
-        
+
         if(placement[0] - 2 > 0){
             //north
-            
+
             surroundingImageIcon = (ImageIcon)_buttons[placement[0] - 2][placement[1]].getIcon();
-           
+
             if(surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())){
                 victimPiece = (ImageIcon)_buttons[placement[0] - 1][placement[1]].getIcon();
                 if(!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
                     _buttons[placement[0] - 1][placement[1]].setIcon(emptyImageIcon);
                 }
-                
+
             }
         }
-        
+
         if(placement[0] + 2 < 11){
             //south
-           
+
             surroundingImageIcon = (ImageIcon)_buttons[placement[0] + 2][placement[1]].getIcon();
-            
+
             if(surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())){
                 victimPiece = (ImageIcon)_buttons[placement[0] + 1][placement[1]].getIcon();
                 if(!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
                     _buttons[placement[0] + 1][placement[1]].setIcon(emptyImageIcon);
                 }
-                
+
             }
         }
         if(placement[1] - 2 >= 0){
             //west
-           
-            surroundingImageIcon = (ImageIcon)_buttons[placement[0] - 2][placement[1]].getIcon();
-            
+
+            surroundingImageIcon = (ImageIcon)_buttons[placement[0]][placement[1] - 2].getIcon();
+
             if(surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())){
                 victimPiece = (ImageIcon)_buttons[placement[0]][placement[1] - 1].getIcon();
                 if(!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
                     _buttons[placement[0]][placement[1] - 1].setIcon(emptyImageIcon);
                 }
-                
+
             }
         }
         if(placement[1] + 2 < 11){
             //east
-           
+
             surroundingImageIcon = (ImageIcon)_buttons[placement[0]][placement[1] + 2].getIcon();
-            
+
             if(surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())){
                 victimPiece = (ImageIcon)_buttons[placement[0]][placement[1] + 1].getIcon();
                 if(!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
                     _buttons[placement[0]][placement[1] + 1].setIcon(emptyImageIcon);
                 }
-                
+
             }
         }
-        
+
         return true;
     }
     /*
@@ -420,9 +420,9 @@ public class Hnefatafl {
                             isFirstPlayer=false;
                             turn.setText("Shield Moves");
                         }
-                        else if(firstClickImageIcon.getDescription().equals(defenseIcon.getDescription()) 
-                                || firstClickImageIcon.getDescription().equals(kingIcon.getDescription())) 
-                        {   
+                        else if(firstClickImageIcon.getDescription().equals(defenseIcon.getDescription())
+                                || firstClickImageIcon.getDescription().equals(kingIcon.getDescription()))
+                        {
                             if(firstClickImageIcon.getDescription().equals(kingIcon.getDescription())){
                                 _secondClick.setIcon(kingIcon);
                                 attackPieces(_secondClick);
@@ -431,11 +431,11 @@ public class Hnefatafl {
                                 _secondClick.setIcon(defenseIcon);
                                 attackPieces(_secondClick);
                             }
-                            
-                            if(((getXandY(_secondClick)[0] == 0 && getXandY(_secondClick)[1] == 0) 
+
+                            if(((getXandY(_secondClick)[0] == 0 && getXandY(_secondClick)[1] == 0)
                                     || (getXandY(_secondClick)[0] == 0 && getXandY(_secondClick)[1] == 10)
                                     || (getXandY(_secondClick)[0] == 10 && getXandY(_secondClick)[1] == 0)
-                                    || (getXandY(_secondClick)[0] == 10 && getXandY(_secondClick)[1] == 10)) 
+                                    || (getXandY(_secondClick)[0] == 10 && getXandY(_secondClick)[1] == 10))
                                     && firstClickImageIcon.getDescription().equals("K"))
                             {
                                 turn.setText("Shield Wins!");
@@ -453,7 +453,7 @@ public class Hnefatafl {
                         _firstClick.setIcon(emptyImageIcon);
                         _firstClick = null;
                         _secondClick = null;
-                        
+
                         //check if there are no pieces left to see if theres a winner
                         noPiecesCheck = piecesLeft();
                         //shields win
