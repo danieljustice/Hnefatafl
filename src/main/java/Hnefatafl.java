@@ -206,57 +206,53 @@ public class Hnefatafl {
         ImageIcon surroundingImageIcon;
         ImageIcon victimPiece;
 
-        if(placement[0] - 2 > 0){
+        if(placement[0] - 2 >= 0){
             //north
 
             surroundingImageIcon = (ImageIcon)_buttons[placement[0] - 2][placement[1]].getIcon();
-
+            
             if(surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())){
                 victimPiece = (ImageIcon)_buttons[placement[0] - 1][placement[1]].getIcon();
                 if(!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
                     _buttons[placement[0] - 1][placement[1]].setIcon(emptyImageIcon);
                 }
-
             }
+            
         }
 
         if(placement[0] + 2 < 11){
             //south
 
             surroundingImageIcon = (ImageIcon)_buttons[placement[0] + 2][placement[1]].getIcon();
-
+            
             if(surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())){
                 victimPiece = (ImageIcon)_buttons[placement[0] + 1][placement[1]].getIcon();
                 if(!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
                     _buttons[placement[0] + 1][placement[1]].setIcon(emptyImageIcon);
                 }
-
             }
         }
         if(placement[1] - 2 >= 0){
             //west
 
             surroundingImageIcon = (ImageIcon)_buttons[placement[0]][placement[1] - 2].getIcon();
-
+            
             if(surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())){
                 victimPiece = (ImageIcon)_buttons[placement[0]][placement[1] - 1].getIcon();
                 if(!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
                     _buttons[placement[0]][placement[1] - 1].setIcon(emptyImageIcon);
                 }
-
             }
         }
         if(placement[1] + 2 < 11){
             //east
 
             surroundingImageIcon = (ImageIcon)_buttons[placement[0]][placement[1] + 2].getIcon();
-
             if(surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())){
                 victimPiece = (ImageIcon)_buttons[placement[0]][placement[1] + 1].getIcon();
                 if(!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
                     _buttons[placement[0]][placement[1] + 1].setIcon(emptyImageIcon);
                 }
-
             }
         }
 
