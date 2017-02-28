@@ -81,43 +81,53 @@ public class HnefataflTests extends Hnefatafl{
 	
 	@Test
 	public void IsValidMoveSameLocationTest(){
-		int[] start = new int[] { 0, 0 };
-		int[] dest = new int[] { 0, 0 };
-		assertFalse(isValidMove(start, dest));
+		int[] start = new int[] { 1, 1 };
+		int[] dest = new int[] { 1, 1 };
+		assertFalse(isValidMove(start, dest, false));
 	}
 	
 	@Test
 	public void IsValidMoveDiagonalMoveTest(){
 		int[] start = new int[] { 0, 0 };
 		int[] dest = new int[] { 1, 1 };
-		assertFalse(isValidMove(start, dest));
+		assertFalse(isValidMove(start, dest, false));
 	}
 	
 	@Test
 	public void IsValidMoveLeftMoveTest(){
 		int[] start = new int[] { 0, 0 };
 		int[] dest = new int[] { 1, 0 };
-		assertTrue(isValidMove(start, dest));
+		assertTrue(isValidMove(start, dest, false));
 	}
 	
 	@Test
 	public void IsValidMoveRightMoveTest(){
-		int[] start = new int[] { 1, 0 };
-		int[] dest = new int[] { 0, 0 };
-		assertTrue(isValidMove(start, dest));
+		int[] start = new int[] { 2, 0 };
+		int[] dest = new int[] { 1, 0 };
+		assertTrue(isValidMove(start, dest, false));
 	}
 	
 	@Test
 	public void IsValidMoveDownMoveTest(){
 		int[] start = new int[] { 0, 1 };
-		int[] dest = new int[] { 0, 0 };
-		assertTrue(isValidMove(start, dest));
+		int[] dest = new int[] { 0, 2 };
+		assertTrue(isValidMove(start, dest, false));
 	}
 	
 	@Test
 	public void IsValidMoveUpMoveTest(){
-		int[] start = new int[] { 0, 0 };
+		int[] start = new int[] { 0, 2 };
 		int[] dest = new int[] { 0, 1 };
-		assertTrue(isValidMove(start, dest));
+		assertTrue(isValidMove(start, dest, false));
+	}
+	
+	@Test
+	public void IsOccupiedSpaceTest(){
+		Hnefatafl h = new Hnefatafl();
+		h._buttons[0][1] = new JButton(axeIcon);
+		h._buttons[0][2] = new JButton(emptyImageIcon);
+		int[] start = getXandY(h._buttons[0][1]);
+		int[] dest = getXandY(h._buttons[0][2]);
+		assertTrue(isValidMove(start, dest, false));
 	}
 }

@@ -236,7 +236,7 @@ public class Hnefatafl {
         if(placement[1] - 2 >= 0){
             //west
            
-            surroundingImageIcon = (ImageIcon)_buttons[placement[0] - 2][placement[1]].getIcon();
+        	surroundingImageIcon = (ImageIcon)_buttons[placement[0] ][placement[1] - 2].getIcon();
             
             if(surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())){
                 victimPiece = (ImageIcon)_buttons[placement[0]][placement[1] - 1].getIcon();
@@ -356,14 +356,84 @@ public class Hnefatafl {
      * @param destination   an integer array with 2 values, [0] index is x, [1] is y
      * @return  returns true if valid move, false if not
      */
-    public boolean isValidMove(int[] start, int[] destination){
+    public boolean isValidMove(int[] start, int[] destination, boolean isKingPiece){
+        
         if(start[0] == destination[0] && start[1] == destination[1] )
             return false;
-        else if(start[0] == destination[0] || start[1] == destination[1])
+        else if(destination[0] == 5 && destination[1] == 5)
+            return false;
+        else if( (start[0] == destination[0] || start[1] == destination[1]) ){
+        	
+        	if(!isSpaceOccupied(destination)){
+        		
+	        	if(canMoveToDestination(start, destination)){	        	
+		        	if(!isKingPiece){
+		                //checks to see if a normal piece is trying to enter one of the corner squares
+		                if(destination[0] == 0 && destination[1] == 0 || destination[0] == 0 && destination[1] == 10 
+		                    || destination[0] == 10 && destination[1] == 0 || destination[0] == 10 && destination[1] == 10){
+		                	//check to see if pieces are in between 
+		                	return false;
+		                }
+		            }
+		        	return true;
+	        	}
+        	}
+        }
+        return false;
+       
+    }
+
+    public boolean canMoveToDestination(int[] start, int[] destination){
+        int[] counter = new int[2];
+        counter[0] = start[0];
+        counter[1] = start[1]; 
+        if(start[0] == destination[0]){                 
+            if(start[1] < destination[1]){   
+            	counter[1]++;
+                while(counter[1] < destination[1]){
+                    if(isSpaceOccupied(counter))
+                        return false;
+                    counter[1]++;
+                }
+            }
+            else
+            {          
+            	counter[1]--;
+                while(counter[1] > destination[1]){
+                    if(isSpaceOccupied(counter))
+                        return false;
+                    counter[1]--;
+                }
+            }
+        }
+        else if(start[1] == destination[1]){           
+            if(start[0] < destination[0]){
+                counter[0]++;
+                while(counter[0] < destination[0]){
+                    if(isSpaceOccupied(counter))
+                        return false;
+                    counter[0]++;
+                }
+            }
+            else
+            {
+            	counter[0]--;            
+                while(counter[0] > destination[0]){
+                    if(isSpaceOccupied(counter))
+                        return false;
+                    counter[0]--;
+                }
+            }
+        }
+        return true;
+    }
+
+    public boolean isSpaceOccupied(int[] destination){
+        ImageIcon currentImageIcon = (ImageIcon) _buttons[destination[0]][destination[1]].getIcon();
+        if( !currentImageIcon.getDescription().equals("empty") )
             return true;
         return false;
     }
-
     /**
      * Main method
      */
@@ -413,7 +483,7 @@ public class Hnefatafl {
                 else{
                     _secondClick = (JButton) e.getSource();
                     secondClickImageIcon = (ImageIcon)_secondClick.getIcon();
-                    if(isValidMove(getXandY(_firstClick), getXandY(_secondClick)) ){
+                    if(isValidMove(getXandY(_firstClick), getXandY(_secondClick), firstClickImageIcon.getDescription().equals(kingIcon.getDescription())) ){
                         if(firstClickImageIcon.getDescription().equals(axeIcon.getDescription())) {
                             _secondClick.setIcon(axeIcon);
                             attackPieces(_secondClick);
