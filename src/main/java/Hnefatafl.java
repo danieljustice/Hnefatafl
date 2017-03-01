@@ -7,7 +7,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 public class Hnefatafl {
-  
+
     private int gameWidth = 11;
     private int gameHeight = 11;
     private int frameWidth = 850;
@@ -29,16 +29,17 @@ public class Hnefatafl {
     public ImageIcon axeIcon;
     public ImageIcon kingIcon;
     public ImageIcon emptyImageIcon;
+    public Image backgroundIcon;
 
     public Hnefatafl() {
         //pull in images for icons on the buttons
         try{
             //ImageIcons are public so we can test them in unit tests
-            defenseIcon = new ImageIcon(ImageIO.read(new File("src/First Shield.png")));
-            axeIcon = new ImageIcon(ImageIO.read(new File("src/First Axe.png")));
+            defenseIcon = new ImageIcon(ImageIO.read(new File("src/assets/First Shield.png")));
+            axeIcon = new ImageIcon(ImageIO.read(new File("src/assets/First Axe.png")));
             kingIcon = new ImageIcon(ImageIO.read(new File("src/Crown.png")));
-            emptyImageIcon = new ImageIcon(ImageIO.read(new File("src/empty.png")));
-            
+            emptyImageIcon = new ImageIcon(ImageIO.read(new File("src/assets/empty.png")));
+            backgroundIcon = ImageIO.read(new File("src/assets/simpleBoard.png"));
             //give each icon a description so we can compare them later
 
             defenseIcon.setDescription("shield");
@@ -59,7 +60,7 @@ public class Hnefatafl {
         _frame = new JFrame("Hnefatafl");
         _frame.setSize(frameWidth, frameHeight);
         _frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
+
         JToolBar tools = new JToolBar();
         tools.setFloatable(false);
         _frame.add(tools, BorderLayout.PAGE_START);
@@ -112,6 +113,21 @@ public class Hnefatafl {
         _ttt = new JPanel();
         _ttt.setLayout(new GridLayout(gameWidth, gameHeight));
 
+        //At some point some smarter math need to be put in to automatically resize
+        //any image to be the background
+
+        //changes image into a certain sized BufferedImage
+        BufferedImage backgroundImage = new BufferedImage(425, 425, BufferedImage.TYPE_INT_ARGB);
+
+        //this magically resizes the background image to the right size
+		Graphics2D graphics2D = (Graphics2D)backgroundImage.getGraphics();
+        graphics2D.scale(3.21, 3.21);
+       	graphics2D.drawImage(backgroundIcon, 0, 0, null);
+       	graphics2D.dispose();
+
+       	//creates new panel with correctly sized background image
+        BackgroundPanel backgroundPanel = new BackgroundPanel(backgroundImage, 0, 0, 0);
+
 
         _newPanel = new JPanel();
         _newPanel.setLayout(new FlowLayout());
@@ -157,13 +173,16 @@ public class Hnefatafl {
                 _buttons[i][j].setContentAreaFilled(false);
                 //_buttons[i][j].setBorderPainted(false);
                 // Add this button to the _ttt panel
+                _buttons[i][j].setBorder(null);
                 _ttt.add(_buttons[i][j]);
             }
         }
 
         // This will place the tic-tac-toe panel at the top of
         // the frame and the newPanel panel at the bottom
-        _frame.add(_ttt, BorderLayout.CENTER);
+        _frame.add(backgroundPanel, BorderLayout.CENTER);
+        _ttt.setBorder(null); 	
+        backgroundPanel.add(_ttt, BorderLayout.CENTER);
         _frame.add(_newPanel, BorderLayout.SOUTH);
 
     }
@@ -191,7 +210,7 @@ public class Hnefatafl {
         }
         return new int[2];
     }
-    
+
     /*
     *
     * kill pieces as they are surrounded Othello style (King is an exception)
@@ -205,24 +224,24 @@ public class Hnefatafl {
         ImageIcon currentImageIcon = (ImageIcon)piecePlacement.getIcon();
         ImageIcon surroundingImageIcon;
         ImageIcon victimPiece;
-        
-        if(placement[0] - 2 > 0){
+
+        if(placement[0] - 2 >= 0){
             //north
-            
+
             surroundingImageIcon = (ImageIcon)_buttons[placement[0] - 2][placement[1]].getIcon();
-           
+            
             if(surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())){
                 victimPiece = (ImageIcon)_buttons[placement[0] - 1][placement[1]].getIcon();
                 if(!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
                     _buttons[placement[0] - 1][placement[1]].setIcon(emptyImageIcon);
                 }
-                
             }
+            
         }
-        
+
         if(placement[0] + 2 < 11){
             //south
-           
+
             surroundingImageIcon = (ImageIcon)_buttons[placement[0] + 2][placement[1]].getIcon();
             
             if(surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())){
@@ -230,36 +249,32 @@ public class Hnefatafl {
                 if(!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
                     _buttons[placement[0] + 1][placement[1]].setIcon(emptyImageIcon);
                 }
-                
             }
         }
         if(placement[1] - 2 >= 0){
             //west
-           
-        	surroundingImageIcon = (ImageIcon)_buttons[placement[0] ][placement[1] - 2].getIcon();
+
+            surroundingImageIcon = (ImageIcon)_buttons[placement[0]][placement[1] - 2].getIcon();
             
             if(surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())){
                 victimPiece = (ImageIcon)_buttons[placement[0]][placement[1] - 1].getIcon();
                 if(!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
                     _buttons[placement[0]][placement[1] - 1].setIcon(emptyImageIcon);
                 }
-                
             }
         }
         if(placement[1] + 2 < 11){
             //east
-           
+
             surroundingImageIcon = (ImageIcon)_buttons[placement[0]][placement[1] + 2].getIcon();
-            
             if(surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())){
                 victimPiece = (ImageIcon)_buttons[placement[0]][placement[1] + 1].getIcon();
                 if(!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
                     _buttons[placement[0]][placement[1] + 1].setIcon(emptyImageIcon);
                 }
-                
             }
         }
-        
+
         return true;
     }
     /*
@@ -284,7 +299,7 @@ public class Hnefatafl {
                     //check the pieces east north south and west
                     ImageIcon surroundingImageIcon;
 
-                    if(i - 1 > 0){
+                    if(i - 1 >= 0){
                         //north
                         surroundingImageIcon = (ImageIcon)_buttons[i - 1][j].getIcon();
                         if(surroundingImageIcon.getDescription().equals(axeIcon.getDescription())){
@@ -501,9 +516,9 @@ public class Hnefatafl {
                             isFirstPlayer=false;
                             turn.setText("Shield Moves");
                         }
-                        else if(firstClickImageIcon.getDescription().equals(defenseIcon.getDescription()) 
-                                || firstClickImageIcon.getDescription().equals(kingIcon.getDescription())) 
-                        {   
+                        else if(firstClickImageIcon.getDescription().equals(defenseIcon.getDescription())
+                                || firstClickImageIcon.getDescription().equals(kingIcon.getDescription()))
+                        {
                             if(firstClickImageIcon.getDescription().equals(kingIcon.getDescription())){
                                 _secondClick.setIcon(kingIcon);
                                 attackPieces(_secondClick);
@@ -512,11 +527,11 @@ public class Hnefatafl {
                                 _secondClick.setIcon(defenseIcon);
                                 attackPieces(_secondClick);
                             }
-                            
-                            if(((getXandY(_secondClick)[0] == 0 && getXandY(_secondClick)[1] == 0) 
+
+                            if(((getXandY(_secondClick)[0] == 0 && getXandY(_secondClick)[1] == 0)
                                     || (getXandY(_secondClick)[0] == 0 && getXandY(_secondClick)[1] == 10)
                                     || (getXandY(_secondClick)[0] == 10 && getXandY(_secondClick)[1] == 0)
-                                    || (getXandY(_secondClick)[0] == 10 && getXandY(_secondClick)[1] == 10)) 
+                                    || (getXandY(_secondClick)[0] == 10 && getXandY(_secondClick)[1] == 10))
                                     && firstClickImageIcon.getDescription().equals("K"))
                             {
                                 turn.setText("Shield Wins!");
@@ -534,7 +549,7 @@ public class Hnefatafl {
                         _firstClick.setIcon(emptyImageIcon);
                         _firstClick = null;
                         _secondClick = null;
-                        
+
                         //check if there are no pieces left to see if theres a winner
                         noPiecesCheck = piecesLeft();
                         //shields win
