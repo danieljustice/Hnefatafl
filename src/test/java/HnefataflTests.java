@@ -72,19 +72,19 @@ public class HnefataflTests extends Hnefatafl{
     */
 
 
-    //Tests that a non-King piece is destroyed when surrounded
-	@Test
-	public void attackPiecesTest() {
-		Hnefatafl h = new Hnefatafl();
-		JButton jbutton = h._buttons[2][2];
-		assertTrue(attackPieces(jbutton));
-	}
-	//Tests that piecesLeft() accurately recognizes when a team has no more pieces
-	@Test
-	public void piecesLeftTest() {
-		Hnefatafl h = new Hnefatafl();
-		assertEquals(0, piecesLeft());
-	}
+ //    //Tests that a non-King piece is destroyed when surrounded
+	// @Test
+	// public void attackPiecesTest() {
+	// 	Hnefatafl h = new Hnefatafl();
+	// 	JButton jbutton = h._buttons[2][2];
+	// 	assertTrue(h.attackPieces(jbutton));
+	// }
+	// //Tests that piecesLeft() accurately recognizes when a team has no more pieces
+	// @Test
+	// public void piecesLeftTest() {
+	// 	Hnefatafl h = new Hnefatafl();
+	// 	assertEquals(0, h.piecesLeft());
+	// }
 	
 	//Test that getXandY() returns the expected values for a jbutton
 	@Test
