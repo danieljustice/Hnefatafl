@@ -70,6 +70,19 @@ public class HnefataflTests extends Hnefatafl{
 
     //Verifies 
 	@Test
+	public void attackPiecesTest() {
+		Hnefatafl h = new Hnefatafl();
+		JButton jbutton = h._buttons[2][2];
+		assertTrue(attackPieces(jbutton));
+	}
+
+	@Test
+	public void piecesLeftTest() {
+		Hnefatafl h = new Hnefatafl();
+		assertEquals(0, piecesLeft(jbutton));
+	}
+	
+	@Test
 	public void GetXYTest() {
 		Hnefatafl h = new Hnefatafl();
 		JButton jbutton = h._buttons[0][0];
