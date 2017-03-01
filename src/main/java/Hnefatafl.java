@@ -380,9 +380,14 @@ public class Hnefatafl {
         	}
         }
         return false;
-       
     }
 
+    /** Traverses through each space on the board to see if any of them are occupied.
+     * 
+     * @param start integer[] with size 2: index 0 is x cord, index 1 is y cord
+     * @param destination start integer[] with size 2: index 0 is x cord, index 1 is y cord
+     * @return returns false if any spaces are occupied between the start and destination
+     */
     public boolean canMoveToDestination(int[] start, int[] destination){
         int[] counter = new int[2];
         counter[0] = start[0];
@@ -427,13 +432,19 @@ public class Hnefatafl {
         }
         return true;
     }
-
+    
+    /** This uses the same integer[] as getXandY and returns whether the destination is occupied or not
+     * 
+     * @param destination integer[] of size 2: index 0 is x cord, index 1 is y cord
+     * @return true if the space is occupied by axe, shield or king
+     */
     public boolean isSpaceOccupied(int[] destination){
         ImageIcon currentImageIcon = (ImageIcon) _buttons[destination[0]][destination[1]].getIcon();
         if( !currentImageIcon.getDescription().equals("empty") )
             return true;
         return false;
     }
+    
     /**
      * Main method
      */
