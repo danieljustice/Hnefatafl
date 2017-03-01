@@ -29,16 +29,17 @@ public class Hnefatafl {
     public ImageIcon axeIcon;
     public ImageIcon kingIcon;
     public ImageIcon emptyImageIcon;
+    public Image backgroundIcon;
 
     public Hnefatafl() {
         //pull in images for icons on the buttons
         try{
             //ImageIcons are public so we can test them in unit tests
-            defenseIcon = new ImageIcon(ImageIO.read(new File("src/First Shield.png")));
-            axeIcon = new ImageIcon(ImageIO.read(new File("src/First Axe.png")));
+            defenseIcon = new ImageIcon(ImageIO.read(new File("src/assets/First Shield.png")));
+            axeIcon = new ImageIcon(ImageIO.read(new File("src/assets/First Axe.png")));
             kingIcon = new ImageIcon(ImageIO.read(new File("src/Crown.png")));
-            emptyImageIcon = new ImageIcon(ImageIO.read(new File("src/empty.png")));
-
+            emptyImageIcon = new ImageIcon(ImageIO.read(new File("src/assets/empty.png")));
+            backgroundIcon = ImageIO.read(new File("src/assets/simpleBoard.png"));
             //give each icon a description so we can compare them later
 
             defenseIcon.setDescription("shield");
@@ -112,6 +113,21 @@ public class Hnefatafl {
         _ttt = new JPanel();
         _ttt.setLayout(new GridLayout(gameWidth, gameHeight));
 
+        //At some point some smarter math need to be put in to automatically resize
+        //any image to be the background
+
+        //changes image into a certain sized BufferedImage
+        BufferedImage backgroundImage = new BufferedImage(425, 425, BufferedImage.TYPE_INT_ARGB);
+
+        //this magically resizes the background image to the right size
+		Graphics2D graphics2D = (Graphics2D)backgroundImage.getGraphics();
+        graphics2D.scale(3.21, 3.21);
+       	graphics2D.drawImage(backgroundIcon, 0, 0, null);
+       	graphics2D.dispose();
+
+       	//creates new panel with correctly sized background image
+        BackgroundPanel backgroundPanel = new BackgroundPanel(backgroundImage, 0, 0, 0);
+
 
         _newPanel = new JPanel();
         _newPanel.setLayout(new FlowLayout());
@@ -157,13 +173,16 @@ public class Hnefatafl {
                 _buttons[i][j].setContentAreaFilled(false);
                 //_buttons[i][j].setBorderPainted(false);
                 // Add this button to the _ttt panel
+                _buttons[i][j].setBorder(null);
                 _ttt.add(_buttons[i][j]);
             }
         }
 
         // This will place the tic-tac-toe panel at the top of
         // the frame and the newPanel panel at the bottom
-        _frame.add(_ttt, BorderLayout.CENTER);
+        _frame.add(backgroundPanel, BorderLayout.CENTER);
+        _ttt.setBorder(null); 	
+        backgroundPanel.add(_ttt, BorderLayout.CENTER);
         _frame.add(_newPanel, BorderLayout.SOUTH);
 
     }
