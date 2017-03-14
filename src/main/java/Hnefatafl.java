@@ -14,7 +14,7 @@ public class Hnefatafl {
     private int frameHeight = 850;
     private JFrame _frame = new JFrame("Hnefatafl");
     private JPanel _ttt = new JPanel();
-    JLabel turn = new JLabel();
+    private JLabel turn = new JLabel();
     private JPanel _newPanel = new JPanel();
     private int CLICKS = 0;
 
@@ -100,6 +100,11 @@ public class Hnefatafl {
         return(true);
     }
 
+    /**
+     * Intermediary method to reset the game state to either
+     *     1) A previous game state (load)
+     *     2) The starting game state (new)
+     */
     public void reloadBoard() {
         _frame.dispose();
         drawBoard();
@@ -181,7 +186,7 @@ public class Hnefatafl {
         // This will place the tic-tac-toe panel at the top of
         // the frame and the newPanel panel at the bottom
         _frame.add(backgroundPanel, BorderLayout.CENTER);
-        _ttt.setBorder(null); 	
+        _ttt.setBorder(null);
         backgroundPanel.add(_ttt, BorderLayout.CENTER);
         _frame.add(_newPanel, BorderLayout.SOUTH);
 
@@ -229,21 +234,21 @@ public class Hnefatafl {
             //north
 
             surroundingImageIcon = (ImageIcon)_buttons[placement[0] - 2][placement[1]].getIcon();
-            
+
             if(surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())){
                 victimPiece = (ImageIcon)_buttons[placement[0] - 1][placement[1]].getIcon();
                 if(!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
                     _buttons[placement[0] - 1][placement[1]].setIcon(emptyImageIcon);
                 }
             }
-            
+
         }
 
         if(placement[0] + 2 < 11){
             //south
 
             surroundingImageIcon = (ImageIcon)_buttons[placement[0] + 2][placement[1]].getIcon();
-            
+
             if(surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())){
                 victimPiece = (ImageIcon)_buttons[placement[0] + 1][placement[1]].getIcon();
                 if(!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
@@ -255,7 +260,7 @@ public class Hnefatafl {
             //west
 
             surroundingImageIcon = (ImageIcon)_buttons[placement[0]][placement[1] - 2].getIcon();
-            
+
             if(surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())){
                 victimPiece = (ImageIcon)_buttons[placement[0]][placement[1] - 1].getIcon();
                 if(!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
@@ -372,21 +377,21 @@ public class Hnefatafl {
      * @return  returns true if valid move, false if not
      */
     public boolean isValidMove(int[] start, int[] destination, boolean isKingPiece){
-        
+
         if(start[0] == destination[0] && start[1] == destination[1] )
             return false;
         else if(destination[0] == 5 && destination[1] == 5)
             return false;
         else if( (start[0] == destination[0] || start[1] == destination[1]) ){
-        	
+
         	if(!isSpaceOccupied(destination)){
-        		
-	        	if(canMoveToDestination(start, destination)){	        	
+
+	        	if(canMoveToDestination(start, destination)){
 		        	if(!isKingPiece){
 		                //checks to see if a normal piece is trying to enter one of the corner squares
-		                if(destination[0] == 0 && destination[1] == 0 || destination[0] == 0 && destination[1] == 10 
+		                if(destination[0] == 0 && destination[1] == 0 || destination[0] == 0 && destination[1] == 10
 		                    || destination[0] == 10 && destination[1] == 0 || destination[0] == 10 && destination[1] == 10){
-		                	//check to see if pieces are in between 
+		                	//check to see if pieces are in between
 		                	return false;
 		                }
 		            }
@@ -398,7 +403,7 @@ public class Hnefatafl {
     }
 
     /** Traverses through each space on the board to see if any of them are occupied.
-     * 
+     *
      * @param start integer[] with size 2: index 0 is x cord, index 1 is y cord
      * @param destination start integer[] with size 2: index 0 is x cord, index 1 is y cord
      * @return returns false if any spaces are occupied between the start and destination
@@ -406,9 +411,9 @@ public class Hnefatafl {
     public boolean canMoveToDestination(int[] start, int[] destination){
         int[] counter = new int[2];
         counter[0] = start[0];
-        counter[1] = start[1]; 
-        if(start[0] == destination[0]){                 
-            if(start[1] < destination[1]){   
+        counter[1] = start[1];
+        if(start[0] == destination[0]){
+            if(start[1] < destination[1]){
             	counter[1]++;
                 while(counter[1] < destination[1]){
                     if(isSpaceOccupied(counter))
@@ -417,7 +422,7 @@ public class Hnefatafl {
                 }
             }
             else
-            {          
+            {
             	counter[1]--;
                 while(counter[1] > destination[1]){
                     if(isSpaceOccupied(counter))
@@ -426,7 +431,7 @@ public class Hnefatafl {
                 }
             }
         }
-        else if(start[1] == destination[1]){           
+        else if(start[1] == destination[1]){
             if(start[0] < destination[0]){
                 counter[0]++;
                 while(counter[0] < destination[0]){
@@ -437,7 +442,7 @@ public class Hnefatafl {
             }
             else
             {
-            	counter[0]--;            
+            	counter[0]--;
                 while(counter[0] > destination[0]){
                     if(isSpaceOccupied(counter))
                         return false;
@@ -447,9 +452,9 @@ public class Hnefatafl {
         }
         return true;
     }
-    
+
     /** This uses the same integer[] as getXandY and returns whether the destination is occupied or not
-     * 
+     *
      * @param destination integer[] of size 2: index 0 is x cord, index 1 is y cord
      * @return true if the space is occupied by axe, shield or king
      */
@@ -459,7 +464,7 @@ public class Hnefatafl {
             return true;
         return false;
     }
-    
+
     /**
      * Main method
      */
@@ -472,11 +477,19 @@ public class Hnefatafl {
     // Button listeners
     // #################################################################
 
+    /**
+     * Custom action listener executes every time a button on the game board is clicked.
+     *
+     * Listener also handles win conditions and enforces turns through the use of
+     * _firstClick and _secondClick buttons, as well as the isFirstTurn boolean,
+     * describing whose turn it is supposed to be.
+     */
     private class ButtonListener implements ActionListener {
 
         // Every time we click the button, it will perform
         // the following action.
 
+        @Override
         public void actionPerformed(ActionEvent e) {
 
             JButton temp = (JButton) e.getSource();
@@ -580,30 +593,48 @@ public class Hnefatafl {
         }
     }
 
+    /**
+     * Custom action listener handles resetting the board to the new game state.
+     *
+     * Listener also sets the turn to the first player.
+     */
     private class NewButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
+            // Reset button array to redraw the board in the "new game" state
             _buttons = new JButton[gameWidth][gameHeight];
+            // Set the first player's turn
             isFirstPlayer = true;
             reloadBoard();
         }
     }
 
+    /**
+     * Custom action listener handles saving the state of the game board using
+     * object serialization.
+     *
+     * Allows the user to save the game state to a file of their choosing in the
+     * location of the choosing.
+     */
     private class SaveButtonListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
             try{
                 JFileChooser fileChooser = new JFileChooser();
+                // Only executes if the user does not cancel. No change to game state regardless.
                 if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
                     File file = fileChooser.getSelectedFile();
                     FileOutputStream fos = new FileOutputStream(file);
                     ObjectOutputStream oos = new ObjectOutputStream(fos);
 
+                    // Save the current game board button states
                     for(int i=0; i < gameWidth; i++){
                         for(int j=0; j < gameHeight;j++){
                             oos.writeObject(_buttons[i][j]);
                         }
                     }
+
+                    // Save the current player whose turn it is
                     oos.writeObject(isFirstPlayer);
                     oos.close();
                     fos.close();
@@ -617,24 +648,35 @@ public class Hnefatafl {
         }
     }
 
+    /**
+     * Custom action listener handles loading the state of the game board using
+     * object deserialization.
+     *
+     * If the user does not load a game then the current game state is not interrupted
+     * and the current game can resume as the user did not attempt to load a
+     * previous game state.
+     */
     private class LoadButtonListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
 
             try{
                 JFileChooser fileChooser = new JFileChooser();
+                // Only executes if the user does not cancel. Otherwise game state is not changed.
                 if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
                     File file = fileChooser.getSelectedFile();
-                  // load from file
 
                     FileInputStream fip = new FileInputStream(file);
                     ObjectInputStream oip = new ObjectInputStream(fip);
 
+                    // Load the previous game board button states
                     for(int i=0; i < gameWidth; i++){
                         for(int j=0; j < gameHeight;j++){
                             _buttons[i][j] = (JButton) oip.readObject();
                         }
                     }
+
+                    // Load the current player whose turn it is
                     isFirstPlayer = (boolean) oip.readObject();
                     oip.close();
                     fip.close();
