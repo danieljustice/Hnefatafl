@@ -1,3 +1,10 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package hnefatafl;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -14,10 +21,9 @@ public class Hnefatafl {
     private int frameHeight = 850;
     private JFrame _frame = new JFrame("Hnefatafl");
     private JPanel _ttt = new JPanel();
-    private JLabel turn = new JLabel();
+    JLabel turn = new JLabel();
     private JPanel _newPanel = new JPanel();
-    private int CLICKS = 0;
-
+    
     private JButton _firstClick = null;
     private JButton _secondClick = null;
     private boolean isFirstPlayer = true;
@@ -39,7 +45,7 @@ public class Hnefatafl {
             axeIcon = new ImageIcon(ImageIO.read(new File("src/assets/First Axe.png")));
             kingIcon = new ImageIcon(ImageIO.read(new File("src/Crown.png")));
             emptyImageIcon = new ImageIcon(ImageIO.read(new File("src/assets/empty.png")));
-            backgroundIcon = ImageIO.read(new File("src/assets/simpleBoard.png"));
+            backgroundIcon = ImageIO.read(new File("simpleBoard.png"));
             //give each icon a description so we can compare them later
 
             defenseIcon.setDescription("shield");
@@ -52,7 +58,7 @@ public class Hnefatafl {
             System.out.println("WOOPS " + e);
         }
     }
-
+    
     /**
      * Draws the board panel itself and then calls the method to set the initial game state.
      */
@@ -112,6 +118,8 @@ public class Hnefatafl {
 
     /**
      * Initializes the assumed-drawn board with the start state
+     * @param Not Available
+     * @return Not Available
      */
     public void setupGame(){
         //reinitialize the panels for new games
@@ -219,7 +227,8 @@ public class Hnefatafl {
     /*
     *
     * kill pieces as they are surrounded Othello style (King is an exception)
-    *
+    * @param piecePlacement Jbutton that is where the latest piece was placed to see if a piece is destroyed
+    * @return returns boolean true if a piece is taken out
     */
     public boolean attackPieces(JButton piecePlacement){
         int[] placement = getXandY(piecePlacement);
@@ -232,13 +241,26 @@ public class Hnefatafl {
 
         if(placement[0] - 2 >= 0){
             //north
-
+            
+            //checks the north space piece and stores into this variable
             surroundingImageIcon = (ImageIcon)_buttons[placement[0] - 2][placement[1]].getIcon();
-
-            if(surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())){
-                victimPiece = (ImageIcon)_buttons[placement[0] - 1][placement[1]].getIcon();
-                if(!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
-                    _buttons[placement[0] - 1][placement[1]].setIcon(emptyImageIcon);
+            
+            //checks if the originating piece is a king or shield
+            if(currentImageIcon.getDescription().equals(kingIcon.getDescription()) || currentImageIcon.getDescription().equals(defenseIcon.getDescription())){
+                if(surroundingImageIcon.getDescription().equals(defenseIcon.getDescription()) || surroundingImageIcon.getDescription().equals(kingIcon.getDescription())){
+                    victimPiece = (ImageIcon)_buttons[placement[0] - 1][placement[1]].getIcon();
+                    if(!(victimPiece.getDescription().equals(defenseIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
+                        _buttons[placement[0] - 1][placement[1]].setIcon(emptyImageIcon);
+                    }
+                }
+            }
+            //else axe
+            else{
+                if(surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())){
+                    victimPiece = (ImageIcon)_buttons[placement[0] - 1][placement[1]].getIcon();
+                    if(!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
+                        _buttons[placement[0] - 1][placement[1]].setIcon(emptyImageIcon);
+                    }
                 }
             }
 
@@ -247,35 +269,75 @@ public class Hnefatafl {
         if(placement[0] + 2 < 11){
             //south
 
+            //checks the north space piece and stores into this variable
             surroundingImageIcon = (ImageIcon)_buttons[placement[0] + 2][placement[1]].getIcon();
 
-            if(surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())){
-                victimPiece = (ImageIcon)_buttons[placement[0] + 1][placement[1]].getIcon();
-                if(!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
-                    _buttons[placement[0] + 1][placement[1]].setIcon(emptyImageIcon);
+            //checks if the originating piece is a king or shield
+            if(currentImageIcon.getDescription().equals(kingIcon.getDescription()) || currentImageIcon.getDescription().equals(defenseIcon.getDescription())){
+                if(surroundingImageIcon.getDescription().equals(defenseIcon.getDescription()) || surroundingImageIcon.getDescription().equals(kingIcon.getDescription())){
+                    victimPiece = (ImageIcon)_buttons[placement[0] + 1][placement[1]].getIcon();
+                    if(!(victimPiece.getDescription().equals(defenseIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
+                        _buttons[placement[0] + 1][placement[1]].setIcon(emptyImageIcon);
+                    }
+                }
+            }
+            //else axe
+            else{
+                if(surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())){
+                    victimPiece = (ImageIcon)_buttons[placement[0] + 1][placement[1]].getIcon();
+                    if(!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
+                        _buttons[placement[0] + 1][placement[1]].setIcon(emptyImageIcon);
+                    }
                 }
             }
         }
         if(placement[1] - 2 >= 0){
             //west
 
+            //checks the north space piece and stores into this variable
             surroundingImageIcon = (ImageIcon)_buttons[placement[0]][placement[1] - 2].getIcon();
 
-            if(surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())){
-                victimPiece = (ImageIcon)_buttons[placement[0]][placement[1] - 1].getIcon();
-                if(!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
-                    _buttons[placement[0]][placement[1] - 1].setIcon(emptyImageIcon);
+            //checks if the originating piece is a king or shield
+            if(currentImageIcon.getDescription().equals(kingIcon.getDescription()) || currentImageIcon.getDescription().equals(defenseIcon.getDescription())){
+                if(surroundingImageIcon.getDescription().equals(defenseIcon.getDescription()) || surroundingImageIcon.getDescription().equals(kingIcon.getDescription())){
+                    victimPiece = (ImageIcon)_buttons[placement[0]][placement[1] - 1].getIcon();
+                    if(!(victimPiece.getDescription().equals(defenseIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
+                        _buttons[placement[0]][placement[1] - 1].setIcon(emptyImageIcon);
+                    }
+                }
+            }
+            //else axe
+            else{
+                if(surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())){
+                    victimPiece = (ImageIcon)_buttons[placement[0]][placement[1] - 1].getIcon();
+                    if(!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
+                        _buttons[placement[0]][placement[1] - 1].setIcon(emptyImageIcon);
+                    }
                 }
             }
         }
         if(placement[1] + 2 < 11){
             //east
 
+            //checks the north space piece and stores into this variable
             surroundingImageIcon = (ImageIcon)_buttons[placement[0]][placement[1] + 2].getIcon();
-            if(surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())){
-                victimPiece = (ImageIcon)_buttons[placement[0]][placement[1] + 1].getIcon();
-                if(!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
-                    _buttons[placement[0]][placement[1] + 1].setIcon(emptyImageIcon);
+            
+            //checks if the originating piece is a king or shield
+            if(currentImageIcon.getDescription().equals(kingIcon.getDescription()) || currentImageIcon.getDescription().equals(defenseIcon.getDescription())){
+                if(surroundingImageIcon.getDescription().equals(defenseIcon.getDescription()) || surroundingImageIcon.getDescription().equals(kingIcon.getDescription())){
+                    victimPiece = (ImageIcon)_buttons[placement[0]][placement[1] + 1].getIcon();
+                    if(!(victimPiece.getDescription().equals(defenseIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
+                        _buttons[placement[0]][placement[1] + 1].setIcon(emptyImageIcon);
+                    }
+                }
+            }
+            //else axe
+            else{
+                if(surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())){
+                    victimPiece = (ImageIcon)_buttons[placement[0]][placement[1] + 1].getIcon();
+                    if(!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
+                        _buttons[placement[0] ][placement[1] + 1].setIcon(emptyImageIcon);
+                    }
                 }
             }
         }
@@ -284,14 +346,18 @@ public class Hnefatafl {
     }
     /*
     *  check if there are any pieces left for any team
-    *
+    *  @param Not Available
+    *  @return returns int 0 for no winning condition, int 1 for king surrounded shields lose, int 2 for axe defeated for no more pieces
     */
     public int piecesLeft(){
         ImageIcon currentImageIcon;
         int surroundedKingSides = 0;
         int attackPieces = 0;
+        
+        //loop through the 3d array of jbuttons
         for(int i=0; i <gameWidth; i++){
             for(int j=0; j <gameHeight;j++){
+                //
                 currentImageIcon = (ImageIcon)_buttons[i][j].getIcon();
                 if(currentImageIcon.getDescription().equals(axeIcon.getDescription())){
                     //see if there are pieces left for axes
