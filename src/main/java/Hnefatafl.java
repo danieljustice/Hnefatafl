@@ -52,8 +52,8 @@ public class Hnefatafl {
             System.out.println("WOOPS " + e);
         }
     }
-
-    /**
+  
+    /*
      * Draws the board panel itself and then calls the method to set the initial game state.
      */
     public boolean drawBoard(){
@@ -564,7 +564,7 @@ public class Hnefatafl {
                     _firstClick = (JButton) e.getSource();
                     firstClickImageIcon = (ImageIcon)_firstClick.getIcon();
                     if(isFirstPlayer){
-                        if(firstClickImageIcon.getDescription().equals(defenseIcon.getDescription())){
+                        if(firstClickImageIcon.getDescription().equals(defenseIcon.getDescription()) || firstClickImageIcon.getDescription().equals(kingIcon.getDescription())){
                             _firstClick = null;
                             //Might want to add more functionality later. To have a pop up telling user it is not their turn.
 
