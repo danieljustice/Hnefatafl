@@ -38,7 +38,7 @@ public class Hnefatafl {
             axeIcon = new ImageIcon(ImageIO.read(new File("src/assets/First Axe.png")));
             kingIcon = new ImageIcon(ImageIO.read(new File("src/Crown.png")));
             emptyImageIcon = new ImageIcon(ImageIO.read(new File("src/assets/empty.png")));
-            backgroundIcon = ImageIO.read(new File("simpleBoard.png"));
+            backgroundIcon = ImageIO.read(new File("src/assets/simpleBoard.png"));
             //give each icon a description so we can compare them later
 
             defenseIcon.setDescription("shield");
