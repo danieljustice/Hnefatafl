@@ -35,9 +35,13 @@ public class Hnefatafl {
         try{
             //ImageIcons are public so we can test them in unit tests
             defenseIcon = new ImageIcon(ImageIO.read(new File("src/assets/First Shield.png")));
+            System.out.println("Shield");
             axeIcon = new ImageIcon(ImageIO.read(new File("src/assets/First Axe.png")));
-            kingIcon = new ImageIcon(ImageIO.read(new File("src/Crown.png")));
+            System.out.println("Axe");
+            kingIcon = new ImageIcon(ImageIO.read(new File("src/Crown.PNG")));
+            System.out.println("King");
             emptyImageIcon = new ImageIcon(ImageIO.read(new File("src/assets/empty.png")));
+            System.out.println("Empty");
             backgroundIcon = ImageIO.read(new File("src/assets/simpleBoard.png"));
             //give each icon a description so we can compare them later
 
@@ -217,7 +221,7 @@ public class Hnefatafl {
         return new int[2];
     }
 
-    /*
+    /**
     *
     * kill pieces as they are surrounded Othello style (King is an exception)
     * @param piecePlacement Jbutton that is where the latest piece was placed to see if a piece is destroyed
@@ -337,7 +341,7 @@ public class Hnefatafl {
 
         return true;
     }
-    /*
+    /**
     *  check if there are any pieces left for any team
     *  @param Not Available
     *  @return returns int 0 for no winning condition, int 1 for king surrounded shields lose, int 2 for axe defeated for no more pieces
@@ -519,7 +523,9 @@ public class Hnefatafl {
      */
     public boolean isSpaceOccupied(int[] destination){
         ImageIcon currentImageIcon = (ImageIcon) _buttons[destination[0]][destination[1]].getIcon();
-        if( !currentImageIcon.getDescription().equals("empty") )
+        if(currentImageIcon==null || currentImageIcon.getDescription() == null)
+        	return true;
+        if( !currentImageIcon.getDescription().equals("empty"))
             return true;
         return false;
     }
