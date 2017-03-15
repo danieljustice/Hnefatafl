@@ -14,9 +14,9 @@ public class Hnefatafl {
     private int frameHeight = 850;
     private JFrame _frame = new JFrame("Hnefatafl");
     private JPanel _ttt = new JPanel();
-    JLabel turn = new JLabel();
+    JLabel turn = new JLabel("Axe Moves");
     private JPanel _newPanel = new JPanel();
-    
+
     private JButton _firstClick = null;
     private JButton _secondClick = null;
     private boolean isFirstPlayer = true;
@@ -45,13 +45,14 @@ public class Hnefatafl {
             axeIcon.setDescription("axe");
             emptyImageIcon.setDescription("empty");
             kingIcon.setDescription("K");
+            drawBoard();
         }catch(Exception e){
             //woops just in case we cant pull in a file
             //Note: path for file we read must be relative to src/ folder
             System.out.println("WOOPS " + e);
         }
     }
-    
+
     /**
      * Draws the board panel itself and then calls the method to set the initial game state.
      */
@@ -92,7 +93,6 @@ public class Hnefatafl {
         tools.addSeparator();
         tools.addSeparator();
         tools.addSeparator();
-        turn = new JLabel("Axe Moves");
         tools.add(turn);
         setupGame();
         _frame.setVisible(true);
@@ -234,10 +234,10 @@ public class Hnefatafl {
 
         if(placement[0] - 2 >= 0){
             //north
-            
+
             //checks the north space piece and stores into this variable
             surroundingImageIcon = (ImageIcon)_buttons[placement[0] - 2][placement[1]].getIcon();
-            
+
             //checks if the originating piece is a king or shield
             if(currentImageIcon.getDescription().equals(kingIcon.getDescription()) || currentImageIcon.getDescription().equals(defenseIcon.getDescription())){
                 if(surroundingImageIcon.getDescription().equals(defenseIcon.getDescription()) || surroundingImageIcon.getDescription().equals(kingIcon.getDescription())){
@@ -314,7 +314,7 @@ public class Hnefatafl {
 
             //checks the north space piece and stores into this variable
             surroundingImageIcon = (ImageIcon)_buttons[placement[0]][placement[1] + 2].getIcon();
-            
+
             //checks if the originating piece is a king or shield
             if(currentImageIcon.getDescription().equals(kingIcon.getDescription()) || currentImageIcon.getDescription().equals(defenseIcon.getDescription())){
                 if(surroundingImageIcon.getDescription().equals(defenseIcon.getDescription()) || surroundingImageIcon.getDescription().equals(kingIcon.getDescription())){
@@ -346,7 +346,7 @@ public class Hnefatafl {
         ImageIcon currentImageIcon;
         int surroundedKingSides = 0;
         int attackPieces = 0;
-        
+
         //loop through the 3d array of jbuttons
         for(int i=0; i <gameWidth; i++){
             for(int j=0; j <gameHeight;j++){
@@ -529,7 +529,7 @@ public class Hnefatafl {
      */
     public static void main(String[] args) {
         Hnefatafl game = new Hnefatafl();
-        game.drawBoard();
+        // game.drawBoard();
     }
 
     // #################################################################
@@ -695,6 +695,7 @@ public class Hnefatafl {
 
                     // Save the current player whose turn it is
                     oos.writeObject(isFirstPlayer);
+                    oos.writeObject(turn);
                     oos.close();
                     fos.close();
                     JOptionPane.showMessageDialog(null, "File saved!");
@@ -737,6 +738,7 @@ public class Hnefatafl {
 
                     // Load the current player whose turn it is
                     isFirstPlayer = (boolean) oip.readObject();
+                    turn = (JLabel) oip.readObject();
                     oip.close();
                     fip.close();
                     JOptionPane.showMessageDialog(null, "File loaded!");
