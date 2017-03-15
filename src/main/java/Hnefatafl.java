@@ -6,6 +6,8 @@ import java.io.*;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
+import org.omg.CORBA.SystemException;
+
 public class Hnefatafl {
 
     private int gameWidth = 11;
@@ -32,29 +34,59 @@ public class Hnefatafl {
 
     public Hnefatafl() {
         //pull in images for icons on the buttons
-        try{
-            //ImageIcons are public so we can test them in unit tests
-            defenseIcon = new ImageIcon(ImageIO.read(new File("src/assets/First Shield.png")));
-            System.out.println("Shield");
-            axeIcon = new ImageIcon(ImageIO.read(new File("src/assets/First Axe.png")));
-            System.out.println("Axe");
-            kingIcon = new ImageIcon(ImageIO.read(new File("src/Crown.PNG")));
-            System.out.println("King");
-            emptyImageIcon = new ImageIcon(ImageIO.read(new File("src/assets/empty.png")));
-            System.out.println("Empty");
-            backgroundIcon = ImageIO.read(new File("src/assets/simpleBoard.png"));
-            //give each icon a description so we can compare them later
-
-            defenseIcon.setDescription("shield");
-            axeIcon.setDescription("axe");
-            emptyImageIcon.setDescription("empty");
-            kingIcon.setDescription("K");
-            drawBoard();
-        }catch(Exception e){
-            //woops just in case we cant pull in a file
-            //Note: path for file we read must be relative to src/ folder
-            System.out.println("WOOPS " + e);
+        if(loadImages()){
+            drawBoard();  
         }
+    }
+
+    public boolean loadImages(){
+        boolean success = true;
+        try {
+            defenseIcon = new ImageIcon(ImageIO.read(new File("src/assets/First Shield.png")));
+            defenseIcon.setDescription("shield");
+        } catch (Exception e) {
+            //TODO: handle exception
+            System.out.println("Shield: " + e);
+            success = false;
+        }
+
+
+        try {
+            axeIcon = new ImageIcon(ImageIO.read(new File("src/assets/First Axe.png")));
+            axeIcon.setDescription("axe");
+        } catch (Exception e) {
+            //TODO: handle exception
+            System.out.println("Axe: " + e);
+            success = false;
+        }
+
+        try {
+            kingIcon = new ImageIcon(ImageIO.read(new File("src/Crown.PNG")));
+            kingIcon.setDescription("king");
+        } catch (Exception e) {
+            //TODO: handle exception
+            System.out.println("Crown: " + e);
+            success = false;
+        }
+
+
+        try {
+            emptyImageIcon = new ImageIcon(ImageIO.read(new File("src/assets/empty.png")));
+            emptyImageIcon.setDescription("empty");
+
+        } catch (Exception e) {
+            //TODO: handle exception
+            System.out.println("Empty: " + e);
+            success = false;
+        }
+        try {
+            backgroundIcon = ImageIO.read(new File("src/assets/simpleBoard.png"));
+        } catch (Exception e) {
+            //TODO: handle exception
+            System.out.println("Board: " + e);
+            success = false;
+        }
+        return success;
     }
   
     /*
