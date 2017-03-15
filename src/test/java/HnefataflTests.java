@@ -28,6 +28,7 @@ public class HnefataflTests extends Hnefatafl{
         // Test that the board draws without error
         assertTrue(game.drawBoard());
     }
+    
     //Test that there is an empty button where it is expected to be
     @Test
     public void testForEmptyButton(){
@@ -39,6 +40,7 @@ public class HnefataflTests extends Hnefatafl{
     	String testDescription = testImageIcon.getDescription();
     	assertTrue(testDescription.equals("empty"));
     }
+    
     /*
     @Test
     //EXPECT THIS TO BECOME OBSOLETE AT ONE POINT
@@ -72,21 +74,28 @@ public class HnefataflTests extends Hnefatafl{
     */
 
 
- //    //Tests that a non-King piece is destroyed when surrounded
+    /**
+     * Tests that a non-King piece is destroyed when surrounded
+     */
 	@Test
 	public void attackPiecesTest() {
 		Hnefatafl h = new Hnefatafl();
 		JButton jbutton = h._buttons[2][2];
 		assertTrue(h.attackPieces(jbutton));
 	}
-	//Tests that piecesLeft() accurately recognizes when a team has no more pieces
+	
+	/*
+	 * Tests that piecesLeft() accurately recognizes when a team has no more pieces
+	 */
 	@Test
 	public void piecesLeftTest() {
 		Hnefatafl h = new Hnefatafl();
 		assertEquals(0, h.piecesLeft());
 	}
 
-	//Test that getXandY() returns the expected values for a jbutton
+	/**
+	 * Test that getXandY() returns the expected values for a jbutton
+	 */
 	@Test
 	public void GetXYTest() {
 		Hnefatafl h = new Hnefatafl();
@@ -96,56 +105,86 @@ public class HnefataflTests extends Hnefatafl{
 		assertEquals(xy[0],testvalues[0]);
 		assertEquals(xy[1],testvalues[1]);
 	}
-	//tests that isValidMove() does not allow a piece to move to its current spot
+	
+	/**
+	 * This test verifies that the space is occupied
+	 */
 	@Test
-	public void IsValidMoveSameLocationTest(){
+	public void IsSpaceOccupiedTestOccupied() {
+		Hnefatafl h = new Hnefatafl();
+		h.setupGame();
+		h._buttons[0][2] = new JButton(axeIcon);
+		assertTrue(h.isSpaceOccupied(new int[] {0,2}));
+	}
+	
+	/**
+	 * This test verifies that the space is not occupied
+	 */
+	@Test
+	public void IsSpaceOccupiedTestNotOccupied() {
+		Hnefatafl h = new Hnefatafl();
+		h.setupGame();
+		h._buttons[0][0] = new JButton(emptyImageIcon);
+		assertFalse(h.isSpaceOccupied(new int[]{0,0}));
+	}
+	
+	/**
+	 * Tests that isValidMove() does not allow a piece to move to its current spot
+	 */
+	@Test
+	public void IsValidMoveCurrentLocationTest(){
 		int[] start = new int[] { 1, 1 };
 		int[] dest = new int[] { 1, 1 };
 		assertFalse(isValidMove(start, dest, false));
 	}
-	//tests that isValidMove() does not allow a piece to move diagonally
+	
+	/**
+	 * Tests that isValidMove() does not allow a piece to move diagonally
+	 */
 	@Test
 	public void IsValidMoveDiagonalMoveTest(){
 		int[] start = new int[] { 0, 0 };
 		int[] dest = new int[] { 1, 1 };
 		assertFalse(isValidMove(start, dest, false));
 	}
-	//tests that isValidMove() does not allow a piece to move left if it is not valid
+	
+	/**
+	 * Tests that isValidMove() does not allow a piece to move left if it is not valid
+	 */
 	@Test
 	public void IsValidMoveLeftMoveTest(){
 		int[] start = new int[] { 0, 0 };
 		int[] dest = new int[] { 1, 0 };
 		assertTrue(isValidMove(start, dest, false));
 	}
-	//tests that isValidMove() does not allow a piece to move right if it is not valid
+	
+	/**
+	 * Tests that isValidMove() does not allow a piece to move right if it is not valid
+	 */
 	@Test
 	public void IsValidMoveRightMoveTest(){
 		int[] start = new int[] { 2, 0 };
 		int[] dest = new int[] { 1, 0 };
 		assertTrue(isValidMove(start, dest, false));
 	}
-	//tests that isValidMove() does not allow a piece to move down if it is not valid
+	
+	/**
+	 * Tests that isValidMove() does not allow a piece to move down if it is not valid
+	 */
 	@Test
 	public void IsValidMoveDownMoveTest(){
 		int[] start = new int[] { 0, 1 };
 		int[] dest = new int[] { 0, 2 };
 		assertTrue(isValidMove(start, dest, false));
 	}
-	//tests that isValidMove() does not allow a piece to move up if it is not valid
+	
+	/**
+	 * Tests that isValidMove() does not allow a piece to move up if it is not valid
+	 */
 	@Test
 	public void IsValidMoveUpMoveTest(){
 		int[] start = new int[] { 0, 2 };
 		int[] dest = new int[] { 0, 1 };
-		assertTrue(isValidMove(start, dest, false));
-	}
-
-	@Test
-	public void IsOccupiedSpaceTest(){
-		Hnefatafl h = new Hnefatafl();
-		h._buttons[0][1] = new JButton(axeIcon);
-		h._buttons[0][2] = new JButton(emptyImageIcon);
-		int[] start = getXandY(h._buttons[0][1]);
-		int[] dest = getXandY(h._buttons[0][2]);
 		assertTrue(isValidMove(start, dest, false));
 	}
 }

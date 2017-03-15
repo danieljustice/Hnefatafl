@@ -217,7 +217,7 @@ public class Hnefatafl {
         return new int[2];
     }
 
-    /*
+    /**
     *
     * kill pieces as they are surrounded Othello style (King is an exception)
     * @param piecePlacement Jbutton that is where the latest piece was placed to see if a piece is destroyed
@@ -337,7 +337,7 @@ public class Hnefatafl {
 
         return true;
     }
-    /*
+    /**
     *  check if there are any pieces left for any team
     *  @param Not Available
     *  @return returns int 0 for no winning condition, int 1 for king surrounded shields lose, int 2 for axe defeated for no more pieces
@@ -519,7 +519,9 @@ public class Hnefatafl {
      */
     public boolean isSpaceOccupied(int[] destination){
         ImageIcon currentImageIcon = (ImageIcon) _buttons[destination[0]][destination[1]].getIcon();
-        if( !currentImageIcon.getDescription().equals("empty") )
+        if(currentImageIcon==null || currentImageIcon.getDescription() == null)
+        	return true;
+        if( !currentImageIcon.getDescription().equals("empty"))
             return true;
         return false;
     }
