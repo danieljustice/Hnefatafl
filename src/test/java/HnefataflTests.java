@@ -32,7 +32,7 @@ public class HnefataflTests extends Hnefatafl{
     @Test
     public void testForEmptyButton(){
     	//must set up the game on the drawnboard
-    	game.setupGame(); 
+    	game.setupGame();
     	JButton testButton = game._buttons[1][1];
     	assertTrue(testButton != null);
     	ImageIcon testImageIcon = (ImageIcon)testButton.getIcon();
@@ -45,8 +45,8 @@ public class HnefataflTests extends Hnefatafl{
     public void testClickCycle(){
     	//this test will click an empty tile three (3) times.  The tile should turn
     	//into an axe, then turn into an empty and then into a shield
-    	
-    	game.setupGame(); 
+
+    	game.setupGame();
     	JButton testButton = game._buttons[1][1];
     	assertTrue(testButton != null);
     	ImageIcon testImageIcon = (ImageIcon)testButton.getIcon();
@@ -73,19 +73,19 @@ public class HnefataflTests extends Hnefatafl{
 
 
  //    //Tests that a non-King piece is destroyed when surrounded
-	// @Test
-	// public void attackPiecesTest() {
-	// 	Hnefatafl h = new Hnefatafl();
-	// 	JButton jbutton = h._buttons[2][2];
-	// 	assertTrue(h.attackPieces(jbutton));
-	// }
-	// //Tests that piecesLeft() accurately recognizes when a team has no more pieces
-	// @Test
-	// public void piecesLeftTest() {
-	// 	Hnefatafl h = new Hnefatafl();
-	// 	assertEquals(0, h.piecesLeft());
-	// }
-	
+	@Test
+	public void attackPiecesTest() {
+		Hnefatafl h = new Hnefatafl();
+		JButton jbutton = h._buttons[2][2];
+		assertTrue(h.attackPieces(jbutton));
+	}
+	//Tests that piecesLeft() accurately recognizes when a team has no more pieces
+	@Test
+	public void piecesLeftTest() {
+		Hnefatafl h = new Hnefatafl();
+		assertEquals(0, h.piecesLeft());
+	}
+
 	//Test that getXandY() returns the expected values for a jbutton
 	@Test
 	public void GetXYTest() {
@@ -138,7 +138,7 @@ public class HnefataflTests extends Hnefatafl{
 		int[] dest = new int[] { 0, 1 };
 		assertTrue(isValidMove(start, dest, false));
 	}
-	
+
 	@Test
 	public void IsOccupiedSpaceTest(){
 		Hnefatafl h = new Hnefatafl();
