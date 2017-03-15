@@ -39,6 +39,10 @@ public class Hnefatafl {
         }
     }
 
+    /**
+    * Loads all images required for game and returns true on success
+    * @return true on successfully loading all images, false on failure to load at least one image
+    **/
     public boolean loadImages(){
         boolean success = true;
         try {
