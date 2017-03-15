@@ -35,9 +35,13 @@ public class Hnefatafl {
         try{
             //ImageIcons are public so we can test them in unit tests
             defenseIcon = new ImageIcon(ImageIO.read(new File("src/assets/First Shield.png")));
+            System.out.println("Shield");
             axeIcon = new ImageIcon(ImageIO.read(new File("src/assets/First Axe.png")));
-            kingIcon = new ImageIcon(ImageIO.read(new File("src/Crown.png")));
+            System.out.println("Axe");
+            kingIcon = new ImageIcon(ImageIO.read(new File("src/Crown.PNG")));
+            System.out.println("King");
             emptyImageIcon = new ImageIcon(ImageIO.read(new File("src/assets/empty.png")));
+            System.out.println("Empty");
             backgroundIcon = ImageIO.read(new File("src/assets/simpleBoard.png"));
             //give each icon a description so we can compare them later
 
