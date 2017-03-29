@@ -743,6 +743,10 @@ public class Hnefatafl extends ClockTimer{
             // Set the first player's turn
             isFirstPlayer = true;
             turn.setText("Axe Moves");
+            axeTimer = new ClockTimer();
+            shieldTimer = new ClockTimer();
+            axeStarted = false;
+            shieldStarted = false;
             reloadBoard();
         }
     }
