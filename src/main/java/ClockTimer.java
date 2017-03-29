@@ -69,6 +69,9 @@ public class ClockTimer extends JLabel implements ActionListener {
 				shouldHalt = true;
 				timerThread.join(0);
 				int newTime = Integer.parseInt(this.getText()) + turnTime;
+				if(newTime > 300){
+					newTime = 300;
+				}
 				this.setText("" + newTime);
 			} catch (InterruptedException iex) {
 				System.out.println("Some sort of error joining threads. Got no clue why.\n" + iex);
