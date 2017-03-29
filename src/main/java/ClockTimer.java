@@ -27,4 +27,37 @@ public class ClockTimer extends JLabel implements ActionListener {
 		Date t = new Date();
 		setText(sdf.format(t));	
 	}
+
+
+	//Takes in an integer and returns a thread that counts down from that number
+	public Thread getTimerThread(int startTime){
+		Thread t = new Thread(() -> {
+			for (int j = startTime; j >= 0; j--) {
+				System.out.println(j + "...");
+
+				// This thread will sleep for >= 1000 milliseconds (1 second)
+				// In practice it will be very close to 1000 milliseconds
+				// Do not rely on Java (or the JVM in general) for hard
+				// real-time guarantees!
+				try {
+				Thread.sleep(1000);
+				} catch (InterruptedException iex) {
+				// ignore
+				}
+			}
+	    });
+		return t;
+	}
+	//starts any thread passed into this function
+	public void startTimerThread(Thread timerThread){
+		timerThread.start();
+	}
+	//joins (ends) any thread passed into this
+	public void stopTimerThread(Thread timerThread){
+		try {
+			timerThread.join();
+		} catch (InterruptedException iex) {
+			System.out.println("Some sort of error joining threads. Got no clue why.\n" + iex);
+		}
+	}
 }
