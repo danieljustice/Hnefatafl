@@ -5,10 +5,9 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-
 import org.omg.CORBA.SystemException;
 
-public class Hnefatafl {
+public class Hnefatafl extends ClockTimer{
 
     private int gameWidth = 11;
     private int gameHeight = 11;
@@ -18,6 +17,7 @@ public class Hnefatafl {
     private JPanel _ttt = new JPanel();
     JLabel turn = new JLabel("Axe Moves");
     private JPanel _newPanel = new JPanel();
+    private JPanel _timerPanel = new JPanel();
 
     private JButton _firstClick = null;
     private JButton _secondClick = null;
@@ -32,10 +32,13 @@ public class Hnefatafl {
     public ImageIcon emptyImageIcon;
     public Image backgroundIcon;
 
+    private ClockTimer axeTimer = new ClockTimer();
+    private ClockTimer shieldTimer = new ClockTimer();
     public Hnefatafl() {
         //pull in images for icons on the buttons
         if(loadImages()){
-            drawBoard();
+        	drawClock();
+            drawBoard();  
         }
     }
 
@@ -66,6 +69,7 @@ public class Hnefatafl {
 
         try {
             kingIcon = new ImageIcon(ImageIO.read(new File("src/Crown.PNG")));
+          
             kingIcon.setDescription("king");
         } catch (Exception e) {
             //TODO: handle exception
@@ -93,6 +97,21 @@ public class Hnefatafl {
         return success;
     }
 
+
+    /**
+    *
+    */
+	public boolean drawClock(){
+
+		//JFrame.setDefaultLookAndFeelDecorated(true);
+		_timerPanel = new JPanel();
+		//_timerPanel.setSize(300,150);
+		_timerPanel.setLayout(new GridLayout(1, 1));	 
+		_timerPanel.add(axeTimer);
+		_timerPanel.add(shieldTimer); 
+		_timerPanel.setVisible(true);
+	    return true;
+	}
     /*
      * Draws the board panel itself and then calls the method to set the initial game state.
      */
@@ -104,8 +123,8 @@ public class Hnefatafl {
         JToolBar tools = new JToolBar();
         tools.setFloatable(false);
         _frame.add(tools, BorderLayout.PAGE_START);
-
-
+        
+        
         JButton newButton = new JButton("New"); //no functions
         ActionListener newButtonListener = new NewButtonListener();
         newButton.addActionListener(newButtonListener);
@@ -138,7 +157,9 @@ public class Hnefatafl {
         tools.addSeparator();
         tools.addSeparator();
         tools.add(turn);
+        tools.add(_timerPanel, BorderLayout.PAGE_START);
         setupGame();
+        
         _frame.setVisible(true);
         return(true);
     }
@@ -150,6 +171,7 @@ public class Hnefatafl {
      */
     public void reloadBoard() {
         _frame.dispose();
+        drawClock();
         drawBoard();
     }
 
@@ -575,7 +597,7 @@ public class Hnefatafl {
      */
     public static void main(String[] args) {
         Hnefatafl game = new Hnefatafl();
-        // game.drawBoard();
+        //game.drawBoard();
     }
 
     // #################################################################
@@ -632,6 +654,9 @@ public class Hnefatafl {
                             _secondClick.setIcon(axeIcon);
                             attackPieces(_secondClick);
                             isFirstPlayer=false;
+                            axeTimer.stopTimerThread();
+                            shieldTimer.startTimerThread();
+                          
                             turn.setText("Shield Moves");
                         }
                         else if(firstClickImageIcon.getDescription().equals(defenseIcon.getDescription())
@@ -661,7 +686,10 @@ public class Hnefatafl {
                             }
                             else{
                                 isFirstPlayer=true;
+                                   axeTimer.startTimerThread();
                                 turn.setText("Axe Moves");
+                             
+                                shieldTimer.stopTimerThread();                                
                             }
                         }
                         _firstClick.setIcon(emptyImageIcon);
