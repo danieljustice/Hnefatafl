@@ -32,6 +32,8 @@ public class Hnefatafl extends ClockTimer{
     public ImageIcon emptyImageIcon;
     public Image backgroundIcon;
 
+    private ClockTimer axeTimer = new ClockTimer();
+    private ClockTimer shieldTimer = new ClockTimer();
     public Hnefatafl() {
         //pull in images for icons on the buttons
         if(loadImages()){
@@ -98,8 +100,7 @@ public class Hnefatafl extends ClockTimer{
     *
     */
 	public boolean drawClock(){
-		ClockTimer axeTimer = new ClockTimer();
-		ClockTimer shieldTimer = new ClockTimer();
+
 		//JFrame.setDefaultLookAndFeelDecorated(true);
 		_timerPanel = new JPanel();
 		//_timerPanel.setSize(300,150);
@@ -648,6 +649,9 @@ public class Hnefatafl extends ClockTimer{
                             _secondClick.setIcon(axeIcon);
                             attackPieces(_secondClick);
                             isFirstPlayer=false;
+                            axeTimer.stopTimerThread();
+                            shieldTimer.startTimerThread();
+                          
                             turn.setText("Shield Moves");
                         }
                         else if(firstClickImageIcon.getDescription().equals(defenseIcon.getDescription())
@@ -677,7 +681,10 @@ public class Hnefatafl extends ClockTimer{
                             }
                             else{
                                 isFirstPlayer=true;
+                                   axeTimer.startTimerThread();
                                 turn.setText("Axe Moves");
+                             
+                                shieldTimer.stopTimerThread();                                
                             }
                         }
                         _firstClick.setIcon(emptyImageIcon);
