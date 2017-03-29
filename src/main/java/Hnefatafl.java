@@ -69,6 +69,7 @@ public class Hnefatafl extends ClockTimer{
 
         try {
             kingIcon = new ImageIcon(ImageIO.read(new File("src/Crown.PNG")));
+          
             kingIcon.setDescription("king");
         } catch (Exception e) {
             //TODO: handle exception
@@ -96,6 +97,7 @@ public class Hnefatafl extends ClockTimer{
         return success;
     }
 
+
     /**
     *
     */
@@ -110,7 +112,6 @@ public class Hnefatafl extends ClockTimer{
 		_timerPanel.setVisible(true);
 	    return true;
 	}
-
     /*
      * Draws the board panel itself and then calls the method to set the initial game state.
      */
@@ -142,7 +143,11 @@ public class Hnefatafl extends ClockTimer{
         tools.add(loadButton);
         tools.addSeparator();
 
-        tools.add(new JButton("Resign")); //no functions
+		JButton resignButton = new JButton("Resign");
+        ActionListener resignButtonListener = new resignButtonListener();
+		resignButton.addActionListener(resignButtonListener);
+		tools.add(resignButton); //no functions
+
         tools.addSeparator();
         tools.addSeparator();
         tools.addSeparator();
@@ -733,6 +738,7 @@ public class Hnefatafl extends ClockTimer{
             _buttons = new JButton[gameWidth][gameHeight];
             // Set the first player's turn
             isFirstPlayer = true;
+            turn.setText("Axe Moves");
             reloadBoard();
         }
     }
@@ -821,6 +827,34 @@ public class Hnefatafl extends ClockTimer{
             } catch(ClassNotFoundException cex) {
                 System.out.println("Class Not Found!");
             }
+        }
+    }
+
+
+    /**
+     * Custom action listener handles resigning the game on the board
+     *
+     * the current user that hits the resign button should forfeit and the next
+     */
+	private class resignButtonListener implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if(isFirstPlayer){
+				turn.setText("Shields Wins!");
+				for(int i = 0; i < 11; i++){
+					for(int j = 0; j < 11; j++){
+						_buttons[i][j].setEnabled(false);
+					}
+				}
+			}
+			else{
+				turn.setText("Axes Wins!");
+				for(int i = 0; i < 11; i++){
+					for(int j = 0; j < 11; j++){
+						_buttons[i][j].setEnabled(false);
+					}
+				}
+			}
         }
     }
 }
