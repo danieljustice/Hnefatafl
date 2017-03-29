@@ -35,7 +35,7 @@ public class Hnefatafl {
     public Hnefatafl() {
         //pull in images for icons on the buttons
         if(loadImages()){
-            drawBoard();  
+            drawBoard();
         }
     }
 
@@ -92,7 +92,7 @@ public class Hnefatafl {
         }
         return success;
     }
-  
+
     /*
      * Draws the board panel itself and then calls the method to set the initial game state.
      */
@@ -128,7 +128,7 @@ public class Hnefatafl {
         ActionListener resignButtonListener = new resignButtonListener();
 		resignButton.addActionListener(resignButtonListener);
 		tools.add(resignButton); //no functions
-		
+
         tools.addSeparator();
         tools.addSeparator();
         tools.addSeparator();
@@ -710,6 +710,7 @@ public class Hnefatafl {
             _buttons = new JButton[gameWidth][gameHeight];
             // Set the first player's turn
             isFirstPlayer = true;
+            turn.setText("Axe Moves");
             reloadBoard();
         }
     }
@@ -800,12 +801,12 @@ public class Hnefatafl {
             }
         }
     }
-	
-	
+
+
     /**
      * Custom action listener handles resigning the game on the board
      *
-     * the current user that hits the resign button should forfeit and the next 
+     * the current user that hits the resign button should forfeit and the next
      */
 	private class resignButtonListener implements ActionListener{
         @Override
