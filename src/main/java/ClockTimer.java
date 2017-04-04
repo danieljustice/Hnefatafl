@@ -15,17 +15,23 @@ public class ClockTimer extends JLabel implements ActionListener {
 	Thread timerThread;
 	public boolean shouldHalt = false;
 
-	int initTime = 300;
-	int turnTime = 3;
+	private static final int initTime = 300;
+	private static final int turnTime = 3;
 
 	int timeLeft = initTime;
-	public ClockTimer() {
+
+	public ClockTimer(int startTime) {
 		setForeground(Color.BLACK);
 		sdf = new SimpleDateFormat("mm:ss");
 		setFont(new Font("arial", Font.BOLD, 15));
 		setHorizontalAlignment(SwingConstants.CENTER);
-		this.setText("" + timeLeft);
+		this.setText("" + startTime);
 	}
+
+	public ClockTimer() {
+		this(initTime);
+	}
+
 
 	public void actionPerformed(ActionEvent ae) {
 		Date t = new Date();
@@ -83,5 +89,9 @@ public class ClockTimer extends JLabel implements ActionListener {
 
 	public boolean isNull() {
 		return(timerThread == null);
+	}
+
+	public int getTime() {
+		return(Integer.parseInt(this.getText()));
 	}
 }

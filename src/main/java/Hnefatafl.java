@@ -779,6 +779,8 @@ public class Hnefatafl extends ClockTimer{
                     // Save the current player whose turn it is
                     oos.writeObject(isFirstPlayer);
                     oos.writeObject(turn);
+                    oos.writeObject(axeTimer.getTime());
+                    oos.writeObject(shieldTimer.getTime());
                     oos.close();
                     fos.close();
                     JOptionPane.showMessageDialog(null, "File saved!");
@@ -822,6 +824,10 @@ public class Hnefatafl extends ClockTimer{
                     // Load the current player whose turn it is
                     isFirstPlayer = (boolean) oip.readObject();
                     turn = (JLabel) oip.readObject();
+                    int axeTime = (int) oip.readObject();
+                    int shieldTime = (int) oip.readObject();
+                    axeTimer = new ClockTimer(axeTime);
+                    shieldTimer = new ClockTimer(shieldTime);
                     oip.close();
                     fip.close();
                     JOptionPane.showMessageDialog(null, "File loaded!");
