@@ -1,6 +1,12 @@
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JToolBar;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import org.omg.CORBA.SystemException;
+
 
 public class GameDriver{
 	//This class's sole purpose is to provide a main method to run the Hnefatafl game
@@ -14,10 +20,11 @@ public class GameDriver{
        //hgame - set up game
         JFrame frame = hGame.createGameFrame("Hnefatafl");
         JToolBar tool =  hGame.createToolBar();
+        BufferedImage backgroundImage = ImageFactory.createBufferedImage("src/assets/simpleBoard.png");
         JPanel panel =  hGame.createBackground(backgroundImage);
 
         frame.add(tool);
-        fram.add(panel);
+        frame.add(panel);
 
 
         Hnefatafl game = new Hnefatafl();
