@@ -6,7 +6,15 @@ import javax.swing.JButton;
  * @author Timothy Kang
  */
 public class GameLogic implements GameLogicInterface{
-    
+
+    private int gameWidth;
+    private int gameHeight;
+
+    public GameLogic(int gameWidth, int gameHeight) {
+        this.gameWidth = gameWidth;
+        this.gameHeight = gameHeight;
+    }
+
     // #################################################################
     // Utility methods
     // #################################################################
@@ -17,7 +25,7 @@ public class GameLogic implements GameLogicInterface{
      * @param jb    JButton that holds the current pushed button
      * @return  returns an integer array that contains, the buttons location as (x,y) = ([0],[1])
      */
-    public int[] getXandY(JButton jb, int gameWidth, int gameHeight, JButton[][] _buttons){
+    public int[] getXandY(JButton jb, JButton[][] _buttons){
         int[] xyCord = new int[2];
         for(int i=0; i <gameWidth; i++){
             for(int j=0; j <gameHeight;j++){
@@ -30,15 +38,15 @@ public class GameLogic implements GameLogicInterface{
         }
         return new int[2];
     }
-    
+
     /**
     *
     * kill pieces as they are surrounded Othello style (King is an exception)
     * @param piecePlacement Jbutton that is where the latest piece was placed to see if a piece is destroyed
     * @return returns boolean true if a piece is taken out
     */
-    public JButton[][] attackPieces(JButton piecePlacement, ImageIcon emptyImageIcon, ImageIcon kingIcon, ImageIcon axeIcon, ImageIcon defenseIcon, int gameWidth, int gameHeight, JButton[][] _buttons){
-        int[] placement = getXandY(piecePlacement, gameWidth, gameHeight, _buttons);
+    public JButton[][] attackPieces(JButton piecePlacement, ImageIcon emptyImageIcon, ImageIcon kingIcon, ImageIcon axeIcon, ImageIcon defenseIcon, JButton[][] _buttons){
+        int[] placement = getXandY(piecePlacement, _buttons);
         //testing for surrounding area
         //i+-2 j+-2
         //check the pieces east north south and west
@@ -73,7 +81,7 @@ public class GameLogic implements GameLogicInterface{
 
         }
 
-        if(placement[0] + 2 < 11){
+        if(placement[0] + 2 < gameHeight){
             //south
 
             //checks the north space piece and stores into this variable
@@ -123,7 +131,7 @@ public class GameLogic implements GameLogicInterface{
                 }
             }
         }
-        if(placement[1] + 2 < 11){
+        if(placement[1] + 2 < gameWidth){
             //east
 
             //checks the north space piece and stores into this variable
@@ -151,13 +159,13 @@ public class GameLogic implements GameLogicInterface{
 
         return _buttons;
     }
-    
+
     /**
     *  check if there are any pieces left for any team
     *  @param Not Available
     *  @return returns int 0 for no winning condition, int 1 for king surrounded shields lose, int 2 for axe defeated for no more pieces
     */
-    public int piecesLeft(int gameWidth, int gameHeight, ImageIcon axeIcon, ImageIcon kingIcon, JButton[][] _buttons){
+    public int piecesLeft(ImageIcon axeIcon, ImageIcon kingIcon, JButton[][] _buttons){
         ImageIcon currentImageIcon;
         int surroundedKingSides = 0;
         int attackPieces = 0;
@@ -190,7 +198,7 @@ public class GameLogic implements GameLogicInterface{
                         surroundedKingSides++;
                     }
 
-                    if(i + 1 < 11){
+                    if(i + 1 < gameHeight){
                         //south
 
                         surroundingImageIcon = (ImageIcon)_buttons[i + 1][j].getIcon();
@@ -214,7 +222,7 @@ public class GameLogic implements GameLogicInterface{
                         //on edge
                         surroundedKingSides++;
                     }
-                    if(j + 1 < 11){
+                    if(j + 1 < gameWidth){
                         //east
 
                         surroundingImageIcon = (ImageIcon)_buttons[i][j + 1].getIcon();
@@ -242,7 +250,7 @@ public class GameLogic implements GameLogicInterface{
             return 0;
         }
     }
-    
+
     /**
      * Returns whether a move is valid based on input arrays which store x and y locations
      *
@@ -274,8 +282,8 @@ public class GameLogic implements GameLogicInterface{
             }
         }
         return false;
-    } 
-    
+    }
+
     /** Traverses through each space on the board to see if any of them are occupied.
      *
      * @param start integer[] with size 2: index 0 is x cord, index 1 is y cord
@@ -326,7 +334,7 @@ public class GameLogic implements GameLogicInterface{
         }
         return true;
     }
-    
+
     /** This uses the same integer[] as getXandY and returns whether the destination is occupied or not
      *
      * @param destination integer[] of size 2: index 0 is x cord, index 1 is y cord

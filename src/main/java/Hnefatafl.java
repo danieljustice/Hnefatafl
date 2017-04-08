@@ -18,7 +18,7 @@ public class Hnefatafl extends ClockTimer{
     JLabel turn = new JLabel("Axe Moves");
     private JPanel _newPanel = new JPanel();
     private JPanel _timerPanel = new JPanel();
-    public GameLogic gameLogic = new GameLogic();
+    public GameLogic gameLogic = new GameLogic(gameWidth, gameHeight);
 
 
     private JButton _firstClick = null;
@@ -35,7 +35,7 @@ public class Hnefatafl extends ClockTimer{
     public ImageIcon kingIcon;
     public ImageIcon emptyImageIcon;
     public Image backgroundIcon;
-    
+
 
     private ClockTimer axeTimer = new ClockTimer();
     private ClockTimer shieldTimer = new ClockTimer();
@@ -320,11 +320,11 @@ public class Hnefatafl extends ClockTimer{
                 else{
                     _secondClick = (JButton) e.getSource();
                     secondClickImageIcon = (ImageIcon)_secondClick.getIcon();
-                    if(gameLogic.isValidMove(gameLogic.getXandY(_firstClick, gameWidth, gameHeight, _buttons), gameLogic.getXandY(_secondClick, gameWidth, gameHeight, _buttons), firstClickImageIcon.getDescription().equals(kingIcon.getDescription()), _buttons)){
+                    if(gameLogic.isValidMove(gameLogic.getXandY(_firstClick, _buttons), gameLogic.getXandY(_secondClick, _buttons), firstClickImageIcon.getDescription().equals(kingIcon.getDescription()), _buttons)){
                         if(firstClickImageIcon.getDescription().equals(axeIcon.getDescription())) {
                             _secondClick.setIcon(axeIcon);
                             //attackPieces(JButton piecePlacement, ImageIcon emptyImageIcon, ImageIcon kingIcon, ImageIcon axeIcon, ImageIcon defenseIcon, int gameWidth, int gameHeight, JButton[][] _buttons)
-                            _buttons = gameLogic.attackPieces(_secondClick, emptyImageIcon, kingIcon, axeIcon, defenseIcon, gameWidth, gameHeight, _buttons);
+                            _buttons = gameLogic.attackPieces(_secondClick, emptyImageIcon, kingIcon, axeIcon, defenseIcon, _buttons);
                             isFirstPlayer=false;
                             axeTimer.stopTimerThread();
                             shieldStarted = true;
@@ -337,19 +337,19 @@ public class Hnefatafl extends ClockTimer{
                         {
                             if(firstClickImageIcon.getDescription().equals(kingIcon.getDescription())){
                                 _secondClick.setIcon(kingIcon);
-                                _buttons = gameLogic.attackPieces(_secondClick, emptyImageIcon, kingIcon, axeIcon, defenseIcon, gameWidth, gameHeight, _buttons);
-                            
+                                _buttons = gameLogic.attackPieces(_secondClick, emptyImageIcon, kingIcon, axeIcon, defenseIcon, _buttons);
+
                             }
                             else{
                                 _secondClick.setIcon(defenseIcon);
-                                _buttons = gameLogic.attackPieces(_secondClick, emptyImageIcon, kingIcon, axeIcon, defenseIcon, gameWidth, gameHeight, _buttons);
-                            
+                                _buttons = gameLogic.attackPieces(_secondClick, emptyImageIcon, kingIcon, axeIcon, defenseIcon, _buttons);
+
                             }
 
-                            if(((gameLogic.getXandY(_secondClick, gameWidth, gameHeight, _buttons)[0] == 0 && gameLogic.getXandY(_secondClick, gameWidth, gameHeight, _buttons)[1] == 0)
-                                    || (gameLogic.getXandY(_secondClick, gameWidth, gameHeight, _buttons)[0] == 0 && gameLogic.getXandY(_secondClick, gameWidth, gameHeight, _buttons)[1] == 10)
-                                    || (gameLogic.getXandY(_secondClick, gameWidth, gameHeight, _buttons)[0] == 10 && gameLogic.getXandY(_secondClick, gameWidth, gameHeight, _buttons)[1] == 0)
-                                    || (gameLogic.getXandY(_secondClick, gameWidth, gameHeight, _buttons)[0] == 10 && gameLogic.getXandY(_secondClick, gameWidth, gameHeight, _buttons)[1] == 10))
+                            if(((gameLogic.getXandY(_secondClick, _buttons)[0] == 0 && gameLogic.getXandY(_secondClick, _buttons)[1] == 0)
+                                    || (gameLogic.getXandY(_secondClick, _buttons)[0] == 0 && gameLogic.getXandY(_secondClick, _buttons)[1] == 10)
+                                    || (gameLogic.getXandY(_secondClick, _buttons)[0] == 10 && gameLogic.getXandY(_secondClick, _buttons)[1] == 0)
+                                    || (gameLogic.getXandY(_secondClick, _buttons)[0] == 10 && gameLogic.getXandY(_secondClick, _buttons)[1] == 10))
                                     && firstClickImageIcon.getDescription().equals("K"))
                             {
                                 turn.setText("Shield Wins!");
@@ -373,7 +373,7 @@ public class Hnefatafl extends ClockTimer{
                         _secondClick = null;
 
                         //check if there are no pieces left to see if theres a winner
-                        noPiecesCheck = gameLogic.piecesLeft(gameWidth, gameHeight, axeIcon, kingIcon, _buttons);
+                        noPiecesCheck = gameLogic.piecesLeft(axeIcon, kingIcon, _buttons);
                         //shields win
                         if(noPiecesCheck == 1 || (axeTimer.isNull() && axeStarted)){
                             turn.setText("Shield Wins!");
