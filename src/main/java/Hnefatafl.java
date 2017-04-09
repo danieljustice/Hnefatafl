@@ -6,6 +6,7 @@ import java.io.*;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import org.omg.CORBA.SystemException;
+import java.util.Arrays;
 
 import game_pieces.*;
 
@@ -25,6 +26,8 @@ public class Hnefatafl extends ClockTimer{
 
     private GamePiece _firstClick = null;
     private GamePiece _secondClick = null;
+    private int firstCoords[];
+    private int secondCoords[];
     private boolean isFirstPlayer = true;
     private ImageIcon firstClickImageIcon = null;
     private ImageIcon secondClickImageIcon = null;
@@ -191,9 +194,9 @@ public class Hnefatafl extends ClockTimer{
      * @param Not Available
      * @return Not Available
      */
-    public void setupGame(){
+    public boolean setupGame(){
         //reinitialize the panels for new games
-        _ttt = new JPanel();
+        _ttt.removeAll();
         _ttt.setLayout(new GridLayout(gameWidth, gameHeight));
 
         //At some point some smarter math need to be put in to automatically resize
@@ -212,8 +215,6 @@ public class Hnefatafl extends ClockTimer{
         BackgroundPanel backgroundPanel = new BackgroundPanel(backgroundImage, 0, 0, 0);
 
 
-        _newPanel = new JPanel();
-        _newPanel.setLayout(new FlowLayout());
         for(int i=0; i<gameWidth; i++){
             for (int j=0; j<gameHeight; j++) {
                 if(_buttons[i][j] == null) {
@@ -246,17 +247,11 @@ public class Hnefatafl extends ClockTimer{
 
                     }
                 }
+
                 // Associate a new ButtonListener to the button (see below)
                 ActionListener buttonListener = new ButtonListener();
                 _buttons[i][j].addActionListener(buttonListener);
-                // Set the font on the button
-                _buttons[i][j].setFont(new Font("Courier", Font.PLAIN, 48));
-                //set button tranparent for cool background
-                _buttons[i][j].setOpaque(false);
-                _buttons[i][j].setContentAreaFilled(false);
-                //_buttons[i][j].setBorderPainted(false);
-                // Add this button to the _ttt panel
-                _buttons[i][j].setBorder(null);
+
                 _ttt.add(_buttons[i][j]);
             }
         }
@@ -266,8 +261,9 @@ public class Hnefatafl extends ClockTimer{
         _frame.add(backgroundPanel, BorderLayout.CENTER);
         _ttt.setBorder(null);
         backgroundPanel.add(_ttt, BorderLayout.CENTER);
-        _frame.add(_newPanel, BorderLayout.SOUTH);
-
+        // _ttt.revalidate();
+        //_frame.add(_newPanel, BorderLayout.SOUTH);
+        return true;
     }
 
     /**
@@ -298,75 +294,82 @@ public class Hnefatafl extends ClockTimer{
         public void actionPerformed(ActionEvent e) {
 
             GamePiece temp = (GamePiece) e.getSource();
-            ImageIcon currentImageIcon = (ImageIcon)temp.getIcon();
             int noPiecesCheck;
 
             if(_firstClick == null && gameLogic.isEmpty(temp)){
                 //Spit out some error message saying there is no game piece here
-            }
-            else{
+            } else{
                 //Turn enforcing
                 if(_firstClick == null){
                     _firstClick = (GamePiece) e.getSource();
-                    firstClickImageIcon = (ImageIcon)_firstClick.getIcon();
+                    firstCoords = gameLogic.getXandY(_firstClick, _buttons);
                     if(isFirstPlayer){
                         if(gameLogic.isDefender(_firstClick) || gameLogic.isKing(_firstClick)){
                             _firstClick = null;
                             //Might want to add more functionality later. To have a pop up telling user it is not their turn.
 
                         }
-                    }
-                    else if(!isFirstPlayer){
+                    } else if(!isFirstPlayer){
                         if(gameLogic.isAttacker(_firstClick)){
                             _firstClick = null;
                              //Might want to add more functionality later. To have a pop up telling user it is not their turn.
                         }
                     }
 
-                }
-                else{
+                } else{
+
                     _secondClick = (GamePiece) e.getSource();
-                    secondClickImageIcon = (ImageIcon)_secondClick.getIcon();
-                    if(gameLogic.isValidMove(gameLogic.getXandY(_firstClick, _buttons), gameLogic.getXandY(_secondClick, _buttons), gameLogic.isKing(_firstClick), _buttons)){
+                    secondCoords = gameLogic.getXandY(_secondClick, _buttons);
+                    if(gameLogic.isValidMove(firstCoords, secondCoords, gameLogic.isKing(_firstClick), _buttons)){
                         if(gameLogic.isAttacker(_firstClick)) {
-                            _secondClick = new AttackerPiece();
+                            _buttons[secondCoords[0]][secondCoords[1]] = (AttackerPiece) _firstClick;
+                            _buttons[firstCoords[0]][firstCoords[1]] = (EmptyPiece) _secondClick;
+                            // setupGame();
+
                             //attackPieces(GamePiece piecePlacement, ImageIcon emptyImageIcon, ImageIcon kingIcon, ImageIcon axeIcon, ImageIcon defenseIcon, int gameWidth, int gameHeight, GamePiece[][] _buttons)
-                            _buttons = gameLogic.attackPieces(_secondClick, _buttons);
+                            // _buttons = gameLogic.attackPieces(_secondClick, _buttons);
+
                             isFirstPlayer=false;
                             axeTimer.stopTimerThread();
                             shieldStarted = true;
                             shieldTimer.startTimerThread();
 
                             turn.setText("Shield Moves");
-                        }
-                        else if(gameLogic.isDefender(_firstClick)
-                                || gameLogic.isKing(_firstClick))
-                        {
+                        } else if(
+                            gameLogic.isDefender(_firstClick)
+                            || gameLogic.isKing(_firstClick)
+                        ) {
                             if(gameLogic.isKing(_firstClick)){
-                                _secondClick = new KingPiece();
-                                _buttons = gameLogic.attackPieces(_secondClick, _buttons);
+                                _buttons[secondCoords[0]][secondCoords[1]] = (KingPiece) _firstClick;
+                                _buttons[firstCoords[0]][firstCoords[1]] = (EmptyPiece) _secondClick;
+                                // setupGame();
 
-                            }
-                            else{
-                                _secondClick = new DefenderPiece();
-                                _buttons = gameLogic.attackPieces(_secondClick, _buttons);
+                                // _buttons = gameLogic.attackPieces(_secondClick, _buttons);
 
-                            }
 
-                            if(((gameLogic.getXandY(_secondClick, _buttons)[0] == 0 && gameLogic.getXandY(_secondClick, _buttons)[1] == 0)
-                                    || (gameLogic.getXandY(_secondClick, _buttons)[0] == 0 && gameLogic.getXandY(_secondClick, _buttons)[1] == 10)
-                                    || (gameLogic.getXandY(_secondClick, _buttons)[0] == 10 && gameLogic.getXandY(_secondClick, _buttons)[1] == 0)
-                                    || (gameLogic.getXandY(_secondClick, _buttons)[0] == 10 && gameLogic.getXandY(_secondClick, _buttons)[1] == 10))
-                                    && firstClickImageIcon.getDescription().equals("K"))
-                            {
+                            } else {
+                                _buttons[secondCoords[0]][secondCoords[1]] = (DefenderPiece) _firstClick;
+                                _buttons[firstCoords[0]][firstCoords[1]] = (EmptyPiece) _secondClick;
+                                // setupGame();
+
+                                // _buttons = gameLogic.attackPieces(_secondClick, _buttons);
+
+
+                            } if(
+                                (
+                                    (secondCoords[0] == 0 && secondCoords[1] == 0)
+                                    || (secondCoords[0] == 0 && secondCoords[1] == 10)
+                                    || (secondCoords[0] == 10 && secondCoords[1] == 0)
+                                    || (secondCoords[0] == 10 && secondCoords[1] == 10)
+                                ) && gameLogic.isKing(_firstClick)
+                            ) {
                                 turn.setText("Shield Wins!");
                                 for(int i = 0; i < 11; i++){
                                     for(int j = 0; j < 11; j++){
                                         _buttons[i][j].setEnabled(false);
                                     }
                                 }
-                            }
-                            else{
+                            } else {
                                 isFirstPlayer=true;
                                     axeStarted = true;
                                    axeTimer.startTimerThread();
@@ -375,7 +378,9 @@ public class Hnefatafl extends ClockTimer{
                                 shieldTimer.stopTimerThread();
                             }
                         }
-                        _firstClick = new EmptyPiece();
+                        // _buttons[firstCoords[0]][firstCoords[1]] = new EmptyPiece();
+                        setupGame();
+
                         _firstClick = null;
                         _secondClick = null;
 
@@ -403,9 +408,20 @@ public class Hnefatafl extends ClockTimer{
                     else{
                         _firstClick = null;
                         _secondClick = null;
+
                     }
                 }
             }
+        }
+        public void swap() {
+            System.out.println(Arrays.toString(firstCoords));
+            System.out.println(Arrays.toString(secondCoords));
+            _ttt.remove(_firstClick);
+            _ttt.remove(_secondClick);
+            _ttt.add(_firstClick,secondCoords[0],secondCoords[1]);
+            _ttt.add(_secondClick,firstCoords[0], firstCoords[1]);
+            _ttt.revalidate();
+            _ttt.repaint();
         }
     }
 

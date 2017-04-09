@@ -10,6 +10,13 @@ public class GamePiece extends JButton implements interfaces.GamePieceInterface 
 
     public GamePiece(String imagePath) {
         setIcon(imagePath);
+        //this.setFont(new Font("Courier", Font.PLAIN, 48));
+        //set button tranparent for cool background
+        this.setOpaque(false);
+        this.setContentAreaFilled(false);
+        //this.setBorderPainted(false);
+        // Add this button to the _ttt panel
+        this.setBorder(null);
     }
 
     public void setIcon(String imagePath) {
