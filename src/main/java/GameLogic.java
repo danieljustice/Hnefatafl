@@ -1,5 +1,6 @@
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import game_pieces.*;
 
 /**
  *
@@ -22,10 +23,10 @@ public class GameLogic implements GameLogicInterface{
     /**
      * Returns integer array contains xy coordinates for button pressed.
      *
-     * @param jb    JButton that holds the current pushed button
+     * @param jb    GamePiece that holds the current pushed button
      * @return  returns an integer array that contains, the buttons location as (x,y) = ([0],[1])
      */
-    public int[] getXandY(JButton jb, JButton[][] _buttons){
+    public int[] getXandY(GamePiece jb, GamePiece[][] _buttons){
         int[] xyCord = new int[2];
         for(int i=0; i <gameWidth; i++){
             for(int j=0; j <gameHeight;j++){
@@ -45,36 +46,36 @@ public class GameLogic implements GameLogicInterface{
     * @param piecePlacement Jbutton that is where the latest piece was placed to see if a piece is destroyed
     * @return returns boolean true if a piece is taken out
     */
-    public JButton[][] attackPieces(JButton piecePlacement, ImageIcon emptyImageIcon, ImageIcon kingIcon, ImageIcon axeIcon, ImageIcon defenseIcon, JButton[][] _buttons){
+    public GamePiece[][] attackPieces(GamePiece piecePlacement, GamePiece[][] _buttons){
         int[] placement = getXandY(piecePlacement, _buttons);
         //testing for surrounding area
         //i+-2 j+-2
         //check the pieces east north south and west
-        ImageIcon currentImageIcon = (ImageIcon)piecePlacement.getIcon();
-        ImageIcon surroundingImageIcon;
-        ImageIcon victimPiece;
+
+        GamePiece victimPiece;
+        GamePiece surroundingPiece;
 
         if(placement[0] - 2 >= 0){
             //north
 
             //checks the north space piece and stores into this variable
-            surroundingImageIcon = (ImageIcon)_buttons[placement[0] - 2][placement[1]].getIcon();
+            surroundingPiece = _buttons[placement[0] - 2][placement[1]];
 
             //checks if the originating piece is a king or shield
-            if(currentImageIcon.getDescription().equals(kingIcon.getDescription()) || currentImageIcon.getDescription().equals(defenseIcon.getDescription())){
-                if(surroundingImageIcon.getDescription().equals(defenseIcon.getDescription()) || surroundingImageIcon.getDescription().equals(kingIcon.getDescription())){
-                    victimPiece = (ImageIcon)_buttons[placement[0] - 1][placement[1]].getIcon();
-                    if(!(victimPiece.getDescription().equals(defenseIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
-                        _buttons[placement[0] - 1][placement[1]].setIcon(emptyImageIcon);
+            if(isKing(piecePlacement) || isDefender(piecePlacement)){
+                if(isDefender(surroundingPiece) || isKing(surroundingPiece)){
+                    victimPiece = _buttons[placement[0] - 1][placement[1]];
+                    if(!(isDefender(victimPiece)) || isKing(victimPiece)){
+                        _buttons[placement[0] - 1][placement[1]] = new EmptyPiece();
                     }
                 }
             }
             //else axe
             else{
-                if(surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())){
-                    victimPiece = (ImageIcon)_buttons[placement[0] - 1][placement[1]].getIcon();
-                    if(!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
-                        _buttons[placement[0] - 1][placement[1]].setIcon(emptyImageIcon);
+                if(surroundingPiece.equals(piecePlacement)){
+                    victimPiece = _buttons[placement[0] - 1][placement[1]];
+                    if(!(victimPiece.getType() == piecePlacement.getType() || isKing(victimPiece))){
+                        _buttons[placement[0] - 1][placement[1]] = new EmptyPiece();
                     }
                 }
             }
@@ -85,23 +86,23 @@ public class GameLogic implements GameLogicInterface{
             //south
 
             //checks the north space piece and stores into this variable
-            surroundingImageIcon = (ImageIcon)_buttons[placement[0] + 2][placement[1]].getIcon();
+            surroundingPiece = _buttons[placement[0] + 2][placement[1]];
 
             //checks if the originating piece is a king or shield
-            if(currentImageIcon.getDescription().equals(kingIcon.getDescription()) || currentImageIcon.getDescription().equals(defenseIcon.getDescription())){
-                if(surroundingImageIcon.getDescription().equals(defenseIcon.getDescription()) || surroundingImageIcon.getDescription().equals(kingIcon.getDescription())){
-                    victimPiece = (ImageIcon)_buttons[placement[0] + 1][placement[1]].getIcon();
-                    if(!(victimPiece.getDescription().equals(defenseIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
-                        _buttons[placement[0] + 1][placement[1]].setIcon(emptyImageIcon);
+            if(isKing(piecePlacement) || isDefender(piecePlacement)){
+                if(isDefender(surroundingPiece) || isKing(surroundingPiece)){
+                    victimPiece = _buttons[placement[0] + 1][placement[1]];
+                    if(!(isDefender(victimPiece)) || isKing(victimPiece)){
+                        _buttons[placement[0] + 1][placement[1]] = new EmptyPiece();
                     }
                 }
             }
             //else axe
             else{
-                if(surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())){
-                    victimPiece = (ImageIcon)_buttons[placement[0] + 1][placement[1]].getIcon();
-                    if(!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
-                        _buttons[placement[0] + 1][placement[1]].setIcon(emptyImageIcon);
+                if(surroundingPiece.equals(piecePlacement)){
+                    victimPiece = _buttons[placement[0] + 1][placement[1]];
+                    if(!(victimPiece.getType() == piecePlacement.getType()) || isKing(victimPiece)){
+                        _buttons[placement[0] + 1][placement[1]] = new EmptyPiece();
                     }
                 }
             }
@@ -110,23 +111,23 @@ public class GameLogic implements GameLogicInterface{
             //west
 
             //checks the north space piece and stores into this variable
-            surroundingImageIcon = (ImageIcon)_buttons[placement[0]][placement[1] - 2].getIcon();
+            surroundingPiece = _buttons[placement[0]][placement[1] - 2];
 
             //checks if the originating piece is a king or shield
-            if(currentImageIcon.getDescription().equals(kingIcon.getDescription()) || currentImageIcon.getDescription().equals(defenseIcon.getDescription())){
-                if(surroundingImageIcon.getDescription().equals(defenseIcon.getDescription()) || surroundingImageIcon.getDescription().equals(kingIcon.getDescription())){
-                    victimPiece = (ImageIcon)_buttons[placement[0]][placement[1] - 1].getIcon();
-                    if(!(victimPiece.getDescription().equals(defenseIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
-                        _buttons[placement[0]][placement[1] - 1].setIcon(emptyImageIcon);
+            if(isKing(piecePlacement) || isDefender(piecePlacement)){
+                if(isDefender(surroundingPiece) || isKing(surroundingPiece)){
+                    victimPiece = _buttons[placement[0]][placement[1] - 1];
+                    if(!(isDefender(victimPiece)) || isKing(victimPiece)){
+                        _buttons[placement[0]][placement[1] - 1] = new EmptyPiece();
                     }
                 }
             }
             //else axe
             else{
-                if(surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())){
-                    victimPiece = (ImageIcon)_buttons[placement[0]][placement[1] - 1].getIcon();
-                    if(!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
-                        _buttons[placement[0]][placement[1] - 1].setIcon(emptyImageIcon);
+                if(surroundingPiece.equals(piecePlacement)){
+                    victimPiece = _buttons[placement[0]][placement[1] - 1];
+                    if(!(victimPiece.getType() == piecePlacement.getType() || isKing(victimPiece))){
+                        _buttons[placement[0]][placement[1] - 1] = new EmptyPiece();
                     }
                 }
             }
@@ -135,23 +136,23 @@ public class GameLogic implements GameLogicInterface{
             //east
 
             //checks the north space piece and stores into this variable
-            surroundingImageIcon = (ImageIcon)_buttons[placement[0]][placement[1] + 2].getIcon();
+            surroundingPiece = _buttons[placement[0]][placement[1] + 2];
 
             //checks if the originating piece is a king or shield
-            if(currentImageIcon.getDescription().equals(kingIcon.getDescription()) || currentImageIcon.getDescription().equals(defenseIcon.getDescription())){
-                if(surroundingImageIcon.getDescription().equals(defenseIcon.getDescription()) || surroundingImageIcon.getDescription().equals(kingIcon.getDescription())){
-                    victimPiece = (ImageIcon)_buttons[placement[0]][placement[1] + 1].getIcon();
-                    if(!(victimPiece.getDescription().equals(defenseIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
-                        _buttons[placement[0]][placement[1] + 1].setIcon(emptyImageIcon);
+            if(isKing(piecePlacement) || isDefender(piecePlacement)){
+                if(isDefender(surroundingPiece) || isKing(surroundingPiece)){
+                    victimPiece = _buttons[placement[0]][placement[1] + 1];
+                    if(!(isDefender(victimPiece) || isKing(victimPiece))){
+                        _buttons[placement[0]][placement[1] + 1] = new EmptyPiece();
                     }
                 }
             }
             //else axe
             else{
-                if(surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())){
-                    victimPiece = (ImageIcon)_buttons[placement[0]][placement[1] + 1].getIcon();
-                    if(!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
-                        _buttons[placement[0] ][placement[1] + 1].setIcon(emptyImageIcon);
+                if(surroundingPiece.equals(piecePlacement)){
+                    victimPiece = _buttons[placement[0]][placement[1] + 1];
+                    if(!(victimPiece.getType() == piecePlacement.getType() || isKing(victimPiece))){
+                        _buttons[placement[0] ][placement[1] + 1] = new EmptyPiece();
                     }
                 }
             }
@@ -165,8 +166,7 @@ public class GameLogic implements GameLogicInterface{
     *  @param Not Available
     *  @return returns int 0 for no winning condition, int 1 for king surrounded shields lose, int 2 for axe defeated for no more pieces
     */
-    public int piecesLeft(ImageIcon axeIcon, ImageIcon kingIcon, JButton[][] _buttons){
-        ImageIcon currentImageIcon;
+    public int piecesLeft(GamePiece[][] _buttons){
         int surroundedKingSides = 0;
         int attackPieces = 0;
 
@@ -174,22 +174,22 @@ public class GameLogic implements GameLogicInterface{
         for(int i=0; i <gameWidth; i++){
             for(int j=0; j <gameHeight;j++){
                 //
-                currentImageIcon = (ImageIcon)_buttons[i][j].getIcon();
-                if(currentImageIcon.getDescription().equals(axeIcon.getDescription())){
+                GamePiece piecePlacement = _buttons[i][j];
+                if(isAttacker(piecePlacement)){
                     //see if there are pieces left for axes
                     attackPieces++;
                 }
-                else if(currentImageIcon.getDescription().equals(kingIcon.getDescription())){
+                else if(isKing(piecePlacement)){
                     //check if king is surrounded
                     //testing for surrounding area
                     //i+-1 j+-1
                     //check the pieces east north south and west
-                    ImageIcon surroundingImageIcon;
+                    GamePiece surroundingPiece;
 
                     if(i - 1 >= 0){
                         //north
-                        surroundingImageIcon = (ImageIcon)_buttons[i - 1][j].getIcon();
-                        if(surroundingImageIcon.getDescription().equals(axeIcon.getDescription())){
+                        surroundingPiece = _buttons[i - 1][j];
+                        if(isAttacker(surroundingPiece)){
                             surroundedKingSides++;
                         }
                     }
@@ -201,8 +201,8 @@ public class GameLogic implements GameLogicInterface{
                     if(i + 1 < gameHeight){
                         //south
 
-                        surroundingImageIcon = (ImageIcon)_buttons[i + 1][j].getIcon();
-                        if(surroundingImageIcon.getDescription().equals(axeIcon.getDescription())){
+                        surroundingPiece = _buttons[i + 1][j];
+                        if(isAttacker(surroundingPiece)){
                             surroundedKingSides++;
                         }
                     }
@@ -213,8 +213,8 @@ public class GameLogic implements GameLogicInterface{
                     if(j - 1 >= 0){
                         //west
 
-                        surroundingImageIcon = (ImageIcon)_buttons[i][j - 1].getIcon();
-                        if(surroundingImageIcon.getDescription().equals(axeIcon.getDescription())){
+                        surroundingPiece = _buttons[i][j - 1];
+                        if(isAttacker(surroundingPiece)){
                             surroundedKingSides++;
                         }
                     }
@@ -225,8 +225,8 @@ public class GameLogic implements GameLogicInterface{
                     if(j + 1 < gameWidth){
                         //east
 
-                        surroundingImageIcon = (ImageIcon)_buttons[i][j + 1].getIcon();
-                        if(surroundingImageIcon.getDescription().equals(axeIcon.getDescription())){
+                        surroundingPiece = _buttons[i][j + 1];
+                        if(isAttacker(surroundingPiece)){
                             surroundedKingSides++;
                         }
                     }
@@ -258,7 +258,7 @@ public class GameLogic implements GameLogicInterface{
      * @param destination   an integer array with 2 values, [0] index is x, [1] is y
      * @return  returns true if valid move, false if not
      */
-    public boolean isValidMove(int[] start, int[] destination, boolean isKingPiece, JButton[][] _buttons){
+    public boolean isValidMove(int[] start, int[] destination, boolean isKingPiece, GamePiece[][] _buttons){
 
         if(start[0] == destination[0] && start[1] == destination[1] )
             return false;
@@ -290,7 +290,7 @@ public class GameLogic implements GameLogicInterface{
      * @param destination start integer[] with size 2: index 0 is x cord, index 1 is y cord
      * @return returns false if any spaces are occupied between the start and destination
      */
-    public boolean canMoveToDestination(int[] start, int[] destination, JButton[][] _buttons ){
+    public boolean canMoveToDestination(int[] start, int[] destination, GamePiece[][] _buttons ){
         int[] counter = new int[2];
         counter[0] = start[0];
         counter[1] = start[1];
@@ -340,12 +340,26 @@ public class GameLogic implements GameLogicInterface{
      * @param destination integer[] of size 2: index 0 is x cord, index 1 is y cord
      * @return true if the space is occupied by axe, shield or king
      */
-    public boolean isSpaceOccupied(int[] destination, JButton[][] _buttons ){
-        ImageIcon currentImageIcon = (ImageIcon) _buttons[destination[0]][destination[1]].getIcon();
-        if(currentImageIcon==null || currentImageIcon.getDescription() == null)
+    public boolean isSpaceOccupied(int[] destination, GamePiece[][] _buttons ){
+        GamePiece piecePlacement =  _buttons[destination[0]][destination[1]];
+        if(piecePlacement==null || !isEmpty(piecePlacement))
         	return true;
-        if( !currentImageIcon.getDescription().equals("empty"))
-            return true;
         return false;
+    }
+
+    public boolean isDefender(GamePiece piece) {
+        return (piece.getType() == GamePieceType.DEFENDER);
+    }
+
+    public boolean isAttacker(GamePiece piece) {
+        return (piece.getType() == GamePieceType.ATTACKER);
+    }
+
+    public boolean isEmpty(GamePiece piece) {
+        return (piece.getType() == GamePieceType.EMPTY);
+    }
+
+    public boolean isKing(GamePiece piece) {
+        return (piece.getType() == GamePieceType.KING);
     }
 }

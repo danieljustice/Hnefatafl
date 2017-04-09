@@ -7,6 +7,8 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import org.omg.CORBA.SystemException;
 
+import game_pieces.*;
+
 public class Hnefatafl extends ClockTimer{
 
     public int gameWidth = 11;
@@ -21,20 +23,25 @@ public class Hnefatafl extends ClockTimer{
     public GameLogic gameLogic = new GameLogic(gameWidth, gameHeight);
 
 
-    private JButton _firstClick = null;
-    private JButton _secondClick = null;
+    private GamePiece _firstClick = null;
+    private GamePiece _secondClick = null;
     private boolean isFirstPlayer = true;
     private ImageIcon firstClickImageIcon = null;
     private ImageIcon secondClickImageIcon = null;
     private boolean axeStarted = false;
     private boolean shieldStarted = false;
 
-    public JButton[][] _buttons = new JButton[gameWidth][gameHeight];
+    public GamePiece[][] _buttons = new GamePiece[gameWidth][gameHeight];
     public ImageIcon defenseIcon;
     public ImageIcon axeIcon;
     public ImageIcon kingIcon;
     public ImageIcon emptyImageIcon;
     public Image backgroundIcon;
+
+    private String defenderPath = "src/Assets/First Shield.png";
+    private String attackerPath = "src/Assets/First Axe.png";
+    private String kingPath = "src/Assets/Crown.PNG";
+    private String emptyPath = "src/Assets/empty.png";
 
 
     private ClockTimer axeTimer = new ClockTimer();
@@ -54,8 +61,8 @@ public class Hnefatafl extends ClockTimer{
     public boolean loadImages(){
         boolean success = true;
         try {
-            defenseIcon = new ImageIcon(ImageIO.read(new File("src/Assets/First Shield.png")));
-            defenseIcon.setDescription("shield");
+            defenseIcon = new ImageIcon(ImageIO.read(new File(defenderPath)));
+            defenseIcon.setDescription(GamePieceType.DEFENDER.toString());
         } catch (Exception e) {
             //TODO: handle exception
             System.out.println("Shield: " + e);
@@ -64,8 +71,8 @@ public class Hnefatafl extends ClockTimer{
 
 
         try {
-            axeIcon = new ImageIcon(ImageIO.read(new File("src/Assets/First Axe.png")));
-            axeIcon.setDescription("axe");
+            axeIcon = new ImageIcon(ImageIO.read(new File(attackerPath)));
+            axeIcon.setDescription(GamePieceType.ATTACKER.toString());
         } catch (Exception e) {
             //TODO: handle exception
             System.out.println("Axe: " + e);
@@ -73,9 +80,9 @@ public class Hnefatafl extends ClockTimer{
         }
 
         try {
-            kingIcon = new ImageIcon(ImageIO.read(new File("src/Crown.PNG")));
+            kingIcon = new ImageIcon(ImageIO.read(new File(kingPath)));
 
-            kingIcon.setDescription("king");
+            kingIcon.setDescription(GamePieceType.KING.toString());
         } catch (Exception e) {
             //TODO: handle exception
             System.out.println("Crown: " + e);
@@ -84,8 +91,8 @@ public class Hnefatafl extends ClockTimer{
 
 
         try {
-            emptyImageIcon = new ImageIcon(ImageIO.read(new File("src/Assets/empty.png")));
-            emptyImageIcon.setDescription("empty");
+            emptyImageIcon = new ImageIcon(ImageIO.read(new File(emptyPath)));
+            emptyImageIcon.setDescription(GamePieceType.EMPTY.toString());
 
         } catch (Exception e) {
             //TODO: handle exception
@@ -147,10 +154,10 @@ public class Hnefatafl extends ClockTimer{
         tools.add(loadButton);
         tools.addSeparator();
 
-	JButton resignButton = new JButton("Resign");
+        JButton resignButton = new JButton("Resign");
         ActionListener resignButtonListener = new ResignButtonListener();
-	resignButton.addActionListener(resignButtonListener);
-	tools.add(resignButton); //no functions
+        resignButton.addActionListener(resignButtonListener);
+        tools.add(resignButton); //no functions
 
         tools.addSeparator();
         tools.addSeparator();
@@ -212,30 +219,30 @@ public class Hnefatafl extends ClockTimer{
                 if(_buttons[i][j] == null) {
                     if((i == 0 && (j > 2 && j < 8)) || (i == 1 && (j == 5))){
                         //top black pieces
-                        _buttons[i][j] = new JButton(axeIcon);
+                        _buttons[i][j] = new AttackerPiece(attackerPath);
                     }
                     else if((j == 0 && (i > 2 && i < 8)) || (i == 5 && (j == 1))){
                         //left black pieces
-                        _buttons[i][j] = new JButton(axeIcon);
+                        _buttons[i][j] = new AttackerPiece(attackerPath);
                     }
                     else if((j == 10 && (i > 2 && i < 8)) || (i == 5 && (j == 9))){
                         //right black pieces
-                        _buttons[i][j] = new JButton(axeIcon);
+                        _buttons[i][j] = new AttackerPiece(attackerPath);
                     }
                     else if((i == 10 && (j > 2 && j < 8)) || (i == 9 && (j == 5))){
                         //bottom black pieces
-                        _buttons[i][j] = new JButton(axeIcon);
+                        _buttons[i][j] = new AttackerPiece(attackerPath);
                     }
                     else if(i == 5 && j == 5){
-                        _buttons[i][j] = new JButton(kingIcon);
+                        _buttons[i][j] = new KingPiece(kingPath);
                     }
                     else if((i == 3 && j == 5) || (i == 4 && (j > 3 && j <7)) || (i == 5 && (j > 2 && j <8)) || (i == 6 && (j > 3 && j <7)) || (i == 7 && j == 5)){
                         //center white pieces
-                        _buttons[i][j] = new JButton(defenseIcon);
+                        _buttons[i][j] = new DefenderPiece(defenderPath);
                     }
                     else{
                         // Make a new button in the array location with text "_"
-                        _buttons[i][j] = new JButton(emptyImageIcon);
+                        _buttons[i][j] = new EmptyPiece(emptyPath);
 
                     }
                 }
@@ -290,27 +297,27 @@ public class Hnefatafl extends ClockTimer{
         @Override
         public void actionPerformed(ActionEvent e) {
 
-            JButton temp = (JButton) e.getSource();
+            GamePiece temp = (GamePiece) e.getSource();
             ImageIcon currentImageIcon = (ImageIcon)temp.getIcon();
             int noPiecesCheck;
 
-            if(_firstClick == null && currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())){
+            if(_firstClick == null && gameLogic.isEmpty(temp)){
                 //Spit out some error message saying there is no game piece here
             }
             else{
                 //Turn enforcing
                 if(_firstClick == null){
-                    _firstClick = (JButton) e.getSource();
+                    _firstClick = (GamePiece) e.getSource();
                     firstClickImageIcon = (ImageIcon)_firstClick.getIcon();
                     if(isFirstPlayer){
-                        if(firstClickImageIcon.getDescription().equals(defenseIcon.getDescription()) || firstClickImageIcon.getDescription().equals(kingIcon.getDescription())){
+                        if(gameLogic.isDefender(_firstClick) || gameLogic.isKing(_firstClick)){
                             _firstClick = null;
                             //Might want to add more functionality later. To have a pop up telling user it is not their turn.
 
                         }
                     }
                     else if(!isFirstPlayer){
-                        if(firstClickImageIcon.getDescription().equals(axeIcon.getDescription())){
+                        if(gameLogic.isAttacker(_firstClick)){
                             _firstClick = null;
                              //Might want to add more functionality later. To have a pop up telling user it is not their turn.
                         }
@@ -318,13 +325,13 @@ public class Hnefatafl extends ClockTimer{
 
                 }
                 else{
-                    _secondClick = (JButton) e.getSource();
+                    _secondClick = (GamePiece) e.getSource();
                     secondClickImageIcon = (ImageIcon)_secondClick.getIcon();
-                    if(gameLogic.isValidMove(gameLogic.getXandY(_firstClick, _buttons), gameLogic.getXandY(_secondClick, _buttons), firstClickImageIcon.getDescription().equals(kingIcon.getDescription()), _buttons)){
-                        if(firstClickImageIcon.getDescription().equals(axeIcon.getDescription())) {
-                            _secondClick.setIcon(axeIcon);
-                            //attackPieces(JButton piecePlacement, ImageIcon emptyImageIcon, ImageIcon kingIcon, ImageIcon axeIcon, ImageIcon defenseIcon, int gameWidth, int gameHeight, JButton[][] _buttons)
-                            _buttons = gameLogic.attackPieces(_secondClick, emptyImageIcon, kingIcon, axeIcon, defenseIcon, _buttons);
+                    if(gameLogic.isValidMove(gameLogic.getXandY(_firstClick, _buttons), gameLogic.getXandY(_secondClick, _buttons), gameLogic.isKing(_firstClick), _buttons)){
+                        if(gameLogic.isAttacker(_firstClick)) {
+                            _secondClick = new AttackerPiece();
+                            //attackPieces(GamePiece piecePlacement, ImageIcon emptyImageIcon, ImageIcon kingIcon, ImageIcon axeIcon, ImageIcon defenseIcon, int gameWidth, int gameHeight, GamePiece[][] _buttons)
+                            _buttons = gameLogic.attackPieces(_secondClick, _buttons);
                             isFirstPlayer=false;
                             axeTimer.stopTimerThread();
                             shieldStarted = true;
@@ -332,17 +339,17 @@ public class Hnefatafl extends ClockTimer{
 
                             turn.setText("Shield Moves");
                         }
-                        else if(firstClickImageIcon.getDescription().equals(defenseIcon.getDescription())
-                                || firstClickImageIcon.getDescription().equals(kingIcon.getDescription()))
+                        else if(gameLogic.isDefender(_firstClick)
+                                || gameLogic.isKing(_firstClick))
                         {
-                            if(firstClickImageIcon.getDescription().equals(kingIcon.getDescription())){
-                                _secondClick.setIcon(kingIcon);
-                                _buttons = gameLogic.attackPieces(_secondClick, emptyImageIcon, kingIcon, axeIcon, defenseIcon, _buttons);
+                            if(gameLogic.isKing(_firstClick)){
+                                _secondClick = new KingPiece();
+                                _buttons = gameLogic.attackPieces(_secondClick, _buttons);
 
                             }
                             else{
-                                _secondClick.setIcon(defenseIcon);
-                                _buttons = gameLogic.attackPieces(_secondClick, emptyImageIcon, kingIcon, axeIcon, defenseIcon, _buttons);
+                                _secondClick = new DefenderPiece();
+                                _buttons = gameLogic.attackPieces(_secondClick, _buttons);
 
                             }
 
@@ -368,12 +375,12 @@ public class Hnefatafl extends ClockTimer{
                                 shieldTimer.stopTimerThread();
                             }
                         }
-                        _firstClick.setIcon(emptyImageIcon);
+                        _firstClick = new EmptyPiece();
                         _firstClick = null;
                         _secondClick = null;
 
                         //check if there are no pieces left to see if theres a winner
-                        noPiecesCheck = gameLogic.piecesLeft(axeIcon, kingIcon, _buttons);
+                        noPiecesCheck = gameLogic.piecesLeft(_buttons);
                         //shields win
                         if(noPiecesCheck == 1 || (axeTimer.isNull() && axeStarted)){
                             turn.setText("Shield Wins!");
@@ -411,7 +418,7 @@ public class Hnefatafl extends ClockTimer{
         @Override
         public void actionPerformed(ActionEvent e) {
             // Reset button array to redraw the board in the "new game" state
-            _buttons = new JButton[gameWidth][gameHeight];
+            _buttons = new GamePiece[gameWidth][gameHeight];
             // Set the first player's turn
             isFirstPlayer = true;
             turn.setText("Axe Moves");
@@ -489,7 +496,7 @@ public class Hnefatafl extends ClockTimer{
                     // Load the previous game board button states
                     for(int i=0; i < gameWidth; i++){
                         for(int j=0; j < gameHeight;j++){
-                            _buttons[i][j] = (JButton) oip.readObject();
+                            _buttons[i][j] = (GamePiece) oip.readObject();
                         }
                     }
 

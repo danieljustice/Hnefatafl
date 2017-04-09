@@ -1,5 +1,6 @@
 import static org.junit.Assert.*;
-import javax.swing.JButton;
+//import javax.swing.GamePiece;
+import game_pieces.*;
 import org.junit.Test;
 import org.junit.Before;
 import java.awt.image.BufferedImage;
@@ -12,6 +13,10 @@ public class HnefataflTests extends Hnefatafl{
 	private GameLogic g;
     private static final int GAMEWIDTH = 11;
     private static final int GAMEHEIGHT = 11;
+    private static final String D_PATH = "src/Assets/First Shield.png";
+    private static final String A_PATH = "src/Assets/First Axe.png";
+    private static final String K_PATH = "src/Assets/Crown.PNG";
+    private static final String E_PATH = "src/Assets/empty.png";
 
     @Before
     public void setUp(){
@@ -44,11 +49,11 @@ public class HnefataflTests extends Hnefatafl{
     public void testForEmptyButton(){
     	//must set up the game on the drawnboard
     	h.setupGame();
-    	JButton testButton = h._buttons[1][1];
+    	GamePiece testButton = h._buttons[1][1];
     	assertTrue(testButton != null);
     	ImageIcon testImageIcon = (ImageIcon)testButton.getIcon();
     	String testDescription = testImageIcon.getDescription();
-    	assertTrue(testDescription.equals("empty"));
+    	assertTrue(testDescription.equals(GamePieceType.EMPTY.toString()));
     }
 
     /*
@@ -59,7 +64,7 @@ public class HnefataflTests extends Hnefatafl{
     	//into an axe, then turn into an empty and then into a shield
 
     	game.setupGame();
-    	JButton testButton = game._buttons[1][1];
+    	GamePiece testButton = game._buttons[1][1];
     	assertTrue(testButton != null);
     	ImageIcon testImageIcon = (ImageIcon)testButton.getIcon();
     	String testDescription = testImageIcon.getDescription();
@@ -89,8 +94,8 @@ public class HnefataflTests extends Hnefatafl{
      */
 	@Test
 	public void attackPiecesTest() {
-		JButton jbutton = h._buttons[2][2];
-		assertEquals(h._buttons, g.attackPieces(jbutton, h.emptyImageIcon, h.kingIcon, h.axeIcon, h.defenseIcon, h._buttons));
+		GamePiece jbutton = h._buttons[2][2];
+		assertEquals(h._buttons, g.attackPieces(jbutton, h._buttons));
 
 	}
 
@@ -99,7 +104,7 @@ public class HnefataflTests extends Hnefatafl{
 	 */
 	@Test
 	public void piecesLeftTest() {
-		assertEquals(0, g.piecesLeft(h.axeIcon, h.kingIcon, h._buttons));;
+		assertEquals(0, g.piecesLeft(h._buttons));;
 	}
 
 	/**
@@ -107,7 +112,7 @@ public class HnefataflTests extends Hnefatafl{
 	 */
 	@Test
 	public void GetXYTest() {
-		JButton jbutton = h._buttons[0][0];
+		GamePiece jbutton = h._buttons[0][0];
 		int[] xy = g.getXandY(jbutton, h._buttons);
 		int[] testvalues = new int[]{ 0, 0 };
 		assertEquals(xy[0],testvalues[0]);
@@ -120,7 +125,7 @@ public class HnefataflTests extends Hnefatafl{
 	@Test
 	public void IsSpaceOccupiedTestOccupied() {
 		h.setupGame();
-		h._buttons[0][2] = new JButton(axeIcon);
+		h._buttons[0][2] = new AttackerPiece();
 		assertTrue(g.isSpaceOccupied(new int[] {0,2}, h._buttons ));
 
 
@@ -132,7 +137,7 @@ public class HnefataflTests extends Hnefatafl{
 	@Test
 	public void IsSpaceOccupiedTestNotOccupied() {
 		h.setupGame();
-		h._buttons[0][0] = new JButton(emptyImageIcon);
+		h._buttons[0][0] = new EmptyPiece();
 		assertFalse(g.isSpaceOccupied(new int[] {0,0}, h._buttons ));
 	}
 
