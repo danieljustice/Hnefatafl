@@ -18,16 +18,18 @@ public class Hnefatafl extends ClockTimer{
     JLabel turn = new JLabel("Axe Moves");
     private JPanel _newPanel = new JPanel();
     private JPanel _timerPanel = new JPanel();
-    public GameLogic gameLogic = new GameLogic(gameWidth, gameHeight);
 
 
-    private JButton _firstClick = null;
-    private JButton _secondClick = null;
-    private boolean isFirstPlayer = true;
-    private ImageIcon firstClickImageIcon = null;
-    private ImageIcon secondClickImageIcon = null;
-    private boolean axeStarted = false;
-    private boolean shieldStarted = false;
+    // private boolean isFirstPlayer = true;
+    // private JButton _firstClick = null;
+    // private JButton _secondClick = null;
+    // private ImageIcon firstClickImageIcon = null;
+    // private ImageIcon secondClickImageIcon = null;
+    // private boolean axeStarted = false;
+    // private boolean shieldStarted = false;
+    private ClockTimer axeTimer = new ClockTimer();
+    private ClockTimer shieldTimer = new ClockTimer();
+    private GamePanel gamePanel;
 
     public JButton[][] _buttons = new JButton[gameWidth][gameHeight];
     public ImageIcon defenseIcon;
@@ -37,12 +39,16 @@ public class Hnefatafl extends ClockTimer{
     public Image backgroundIcon;
 
 
-    private ClockTimer axeTimer = new ClockTimer();
-    private ClockTimer shieldTimer = new ClockTimer();
     public Hnefatafl() {
         //pull in images for icons on the buttons
         if(loadImages()){
         	drawClock();
+            gamePanel = new GamePanel(
+                gameWidth, gameHeight,
+                axeIcon, defenseIcon,
+                kingIcon, emptyImageIcon,
+                axeTimer, shieldTimer
+            );
             drawBoard();
         }
     }
@@ -186,9 +192,6 @@ public class Hnefatafl extends ClockTimer{
      */
     public void setupGame(){
         //reinitialize the panels for new games
-        _ttt = new JPanel();
-        _ttt.setLayout(new GridLayout(gameWidth, gameHeight));
-
         //At some point some smarter math need to be put in to automatically resize
         //any image to be the background
 
@@ -204,62 +207,12 @@ public class Hnefatafl extends ClockTimer{
        	//creates new panel with correctly sized background image
         BackgroundPanel backgroundPanel = new BackgroundPanel(backgroundImage, 0, 0, 0);
 
-
-        _newPanel = new JPanel();
-        _newPanel.setLayout(new FlowLayout());
-        for(int i=0; i<gameWidth; i++){
-            for (int j=0; j<gameHeight; j++) {
-                if(_buttons[i][j] == null) {
-                    if((i == 0 && (j > 2 && j < 8)) || (i == 1 && (j == 5))){
-                        //top black pieces
-                        _buttons[i][j] = new JButton(axeIcon);
-                    }
-                    else if((j == 0 && (i > 2 && i < 8)) || (i == 5 && (j == 1))){
-                        //left black pieces
-                        _buttons[i][j] = new JButton(axeIcon);
-                    }
-                    else if((j == 10 && (i > 2 && i < 8)) || (i == 5 && (j == 9))){
-                        //right black pieces
-                        _buttons[i][j] = new JButton(axeIcon);
-                    }
-                    else if((i == 10 && (j > 2 && j < 8)) || (i == 9 && (j == 5))){
-                        //bottom black pieces
-                        _buttons[i][j] = new JButton(axeIcon);
-                    }
-                    else if(i == 5 && j == 5){
-                        _buttons[i][j] = new JButton(kingIcon);
-                    }
-                    else if((i == 3 && j == 5) || (i == 4 && (j > 3 && j <7)) || (i == 5 && (j > 2 && j <8)) || (i == 6 && (j > 3 && j <7)) || (i == 7 && j == 5)){
-                        //center white pieces
-                        _buttons[i][j] = new JButton(defenseIcon);
-                    }
-                    else{
-                        // Make a new button in the array location with text "_"
-                        _buttons[i][j] = new JButton(emptyImageIcon);
-
-                    }
-                }
-                // Associate a new ButtonListener to the button (see below)
-                ActionListener buttonListener = new ButtonListener();
-                _buttons[i][j].addActionListener(buttonListener);
-                // Set the font on the button
-                _buttons[i][j].setFont(new Font("Courier", Font.PLAIN, 48));
-                //set button tranparent for cool background
-                _buttons[i][j].setOpaque(false);
-                _buttons[i][j].setContentAreaFilled(false);
-                //_buttons[i][j].setBorderPainted(false);
-                // Add this button to the _ttt panel
-                _buttons[i][j].setBorder(null);
-                _ttt.add(_buttons[i][j]);
-            }
-        }
+        gamePanel.reloadGame(_buttons);
 
         // This will place the tic-tac-toe panel at the top of
         // the frame and the newPanel panel at the bottom
         _frame.add(backgroundPanel, BorderLayout.CENTER);
-        _ttt.setBorder(null);
-        backgroundPanel.add(_ttt, BorderLayout.CENTER);
-        _frame.add(_newPanel, BorderLayout.SOUTH);
+        backgroundPanel.add(gamePanel, BorderLayout.CENTER);
 
     }
 
@@ -276,133 +229,6 @@ public class Hnefatafl extends ClockTimer{
     // #################################################################
 
     /**
-     * Custom action listener executes every time a button on the game board is clicked.
-     *
-     * Listener also handles win conditions and enforces turns through the use of
-     * _firstClick and _secondClick buttons, as well as the isFirstTurn boolean,
-     * describing whose turn it is supposed to be.
-     */
-    private class ButtonListener implements ActionListener {
-
-        // Every time we click the button, it will perform
-        // the following action.
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-
-            JButton temp = (JButton) e.getSource();
-            ImageIcon currentImageIcon = (ImageIcon)temp.getIcon();
-            int noPiecesCheck;
-
-            if(_firstClick == null && currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())){
-                //Spit out some error message saying there is no game piece here
-            }
-            else{
-                //Turn enforcing
-                if(_firstClick == null){
-                    _firstClick = (JButton) e.getSource();
-                    firstClickImageIcon = (ImageIcon)_firstClick.getIcon();
-                    if(isFirstPlayer){
-                        if(firstClickImageIcon.getDescription().equals(defenseIcon.getDescription()) || firstClickImageIcon.getDescription().equals(kingIcon.getDescription())){
-                            _firstClick = null;
-                            //Might want to add more functionality later. To have a pop up telling user it is not their turn.
-
-                        }
-                    }
-                    else if(!isFirstPlayer){
-                        if(firstClickImageIcon.getDescription().equals(axeIcon.getDescription())){
-                            _firstClick = null;
-                             //Might want to add more functionality later. To have a pop up telling user it is not their turn.
-                        }
-                    }
-
-                }
-                else{
-                    _secondClick = (JButton) e.getSource();
-                    secondClickImageIcon = (ImageIcon)_secondClick.getIcon();
-                    if(gameLogic.isValidMove(gameLogic.getXandY(_firstClick, _buttons), gameLogic.getXandY(_secondClick, _buttons), firstClickImageIcon.getDescription().equals(kingIcon.getDescription()), _buttons)){
-                        if(firstClickImageIcon.getDescription().equals(axeIcon.getDescription())) {
-                            _secondClick.setIcon(axeIcon);
-                            //attackPieces(JButton piecePlacement, ImageIcon emptyImageIcon, ImageIcon kingIcon, ImageIcon axeIcon, ImageIcon defenseIcon, int gameWidth, int gameHeight, JButton[][] _buttons)
-                            _buttons = gameLogic.attackPieces(_secondClick, emptyImageIcon, kingIcon, axeIcon, defenseIcon, _buttons);
-                            isFirstPlayer=false;
-                            axeTimer.stopTimerThread();
-                            shieldStarted = true;
-                            shieldTimer.startTimerThread();
-
-                            turn.setText("Shield Moves");
-                        }
-                        else if(firstClickImageIcon.getDescription().equals(defenseIcon.getDescription())
-                                || firstClickImageIcon.getDescription().equals(kingIcon.getDescription()))
-                        {
-                            if(firstClickImageIcon.getDescription().equals(kingIcon.getDescription())){
-                                _secondClick.setIcon(kingIcon);
-                                _buttons = gameLogic.attackPieces(_secondClick, emptyImageIcon, kingIcon, axeIcon, defenseIcon, _buttons);
-
-                            }
-                            else{
-                                _secondClick.setIcon(defenseIcon);
-                                _buttons = gameLogic.attackPieces(_secondClick, emptyImageIcon, kingIcon, axeIcon, defenseIcon, _buttons);
-
-                            }
-
-                            if(((gameLogic.getXandY(_secondClick, _buttons)[0] == 0 && gameLogic.getXandY(_secondClick, _buttons)[1] == 0)
-                                    || (gameLogic.getXandY(_secondClick, _buttons)[0] == 0 && gameLogic.getXandY(_secondClick, _buttons)[1] == 10)
-                                    || (gameLogic.getXandY(_secondClick, _buttons)[0] == 10 && gameLogic.getXandY(_secondClick, _buttons)[1] == 0)
-                                    || (gameLogic.getXandY(_secondClick, _buttons)[0] == 10 && gameLogic.getXandY(_secondClick, _buttons)[1] == 10))
-                                    && firstClickImageIcon.getDescription().equals("K"))
-                            {
-                                turn.setText("Shield Wins!");
-                                for(int i = 0; i < 11; i++){
-                                    for(int j = 0; j < 11; j++){
-                                        _buttons[i][j].setEnabled(false);
-                                    }
-                                }
-                            }
-                            else{
-                                isFirstPlayer=true;
-                                    axeStarted = true;
-                                   axeTimer.startTimerThread();
-                                turn.setText("Axe Moves");
-
-                                shieldTimer.stopTimerThread();
-                            }
-                        }
-                        _firstClick.setIcon(emptyImageIcon);
-                        _firstClick = null;
-                        _secondClick = null;
-
-                        //check if there are no pieces left to see if theres a winner
-                        noPiecesCheck = gameLogic.piecesLeft(axeIcon, kingIcon, _buttons);
-                        //shields win
-                        if(noPiecesCheck == 1 || (axeTimer.isNull() && axeStarted)){
-                            turn.setText("Shield Wins!");
-                            for(int i = 0; i < 11; i++){
-                                for(int j = 0; j < 11; j++){
-                                    _buttons[i][j].setEnabled(false);
-                                }
-                            }
-                        }
-                        //axes win
-                        else if(noPiecesCheck == 2 || (shieldTimer.isNull() && shieldStarted)){
-                            turn.setText("Axes Wins!");
-                            for(int i = 0; i < 11; i++){
-                                for(int j = 0; j < 11; j++){
-                                    _buttons[i][j].setEnabled(false);
-                                }
-                            }
-                        }
-                    }
-                    else{
-                        _firstClick = null;
-                        _secondClick = null;
-                    }
-                }
-            }
-        }
-    }
-
-    /**
      * Custom action listener handles resetting the board to the new game state.
      *
      * Listener also sets the turn to the first player.
@@ -410,16 +236,16 @@ public class Hnefatafl extends ClockTimer{
     private class NewButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            // Reset button array to redraw the board in the "new game" state
-            _buttons = new JButton[gameWidth][gameHeight];
-            // Set the first player's turn
-            isFirstPlayer = true;
-            turn.setText("Axe Moves");
-            axeTimer = new ClockTimer();
-            shieldTimer = new ClockTimer();
-            axeStarted = false;
-            shieldStarted = false;
-            reloadBoard();
+            // // Reset button array to redraw the board in the "new game" state
+            // _buttons = new JButton[gameWidth][gameHeight];
+            // // Set the first player's turn
+            // isFirstPlayer = true;
+            // turn.setText("Axe Moves");
+            // axeTimer = new ClockTimer();
+            // shieldTimer = new ClockTimer();
+            // axeStarted = false;
+            // shieldStarted = false;
+            // reloadBoard();
         }
     }
 
@@ -433,35 +259,35 @@ public class Hnefatafl extends ClockTimer{
     private class SaveButtonListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
-            try{
-                JFileChooser fileChooser = new JFileChooser();
-                // Only executes if the user does not cancel. No change to game state regardless.
-                if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-                    File file = fileChooser.getSelectedFile();
-                    FileOutputStream fos = new FileOutputStream(file);
-                    ObjectOutputStream oos = new ObjectOutputStream(fos);
+            // try{
+            //     JFileChooser fileChooser = new JFileChooser();
+            //     // Only executes if the user does not cancel. No change to game state regardless.
+            //     if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+            //         File file = fileChooser.getSelectedFile();
+            //         FileOutputStream fos = new FileOutputStream(file);
+            //         ObjectOutputStream oos = new ObjectOutputStream(fos);
 
-                    // Save the current game board button states
-                    for(int i=0; i < gameWidth; i++){
-                        for(int j=0; j < gameHeight;j++){
-                            oos.writeObject(_buttons[i][j]);
-                        }
-                    }
+            //         // Save the current game board button states
+            //         for(int i=0; i < gameWidth; i++){
+            //             for(int j=0; j < gameHeight;j++){
+            //                 oos.writeObject(_buttons[i][j]);
+            //             }
+            //         }
 
-                    // Save the current player whose turn it is
-                    oos.writeObject(isFirstPlayer);
-                    oos.writeObject(turn);
-                    oos.writeObject(axeTimer.getTime());
-                    oos.writeObject(shieldTimer.getTime());
-                    oos.close();
-                    fos.close();
-                    JOptionPane.showMessageDialog(null, "File saved!");
-                } else {
-                    JOptionPane.showMessageDialog(null, "Operation canceled.");
-                }
-            } catch(IOException ex) {
-                System.out.println("File Writing Error!");
-            }
+            //         // Save the current player whose turn it is
+            //         oos.writeObject(isFirstPlayer);
+            //         oos.writeObject(turn);
+            //         oos.writeObject(axeTimer.getTime());
+            //         oos.writeObject(shieldTimer.getTime());
+            //         oos.close();
+            //         fos.close();
+            //         JOptionPane.showMessageDialog(null, "File saved!");
+            //     } else {
+            //         JOptionPane.showMessageDialog(null, "Operation canceled.");
+            //     }
+            // } catch(IOException ex) {
+            //     System.out.println("File Writing Error!");
+            // }
         }
     }
 
@@ -477,42 +303,42 @@ public class Hnefatafl extends ClockTimer{
         @Override
         public void actionPerformed(ActionEvent e) {
 
-            try{
-                JFileChooser fileChooser = new JFileChooser();
-                // Only executes if the user does not cancel. Otherwise game state is not changed.
-                if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-                    File file = fileChooser.getSelectedFile();
+            // try{
+            //     JFileChooser fileChooser = new JFileChooser();
+            //     // Only executes if the user does not cancel. Otherwise game state is not changed.
+            //     if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+            //         File file = fileChooser.getSelectedFile();
 
-                    FileInputStream fip = new FileInputStream(file);
-                    ObjectInputStream oip = new ObjectInputStream(fip);
+            //         FileInputStream fip = new FileInputStream(file);
+            //         ObjectInputStream oip = new ObjectInputStream(fip);
 
-                    // Load the previous game board button states
-                    for(int i=0; i < gameWidth; i++){
-                        for(int j=0; j < gameHeight;j++){
-                            _buttons[i][j] = (JButton) oip.readObject();
-                        }
-                    }
+            //         // Load the previous game board button states
+            //         for(int i=0; i < gameWidth; i++){
+            //             for(int j=0; j < gameHeight;j++){
+            //                 _buttons[i][j] = (JButton) oip.readObject();
+            //             }
+            //         }
 
-                    // Load the current player whose turn it is
-                    isFirstPlayer = (boolean) oip.readObject();
-                    turn = (JLabel) oip.readObject();
-                    int axeTime = (int) oip.readObject();
-                    int shieldTime = (int) oip.readObject();
-                    axeTimer = new ClockTimer(axeTime);
-                    shieldTimer = new ClockTimer(shieldTime);
-                    oip.close();
-                    fip.close();
-                    JOptionPane.showMessageDialog(null, "File loaded!");
-                    reloadBoard();
-                } else {
-                    JOptionPane.showMessageDialog(null, "Operation canceled.");
-                }
+            //         // Load the current player whose turn it is
+            //         isFirstPlayer = (boolean) oip.readObject();
+            //         turn = (JLabel) oip.readObject();
+            //         int axeTime = (int) oip.readObject();
+            //         int shieldTime = (int) oip.readObject();
+            //         axeTimer = new ClockTimer(axeTime);
+            //         shieldTimer = new ClockTimer(shieldTime);
+            //         oip.close();
+            //         fip.close();
+            //         JOptionPane.showMessageDialog(null, "File loaded!");
+            //         reloadBoard();
+            //     } else {
+            //         JOptionPane.showMessageDialog(null, "Operation canceled.");
+            //     }
 
-            }catch(IOException ex) {
-                System.out.println("File Reading Error!");
-            } catch(ClassNotFoundException cex) {
-                System.out.println("Class Not Found!");
-            }
+            // }catch(IOException ex) {
+            //     System.out.println("File Reading Error!");
+            // } catch(ClassNotFoundException cex) {
+            //     System.out.println("Class Not Found!");
+            // }
         }
     }
 
@@ -525,7 +351,7 @@ public class Hnefatafl extends ClockTimer{
 	private class ResignButtonListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(isFirstPlayer){
+            if(gamePanel.isFirstPlayer){
 				turn.setText("Shields Wins!");
 				for(int i = 0; i < 11; i++){
 					for(int j = 0; j < 11; j++){
