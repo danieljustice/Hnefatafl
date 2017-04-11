@@ -9,11 +9,13 @@ import javax.swing.ImageIcon;
 // all of these need implemented
 public class HnefataflGame implements GameInterface{
 
+    public int frameHeight = 850;
+    public int frameWidth = 850;
+
 
     /**
      * Take in a string a name for the game and returns a JFrame
-     * named by that string.  Currently the size of the JFrame is 
-     * locked to 850 X 850
+     * named by that string. 
      * @param gameName String to set as name of the JFrame
      * @return JFrame the JFrame needed as a base to the game
      */
@@ -21,13 +23,17 @@ public class HnefataflGame implements GameInterface{
 	public JFrame createGameFrame(String gameName){
 
         JFrame _frame = new JFrame(gameName);
-        int frameWidth = 850;
-        int frameHeight = 850;
         _frame.setSize(frameWidth, frameHeight);
         _frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         _frame.setVisible(true);
         return _frame;
     }
+
+
+    /**
+     * Creates the specific toolbar for Hnefatafl
+     * @return JFrame the JFrame needed as a base to the game
+     */
 
 	public JToolBar createToolBar(){
         JToolBar tools = new JToolBar();
@@ -76,8 +82,26 @@ public class HnefataflGame implements GameInterface{
         return tools;
     }
 
+    /**
+     * Take in a BufferedImage and returns a JPanel(BackgroundPanel)
+     * with that image painted on it
+     * @param backgroundImage BufferedImage to set image for JPanel
+     * @return BackgroundImage (JPanel) to be used for the game
+     */
+
     public JPanel createBackground(BufferedImage backgroundImage){
 
-        return null;
+       	//creates new BufferedImage with correctly sized background image
+        BufferedImage bImage = new BufferedImage(frameWidth, frameHeight, BufferedImage.TYPE_INT_RGB);
+        
+        Graphics2D painter = bImage.createGraphics();
+        //draw the "image" to the "bufferedImage"
+        painter.drawImage(backgroundImage, 0, 0, frameWidth, frameHeight, null);
+        
+
+       //Creates a backgroundPanel with bImage painted to it, the image should change size with it.
+        BackgroundPanel backgroundPanel = new BackgroundPanel(bImage, 0, 0, 0);
+
+        return backgroundPanel;
     }
 }

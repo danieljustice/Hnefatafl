@@ -5,8 +5,13 @@ import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageTypeSpecifier;
 import javax.swing.ImageIcon;
 import org.omg.CORBA.SystemException;
+import java.util.*;
+import javax.imageio.ImageReadParam;
+import javax.imageio.stream.ImageInputStream;
 
 public class ImageFactory{
 
@@ -28,19 +33,48 @@ public class ImageFactory{
 
     public static BufferedImage createBufferedImage(String filePath){
         Image image = null;
-        BufferedImage bufferedImage = null;
-        try {
-            bufferedImage = ImageIO.read(new File(filePath));
-            bufferedImage = new BufferedImage(425, 425, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage bufferedImage = null; //new BufferedImage(425, 425, BufferedImage.TYPE_INT_ARGB);
 
-            //this magically resizes the background image to the right size
-            Graphics2D graphics2D = (Graphics2D)bufferedImage.getGraphics();
-            graphics2D.scale(3.21, 3.21);
-            graphics2D.drawImage(image, 0, 0, null);
-            graphics2D.dispose();
+        try {
+            File file = new File(filePath);
+
+            //Create a stream to read the image
+            ImageInputStream iis = ImageIO.createImageInputStream(file);
+
+            Iterator<ImageReader> iter = ImageIO.getImageReadersByFormatName("png");
+            ImageReader imageReader = iter.next();
+            imageReader.setInput(iis, true);
+            ImageReadParam param = imageReader.getDefaultReadParam();
+            image = imageReader.read(0, param);
+            bufferedImage = new BufferedImage(image.getWidth(null),
+                image.getHeight(null), BufferedImage.TYPE_INT_RGB);
+
+             //using "painter" we can draw in to "bufferedImage"
+             Graphics2D painter = bufferedImage.createGraphics();
+
+            //draw the "image" to the "bufferedImage"
+            painter.drawImage(image, null, null);
+
+            ((ImageInputStream)imageReader.getInput()).close();
+            imageReader.dispose();
+
+
+
+
+
+
+            System.out.println(filePath);
+            // bufferedImage = new BufferedImage(425, 425, BufferedImage.TYPE_INT_ARGB);
+
+            // //this magically resizes the background image to the right size
+            // Graphics2D graphics2D = (Graphics2D)bufferedImage.getGraphics();
+            // graphics2D.scale(3.21, 3.21);
+            // graphics2D.drawImage(image, 0, 0, null);
+            // graphics2D.dispose();
         } catch (Exception e) {
             //TODO: handle exception
-            System.out.println(e);
+            bufferedImage = null;
+            System.err.println("Error at BufferedImage: " + e);
         }
         return bufferedImage;
     }

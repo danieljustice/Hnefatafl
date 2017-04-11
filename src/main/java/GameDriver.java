@@ -20,16 +20,21 @@ public class GameDriver{
        //hgame - set up game
         JFrame frame = hGame.createGameFrame("Hnefatafl");
         JToolBar tools =  hGame.createToolBar();
-        // BufferedImage backgroundImage = ImageFactory.createBufferedImage("src/assets/simpleBoard.png");
-        // JPanel panel =  hGame.createBackground(backgroundImage);
-        
-        
+
+        BufferedImage backgroundImage = ImageFactory.createBufferedImage("../../assets/simpleBoard.png");
+        JPanel background = hGame.createBackground(backgroundImage);
+
+        Dimension d =  background.getSize();
+        System.out.println("Width: " + d.width + "\tHeight: " +  d.height);
         //WARNING
         //All buttons on ToolBar currently do not work - They do not have listeners
+        frame.repaint();
         frame.add(tools, BorderLayout.PAGE_START);
-        // frame.add(panel);
-
-
+        frame.add(background);
+        frame.repaint();
+        frame.pack();
+        frame.setVisible(false);
+        frame.setVisible(true);
         // Hnefatafl game = new Hnefatafl();
         // game.drawBoard();
     }
