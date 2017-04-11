@@ -1,46 +1,56 @@
 import static org.junit.Assert.*;
 import javax.swing.JButton;
 import org.junit.Test;
+import org.junit.Before;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 public class HnefataflTests extends Hnefatafl{
-    private Hnefatafl game = new Hnefatafl();
+    private Hnefatafl h;
+	private GameLogic g;
+    private static final int GAMEWIDTH = 11;
+    private static final int GAMEHEIGHT = 11;
+
+    @Before
+    public void setUp(){
+        h = new Hnefatafl();
+        g = new GameLogic(GAMEWIDTH, GAMEHEIGHT);
+    }
 
     //Basic Test to verify that we can create an instance of Hnefatafl
 	@Test
     public void testInstanceOfHnefatafl(){
-    	assertTrue(game != null);
-    	assertTrue(game instanceof Hnefatafl);
+    	assertTrue(h != null);
+    	assertTrue(h instanceof Hnefatafl);
     }
     //Test that we are correctly bringing in ImageIcons for player pieces
     @Test
     public void testImageIcons(){
-    	assertTrue(game.defenseIcon != null);
-    	assertTrue(game.axeIcon != null);
-    	assertTrue(game.emptyImageIcon != null);
+    	assertTrue(h.defenseIcon != null);
+    	assertTrue(h.axeIcon != null);
+    	assertTrue(h.emptyImageIcon != null);
     }
     //Test that a board successfully renders itself
     @Test
     public void testBoardDraws(){
         // Test that the board draws without error
-        assertTrue(game.drawBoard());
+        assertTrue(h.drawBoard());
     }
-    
+
     //Test that there is an empty button where it is expected to be
     @Test
     public void testForEmptyButton(){
     	//must set up the game on the drawnboard
-    	game.setupGame();
-    	JButton testButton = game._buttons[1][1];
+    	h.setupGame();
+    	JButton testButton = h._buttons[1][1];
     	assertTrue(testButton != null);
     	ImageIcon testImageIcon = (ImageIcon)testButton.getIcon();
     	String testDescription = testImageIcon.getDescription();
     	assertTrue(testDescription.equals("empty"));
     }
-    
+
     /*
     @Test
     //EXPECT THIS TO BECOME OBSOLETE AT ONE POINT
@@ -79,18 +89,17 @@ public class HnefataflTests extends Hnefatafl{
      */
 	@Test
 	public void attackPiecesTest() {
-		Hnefatafl h = new Hnefatafl();
 		JButton jbutton = h._buttons[2][2];
-		assertTrue(h.attackPieces(jbutton));
+		assertEquals(h._buttons, g.attackPieces(jbutton, h.emptyImageIcon, h.kingIcon, h.axeIcon, h.defenseIcon, h._buttons));
+
 	}
-	
+
 	/*
 	 * Tests that piecesLeft() accurately recognizes when a team has no more pieces
 	 */
 	@Test
 	public void piecesLeftTest() {
-		Hnefatafl h = new Hnefatafl();
-		assertEquals(0, h.piecesLeft());
+		assertEquals(0, g.piecesLeft(h.axeIcon, h.kingIcon, h._buttons));;
 	}
 
 	/**
@@ -98,36 +107,35 @@ public class HnefataflTests extends Hnefatafl{
 	 */
 	@Test
 	public void GetXYTest() {
-		Hnefatafl h = new Hnefatafl();
 		JButton jbutton = h._buttons[0][0];
-		int[] xy = getXandY(jbutton);
+		int[] xy = g.getXandY(jbutton, h._buttons);
 		int[] testvalues = new int[]{ 0, 0 };
 		assertEquals(xy[0],testvalues[0]);
 		assertEquals(xy[1],testvalues[1]);
 	}
-	
+
 	/**
 	 * This test verifies that the space is occupied
 	 */
 	@Test
 	public void IsSpaceOccupiedTestOccupied() {
-		Hnefatafl h = new Hnefatafl();
 		h.setupGame();
 		h._buttons[0][2] = new JButton(axeIcon);
-		assertTrue(h.isSpaceOccupied(new int[] {0,2}));
+		assertTrue(g.isSpaceOccupied(new int[] {0,2}, h._buttons ));
+
+
 	}
-	
+
 	/**
 	 * This test verifies that the space is not occupied
 	 */
 	@Test
 	public void IsSpaceOccupiedTestNotOccupied() {
-		Hnefatafl h = new Hnefatafl();
 		h.setupGame();
 		h._buttons[0][0] = new JButton(emptyImageIcon);
-		assertFalse(h.isSpaceOccupied(new int[]{0,0}));
+		assertFalse(g.isSpaceOccupied(new int[] {0,0}, h._buttons ));
 	}
-	
+
 	/**
 	 * Tests that isValidMove() does not allow a piece to move to its current spot
 	 */
@@ -135,9 +143,9 @@ public class HnefataflTests extends Hnefatafl{
 	public void IsValidMoveCurrentLocationTest(){
 		int[] start = new int[] { 1, 1 };
 		int[] dest = new int[] { 1, 1 };
-		assertFalse(isValidMove(start, dest, false));
+		assertFalse(g.isValidMove(start, dest, false, h._buttons));
 	}
-	
+
 	/**
 	 * Tests that isValidMove() does not allow a piece to move diagonally
 	 */
@@ -145,9 +153,9 @@ public class HnefataflTests extends Hnefatafl{
 	public void IsValidMoveDiagonalMoveTest(){
 		int[] start = new int[] { 0, 0 };
 		int[] dest = new int[] { 1, 1 };
-		assertFalse(isValidMove(start, dest, false));
+		assertFalse(g.isValidMove(start, dest, false, h._buttons));
 	}
-	
+
 	/**
 	 * Tests that isValidMove() does not allow a piece to move left if it is not valid
 	 */
@@ -155,9 +163,9 @@ public class HnefataflTests extends Hnefatafl{
 	public void IsValidMoveLeftMoveTest(){
 		int[] start = new int[] { 0, 0 };
 		int[] dest = new int[] { 1, 0 };
-		assertTrue(isValidMove(start, dest, false));
+		assertTrue(g.isValidMove(start, dest, false, h._buttons));
 	}
-	
+
 	/**
 	 * Tests that isValidMove() does not allow a piece to move right if it is not valid
 	 */
@@ -165,9 +173,9 @@ public class HnefataflTests extends Hnefatafl{
 	public void IsValidMoveRightMoveTest(){
 		int[] start = new int[] { 2, 0 };
 		int[] dest = new int[] { 1, 0 };
-		assertTrue(isValidMove(start, dest, false));
+		assertTrue(g.isValidMove(start, dest, false, h._buttons));
 	}
-	
+
 	/**
 	 * Tests that isValidMove() does not allow a piece to move down if it is not valid
 	 */
@@ -175,9 +183,9 @@ public class HnefataflTests extends Hnefatafl{
 	public void IsValidMoveDownMoveTest(){
 		int[] start = new int[] { 0, 1 };
 		int[] dest = new int[] { 0, 2 };
-		assertTrue(isValidMove(start, dest, false));
+		assertTrue(g.isValidMove(start, dest, false, h._buttons));
 	}
-	
+
 	/**
 	 * Tests that isValidMove() does not allow a piece to move up if it is not valid
 	 */
@@ -185,6 +193,6 @@ public class HnefataflTests extends Hnefatafl{
 	public void IsValidMoveUpMoveTest(){
 		int[] start = new int[] { 0, 2 };
 		int[] dest = new int[] { 0, 1 };
-		assertTrue(isValidMove(start, dest, false));
+		assertTrue(g.isValidMove(start, dest, false, h._buttons));
 	}
 }
