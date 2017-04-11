@@ -21,11 +21,9 @@ public class GameDriver{
         JFrame frame = hGame.createGameFrame("Hnefatafl");
         JToolBar tools =  hGame.createToolBar();
 
-        BufferedImage backgroundImage = ImageFactory.createBufferedImage("../../assets/simpleBoard.png");
+        BufferedImage backgroundImage = ImageFactory.createBufferedImage("src/assets/simpleBoard.png");
         JPanel background = hGame.createBackground(backgroundImage);
 
-        Dimension d =  background.getSize();
-        System.out.println("Width: " + d.width + "\tHeight: " +  d.height);
         //WARNING
         //All buttons on ToolBar currently do not work - They do not have listeners
         frame.repaint();

@@ -33,7 +33,7 @@ public class ImageFactory{
 
     public static BufferedImage createBufferedImage(String filePath){
         Image image = null;
-        BufferedImage bufferedImage = null; //new BufferedImage(425, 425, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage bufferedImage = null; 
 
         try {
             File file = new File(filePath);
@@ -57,20 +57,6 @@ public class ImageFactory{
 
             ((ImageInputStream)imageReader.getInput()).close();
             imageReader.dispose();
-
-
-
-
-
-
-            System.out.println(filePath);
-            // bufferedImage = new BufferedImage(425, 425, BufferedImage.TYPE_INT_ARGB);
-
-            // //this magically resizes the background image to the right size
-            // Graphics2D graphics2D = (Graphics2D)bufferedImage.getGraphics();
-            // graphics2D.scale(3.21, 3.21);
-            // graphics2D.drawImage(image, 0, 0, null);
-            // graphics2D.dispose();
         } catch (Exception e) {
             //TODO: handle exception
             bufferedImage = null;
