@@ -7,7 +7,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import org.omg.CORBA.SystemException;
 
-public class Hnefatafl extends ClockTimer{
+public class Hnefatafl extends JPanel implements BackgroundInterface{
 
     public int gameWidth = 11;
     public int gameHeight = 11;
@@ -42,8 +42,7 @@ public class Hnefatafl extends ClockTimer{
     public Hnefatafl() {
         //pull in images for icons on the buttons
         if(loadImages()){
-        	drawClock();
-            drawBoard();
+            //setupGame();
         }
     }
 
@@ -53,52 +52,23 @@ public class Hnefatafl extends ClockTimer{
     **/
     public boolean loadImages(){
         boolean success = true;
-        try {
-            defenseIcon = new ImageIcon(ImageIO.read(new File("src/Assets/First Shield.png")));
-            defenseIcon.setDescription("shield");
-        } catch (Exception e) {
-            //TODO: handle exception
-            System.out.println("Shield: " + e);
-            success = false;
-        }
+        
+        defenseIcon = ImageFactory.createImageIcon("src/assets/First Shield.png", "shield");
+        
+        axeIcon = ImageFactory.createImageIcon("src/assets/First Axe.png", "axe");
+        
+        kingIcon = ImageFactory.createImageIcon("src/Crown.PNG", "king");
+        
+        emptyImageIcon = ImageFactory.createImageIcon("src/assets/empty.png", "empty");
 
 
-        try {
-            axeIcon = new ImageIcon(ImageIO.read(new File("src/Assets/First Axe.png")));
-            axeIcon.setDescription("axe");
-        } catch (Exception e) {
-            //TODO: handle exception
-            System.out.println("Axe: " + e);
-            success = false;
-        }
-
-        try {
-            kingIcon = new ImageIcon(ImageIO.read(new File("src/Crown.PNG")));
-
-            kingIcon.setDescription("king");
-        } catch (Exception e) {
-            //TODO: handle exception
-            System.out.println("Crown: " + e);
-            success = false;
-        }
-
-
-        try {
-            emptyImageIcon = new ImageIcon(ImageIO.read(new File("src/Assets/empty.png")));
-            emptyImageIcon.setDescription("empty");
-
-        } catch (Exception e) {
-            //TODO: handle exception
-            System.out.println("Empty: " + e);
-            success = false;
-        }
-        try {
-            backgroundIcon = ImageIO.read(new File("src/Assets/simpleBoard.png"));
-        } catch (Exception e) {
-            //TODO: handle exception
-            System.out.println("Board: " + e);
-            success = false;
-        }
+        // try {
+        //     backgroundIcon = ImageIO.read(new File("src/assets/simpleBoard.png"));
+        // } catch (Exception e) {
+        //     //TODO: handle exception
+        //     System.out.println("Board: " + e);
+        //     success = false;
+        // }
         return success;
     }
 
@@ -116,57 +86,7 @@ public class Hnefatafl extends ClockTimer{
 		_timerPanel.setVisible(true);
 	    return true;
 	}
-    /*
-     * Draws the board panel itself and then calls the method to set the initial game state.
-     */
-    public boolean drawBoard(){
-        _frame = new JFrame("Hnefatafl");
-        _frame.setSize(frameWidth, frameHeight);
-        _frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JToolBar tools = new JToolBar();
-        tools.setFloatable(false);
-        _frame.add(tools, BorderLayout.PAGE_START);
-
-
-        JButton newButton = new JButton("New"); //no functions
-        ActionListener newButtonListener = new NewButtonListener();
-        newButton.addActionListener(newButtonListener);
-        tools.add(newButton);
-        tools.addSeparator();
-
-        JButton saveButton = new JButton("Save"); //no functions
-        ActionListener saveButtonListener = new SaveButtonListener();
-        saveButton.addActionListener(saveButtonListener);
-        tools.add(saveButton);
-        tools.addSeparator();
-
-        JButton loadButton = new JButton("Load"); //no functions
-        ActionListener loadButtonListener = new LoadButtonListener();
-        loadButton.addActionListener(loadButtonListener);
-        tools.add(loadButton);
-        tools.addSeparator();
-
-	JButton resignButton = new JButton("Resign");
-        ActionListener resignButtonListener = new ResignButtonListener();
-	resignButton.addActionListener(resignButtonListener);
-	tools.add(resignButton); //no functions
-
-        tools.addSeparator();
-        tools.addSeparator();
-        tools.addSeparator();
-        tools.addSeparator();
-        tools.addSeparator();
-        tools.addSeparator();
-        tools.addSeparator();
-        tools.addSeparator();
-        tools.add(turn);
-        tools.add(_timerPanel, BorderLayout.PAGE_START);
-        setupGame();
-
-        _frame.setVisible(true);
-        return(true);
-    }
 
     /**
      * Intermediary method to reset the game state to either
@@ -175,8 +95,7 @@ public class Hnefatafl extends ClockTimer{
      */
     public void reloadBoard() {
         _frame.dispose();
-        drawClock();
-        drawBoard();
+        setupGame();
     }
 
     /**
@@ -184,29 +103,11 @@ public class Hnefatafl extends ClockTimer{
      * @param Not Available
      * @return Not Available
      */
-    public void setupGame(){
+    public JPanel setupGame(){
         //reinitialize the panels for new games
         _ttt = new JPanel();
         _ttt.setLayout(new GridLayout(gameWidth, gameHeight));
 
-        //At some point some smarter math need to be put in to automatically resize
-        //any image to be the background
-
-        //changes image into a certain sized BufferedImage
-        BufferedImage backgroundImage = new BufferedImage(425, 425, BufferedImage.TYPE_INT_ARGB);
-
-        //this magically resizes the background image to the right size
-		Graphics2D graphics2D = (Graphics2D)backgroundImage.getGraphics();
-        graphics2D.scale(3.21, 3.21);
-       	graphics2D.drawImage(backgroundIcon, 0, 0, null);
-       	graphics2D.dispose();
-
-       	//creates new panel with correctly sized background image
-        BackgroundPanel backgroundPanel = new BackgroundPanel(backgroundImage, 0, 0, 0);
-
-
-        _newPanel = new JPanel();
-        _newPanel.setLayout(new FlowLayout());
         for(int i=0; i<gameWidth; i++){
             for (int j=0; j<gameHeight; j++) {
                 if(_buttons[i][j] == null) {
@@ -247,20 +148,14 @@ public class Hnefatafl extends ClockTimer{
                 //set button tranparent for cool background
                 _buttons[i][j].setOpaque(false);
                 _buttons[i][j].setContentAreaFilled(false);
-                //_buttons[i][j].setBorderPainted(false);
                 // Add this button to the _ttt panel
                 _buttons[i][j].setBorder(null);
                 _ttt.add(_buttons[i][j]);
             }
         }
 
-        // This will place the tic-tac-toe panel at the top of
-        // the frame and the newPanel panel at the bottom
-        _frame.add(backgroundPanel, BorderLayout.CENTER);
         _ttt.setBorder(null);
-        backgroundPanel.add(_ttt, BorderLayout.CENTER);
-        _frame.add(_newPanel, BorderLayout.SOUTH);
-
+        return _ttt;    
     }
 
     /**
@@ -282,14 +177,13 @@ public class Hnefatafl extends ClockTimer{
      * _firstClick and _secondClick buttons, as well as the isFirstTurn boolean,
      * describing whose turn it is supposed to be.
      */
-    private class ButtonListener implements ActionListener {
+    public class ButtonListener implements ActionListener {
 
         // Every time we click the button, it will perform
         // the following action.
 
         @Override
         public void actionPerformed(ActionEvent e) {
-
             JButton temp = (JButton) e.getSource();
             ImageIcon currentImageIcon = (ImageIcon)temp.getIcon();
             int noPiecesCheck;
@@ -300,16 +194,20 @@ public class Hnefatafl extends ClockTimer{
             else{
                 //Turn enforcing
                 if(_firstClick == null){
+                    System.out.println("First click is null");
                     _firstClick = (JButton) e.getSource();
                     firstClickImageIcon = (ImageIcon)_firstClick.getIcon();
                     if(isFirstPlayer){
+                        System.out.println("Is First Player");
                         if(firstClickImageIcon.getDescription().equals(defenseIcon.getDescription()) || firstClickImageIcon.getDescription().equals(kingIcon.getDescription())){
+                           System.out.println("First Here");
                             _firstClick = null;
                             //Might want to add more functionality later. To have a pop up telling user it is not their turn.
 
                         }
                     }
                     else if(!isFirstPlayer){
+                        System.out.println("Not First");
                         if(firstClickImageIcon.getDescription().equals(axeIcon.getDescription())){
                             _firstClick = null;
                              //Might want to add more functionality later. To have a pop up telling user it is not their turn.
@@ -320,6 +218,7 @@ public class Hnefatafl extends ClockTimer{
                 else{
                     _secondClick = (JButton) e.getSource();
                     secondClickImageIcon = (ImageIcon)_secondClick.getIcon();
+                    System.out.println("Not First Click");
                     if(gameLogic.isValidMove(gameLogic.getXandY(_firstClick, _buttons), gameLogic.getXandY(_secondClick, _buttons), firstClickImageIcon.getDescription().equals(kingIcon.getDescription()), _buttons)){
                         if(firstClickImageIcon.getDescription().equals(axeIcon.getDescription())) {
                             _secondClick.setIcon(axeIcon);
@@ -407,7 +306,7 @@ public class Hnefatafl extends ClockTimer{
      *
      * Listener also sets the turn to the first player.
      */
-    private class NewButtonListener implements ActionListener {
+    public class NewButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             // Reset button array to redraw the board in the "new game" state
@@ -430,7 +329,7 @@ public class Hnefatafl extends ClockTimer{
      * Allows the user to save the game state to a file of their choosing in the
      * location of the choosing.
      */
-    private class SaveButtonListener implements ActionListener{
+    public class SaveButtonListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
             try{
@@ -473,10 +372,44 @@ public class Hnefatafl extends ClockTimer{
      * and the current game can resume as the user did not attempt to load a
      * previous game state.
      */
-    private class LoadButtonListener implements ActionListener{
+    public class LoadButtonListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
+            loadGameData();
+        }
+    }
 
+
+    /**
+     * Custom action listener handles resigning the game on the board
+     *
+     * the current user that hits the resign button should forfeit and the next
+     */
+	public class ResignButtonListener implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if(isFirstPlayer){
+				turn.setText("Shields Wins!");
+				for(int i = 0; i < 11; i++){
+					for(int j = 0; j < 11; j++){
+						_buttons[i][j].setEnabled(false);
+					}
+				}
+			}
+			else{
+				turn.setText("Axes Wins!");
+				for(int i = 0; i < 11; i++){
+					for(int j = 0; j < 11; j++){
+						_buttons[i][j].setEnabled(false);
+					}
+				}
+			}
+        }
+    }
+
+
+
+    public JPanel loadGameData(){
             try{
                 JFileChooser fileChooser = new JFileChooser();
                 // Only executes if the user does not cancel. Otherwise game state is not changed.
@@ -513,35 +446,19 @@ public class Hnefatafl extends ClockTimer{
             } catch(ClassNotFoundException cex) {
                 System.out.println("Class Not Found!");
             }
-        }
+        return null;
     }
 
+    public boolean saveGameData(){
+        return false;
+    }
 
-    /**
-     * Custom action listener handles resigning the game on the board
-     *
-     * the current user that hits the resign button should forfeit and the next
-     */
-	private class ResignButtonListener implements ActionListener{
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if(isFirstPlayer){
-				turn.setText("Shields Wins!");
-				for(int i = 0; i < 11; i++){
-					for(int j = 0; j < 11; j++){
-						_buttons[i][j].setEnabled(false);
-					}
-				}
-			}
-			else{
-				turn.setText("Axes Wins!");
-				for(int i = 0; i < 11; i++){
-					for(int j = 0; j < 11; j++){
-						_buttons[i][j].setEnabled(false);
-					}
-				}
-			}
-        }
+    public JPanel[] removeGamePanel(){
+        return null;
+    }
+
+    public boolean addGamePanel(JPanel gamePanel){
+        return false;
     }
 }
 

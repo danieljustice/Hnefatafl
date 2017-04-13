@@ -6,12 +6,16 @@ import java.io.*;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
+import com.sun.crypto.provider.RSACipher;
+
+
 // all of these need implemented
 public class HnefataflGame implements GameInterface{
 
     public int frameHeight = 850;
     public int frameWidth = 850;
-
+    public ClockTimer axeTimer = new ClockTimer();
+    public ClockTimer shieldTimer = new ClockTimer();
 
     /**
      * Take in a string a name for the game and returns a JFrame
@@ -35,31 +39,35 @@ public class HnefataflGame implements GameInterface{
      * @return JFrame the JFrame needed as a base to the game
      */
 
-	public JToolBar createToolBar(){
+	public JToolBar createToolBar(JPanel game){
         JToolBar tools = new JToolBar();
         tools.setFloatable(false);
 
         JButton newButton = new JButton("New"); //no functions
-        // ActionListener newButtonListener = new NewButtonListener();
-        // newButton.addActionListener(newButtonListener);
+        Hnefatafl.NewButtonListener newButtonListener = ((Hnefatafl)game).new NewButtonListener();
+        newButton.addActionListener(newButtonListener);
+        newButton.setName("New Button");
         tools.add(newButton);
         tools.addSeparator();
 
         JButton saveButton = new JButton("Save"); //no functions
-        // ActionListener saveButtonListener = new SaveButtonListener();
-        // saveButton.addActionListener(saveButtonListener);
+        Hnefatafl.SaveButtonListener saveButtonListener = ((Hnefatafl)game).new SaveButtonListener();
+        saveButton.addActionListener(saveButtonListener);
+        saveButton.setName("Save Button");
         tools.add(saveButton);
         tools.addSeparator();
 
         JButton loadButton = new JButton("Load"); //no functions
-        // ActionListener loadButtonListener = new LoadButtonListener();
-        // loadButton.addActionListener(loadButtonListener);
+        Hnefatafl.LoadButtonListener loadButtonListener = ((Hnefatafl)game).new LoadButtonListener();
+        loadButton.addActionListener(loadButtonListener);
+        loadButton.setName("Load Button");
         tools.add(loadButton);
         tools.addSeparator();
 
 		JButton resignButton = new JButton("Resign");
-        // ActionListener resignButtonListener = new resignButtonListener();
-		// resignButton.addActionListener(resignButtonListener);
+        Hnefatafl.ResignButtonListener resignButtonListener = ((Hnefatafl)game).new ResignButtonListener();
+		resignButton.addActionListener(resignButtonListener);
+        resignButton.setName("Resign Button");
 		tools.add(resignButton); //no functions
 
         tools.addSeparator();
@@ -73,11 +81,14 @@ public class HnefataflGame implements GameInterface{
 
         //A JLabel that shows whose turn it is
         JLabel turn = new JLabel("Axe Moves");
+        turn.setName("Turn Text");
         tools.add(turn);
         
-        //TODO
+
         //timer panel to be set up later
-        //tools.add(_timerPanel, BorderLayout.PAGE_START);
+        JPanel _timerPanel = drawClock();
+        _timerPanel.setName("Timer Panel");
+        tools.add(_timerPanel, BorderLayout.PAGE_START);
 
         return tools;
     }
@@ -104,4 +115,18 @@ public class HnefataflGame implements GameInterface{
 
         return backgroundPanel;
     }
+
+        /**
+    *
+    */
+	public JPanel drawClock(){
+
+		JPanel _timerPanel = new JPanel();
+
+		_timerPanel.setLayout(new GridLayout(1, 1));
+		_timerPanel.add(axeTimer);
+		_timerPanel.add(shieldTimer);
+		_timerPanel.setVisible(true);
+	    return _timerPanel;
+	}
 }

@@ -41,7 +41,7 @@ public interface GameInterface{
 	* @return 	JToolBar on success
 	*
 	*/
-	public JToolBar createToolBar();
+	public JToolBar createToolBar(JPanel game);
 
 	/**
 	* Creates the Background which can be added to the JFrame
