@@ -53,52 +53,18 @@ public class Hnefatafl extends ClockTimer{
     **/
     public boolean loadImages(){
         boolean success = true;
-        try {
-            defenseIcon = new ImageIcon(ImageIO.read(new File("src/Assets/First Shield.png")));
-            defenseIcon.setDescription("shield");
-        } catch (Exception e) {
-            //TODO: handle exception
-            System.out.println("Shield: " + e);
-            success = false;
-        }
+        
+        defenseIcon = ImageFactory.createImageIcon("src/Assets/First Shield.png", "shield");
+        
+        axeIcon = ImageFactory.createImageIcon("src/Assets/First Axe.png", "axe");
+        
+        kingIcon = ImageFactory.createImageIcon("src/Crown.PNG", "king");
+        
+        emptyImageIcon = ImageFactory.createImageIcon("src/Assets/empty.png", "empty");
 
+        backgroundIcon = ImageFactory.createBufferedImage("src/Assets/simpleBoard.png");
 
-        try {
-            axeIcon = new ImageIcon(ImageIO.read(new File("src/Assets/First Axe.png")));
-            axeIcon.setDescription("axe");
-        } catch (Exception e) {
-            //TODO: handle exception
-            System.out.println("Axe: " + e);
-            success = false;
-        }
-
-        try {
-            kingIcon = new ImageIcon(ImageIO.read(new File("src/Crown.PNG")));
-
-            kingIcon.setDescription("king");
-        } catch (Exception e) {
-            //TODO: handle exception
-            System.out.println("Crown: " + e);
-            success = false;
-        }
-
-
-        try {
-            emptyImageIcon = new ImageIcon(ImageIO.read(new File("src/Assets/empty.png")));
-            emptyImageIcon.setDescription("empty");
-
-        } catch (Exception e) {
-            //TODO: handle exception
-            System.out.println("Empty: " + e);
-            success = false;
-        }
-        try {
-            backgroundIcon = ImageIO.read(new File("src/Assets/simpleBoard.png"));
-        } catch (Exception e) {
-            //TODO: handle exception
-            System.out.println("Board: " + e);
-            success = false;
-        }
+       
         return success;
     }
 
