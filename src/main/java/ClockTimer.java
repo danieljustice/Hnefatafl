@@ -49,17 +49,6 @@ public class ClockTimer extends JLabel implements ActionListener {
 					break;
 				}
 				this.setText("" + j);
-				//System.out.println(j + "...");
-
-				// This thread will sleep for >= 1000 milliseconds (1 second)
-				// In practice it will be very close to 1000 milliseconds
-				// Do not rely on Java (or the JVM in general) for hard
-				// real-time guarantees!
-				try {
-				Thread.sleep(1000);
-				} catch (InterruptedException iex) {
-				// ignore
-				}
 			}
 	    });
 		timerThread.start();
