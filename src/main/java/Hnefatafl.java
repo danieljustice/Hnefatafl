@@ -58,7 +58,7 @@ public class Hnefatafl extends ClockTimer{
         
         axeIcon = ImageFactory.createImageIcon("src/Assets/First Axe.png", "axe");
         
-        kingIcon = ImageFactory.createImageIcon("src/Crown.PNG", "king");
+        kingIcon = ImageFactory.createImageIcon("src/Assets/Crown.png", "king");
         
         emptyImageIcon = ImageFactory.createImageIcon("src/Assets/empty.png", "empty");
 
