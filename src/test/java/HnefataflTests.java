@@ -99,7 +99,7 @@ public class HnefataflTests extends Hnefatafl{
 	 */
 	@Test
 	public void piecesLeftTest() {
-		assertEquals(0, g.piecesLeft(h.axeIcon, h.kingIcon, h._buttons));;
+		assertEquals(0, g.piecesLeft(h.axeIcon, h.kingIcon, h.defenseIcon, h._buttons));;
 	}
 
 	/**

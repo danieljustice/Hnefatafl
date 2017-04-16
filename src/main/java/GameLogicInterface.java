@@ -54,6 +54,6 @@ public interface GameLogicInterface {
      *
      * @return pieces remaining
      */
-	public int[] numPiecesLeft;
+	public int[] numPiecesLeft();
 
 }
