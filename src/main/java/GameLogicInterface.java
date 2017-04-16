@@ -24,7 +24,7 @@ public interface GameLogicInterface {
     *  @param Not Available
     *  @return returns int 0 for no winning condition, int 1 for king surrounded shields lose, int 2 for axe defeated for no more pieces
     */
-    public int piecesLeft(ImageIcon axeIcon, ImageIcon kingIcon, JButton[][] _buttons);
+    public int piecesLeft(ImageIcon axeIcon, ImageIcon kingIcon, ImageIcon defenseIcon, JButton[][] _buttons);
 
     /**
      * Returns whether a move is valid based on input arrays which store x and y locations
@@ -49,5 +49,11 @@ public interface GameLogicInterface {
      * @return true if the space is occupied by axe, shield or king
      */
     public boolean isSpaceOccupied(int[] destination, JButton[][] _buttons );
+	
+	/** to retrieve remaining pieces
+     *
+     * @return pieces remaining
+     */
+	public int[] numPiecesLeft();
 
 }
