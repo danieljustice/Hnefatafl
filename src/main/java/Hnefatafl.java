@@ -868,10 +868,11 @@ public class Hnefatafl{
                             {
                                 turn.setText("      Shield Wins!      ");
                                 for(int i = 0; i < 11; i++){
-
+									for(int j = 0; j < 11; j++){
                                         _buttons[i][j].setEnabled(false);
                                     }
-                                }
+								}
+                                
                             } else {
                                 isFirstPlayer = true;
                                 axeStarted = true;
@@ -897,7 +898,6 @@ public class Hnefatafl{
 						redrawPieceRemaining();
 
                         //shields win
-                 for (int j = 0; j < 11; j++) {
                         if(noPiecesCheck == 1 || (axeTimer.isNull() && axeStarted) || axeTimer.timeLeft == 0){
                             turn.setText("      Shield Wins!          ");
                             for(int i = 0; i < 11; i++){
@@ -915,9 +915,10 @@ public class Hnefatafl{
                                 }
                             }
                         }
-                    } else {
-                        _firstClick = null;
-                        _secondClick = null;
+						else {
+							_firstClick = null;
+							_secondClick = null;
+						}
                     }
                 }
             }
