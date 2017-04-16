@@ -2,6 +2,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.*;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -40,6 +42,10 @@ public class Hnefatafl{
     private ClockTimer axeTimer = new ClockTimer();
     private ClockTimer shieldTimer = new ClockTimer();
     public Hnefatafl() {
+        //add listeners to the clocktimers
+        axeTimer.addPropertyChangeListener(new TimePropertyChangeListener());
+        shieldTimer.addPropertyChangeListener(new TimePropertyChangeListener());
+
         //pull in images for icons on the buttons
         if(loadImages()){
         	drawClock();
@@ -380,7 +386,9 @@ public class Hnefatafl{
             isFirstPlayer = true;
             turn.setText("Axe Moves");
             axeTimer = new ClockTimer();
+            axeTimer.addPropertyChangeListener(new TimePropertyChangeListener());
             shieldTimer = new ClockTimer();
+            shieldTimer.addPropertyChangeListener(new TimePropertyChangeListener());
             axeStarted = false;
             shieldStarted = false;
             reloadBoard();
@@ -463,7 +471,9 @@ public class Hnefatafl{
                     int axeTime = (int) oip.readObject();
                     int shieldTime = (int) oip.readObject();
                     axeTimer = new ClockTimer(axeTime);
+                    axeTimer.addPropertyChangeListener(new TimePropertyChangeListener());
                     shieldTimer = new ClockTimer(shieldTime);
+                    shieldTimer.addPropertyChangeListener(new TimePropertyChangeListener());
                     oip.close();
                     fip.close();
                     JOptionPane.showMessageDialog(null, "File loaded!");
@@ -505,6 +515,17 @@ public class Hnefatafl{
 					}
 				}
 			}
+        }
+    }
+    private class TimePropertyChangeListener implements PropertyChangeListener{
+        @Override
+        public void propertyChange(PropertyChangeEvent e) {
+            // do stuff here
+            boolean isText = e.getPropertyName().equalsIgnoreCase("text");
+            boolean isAtZero = e.getNewValue().equals("0");
+            if(isText && isAtZero){
+                System.out.println("Should call an end game function here");
+            }
         }
     }
 }

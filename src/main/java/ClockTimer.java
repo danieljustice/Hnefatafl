@@ -98,7 +98,7 @@ public class ClockTimer extends JLabel implements ActionListener {
 		if(!isNull()){
 			this.setText("" + timeLeft);
 		}else{
-			this.setText("Game Over!");
+			//this.setText("Game Over!");
 		}
 	}
 
