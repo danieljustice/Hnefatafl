@@ -7,6 +7,7 @@ import java.beans.PropertyChangeListener;
 import java.io.*;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.border.LineBorder;
 import org.omg.CORBA.SystemException;
 
 public class Hnefatafl{
@@ -124,6 +125,11 @@ public class Hnefatafl{
 	resignButton.addActionListener(resignButtonListener);
 	tools.add(resignButton); //no functions
 
+        JButton bestButton = new JButton("Best Move");
+        ActionListener bestButtonListener = new bestButtonListener();
+	bestButton.addActionListener(bestButtonListener);
+	tools.add(bestButton); 
+        
         tools.addSeparator();
         tools.addSeparator();
         tools.addSeparator();
@@ -268,7 +274,7 @@ public class Hnefatafl{
         //game.drawBoard();
     }
 
-	public void displayCorrectChoice(int[] start, int[] destination) {
+    public void displayCorrectChoice(int[] start, int[] destination) {
         _buttons[start[0]][start[1]].setBorder(new LineBorder(Color.YELLOW));
         _buttons[destination[0]][destination[1]].setBorder(new LineBorder(Color.YELLOW));
     }
@@ -285,17 +291,17 @@ public class Hnefatafl{
 
     public void showCorrectChoice() {
         ImageIcon currentImageIcon;
+        ImageIcon temp;
         int score = 0;
         int[] start = new int[2];
         int[] destination = new int[2];
         boolean king = false;
 
         if (isFirstPlayer) {
-            System.out.println("isfirstperson");
             for (int i = 0; i < gameWidth; i++) {
                 for (int j = 0; j < gameHeight; j++) {
                     currentImageIcon = (ImageIcon) _buttons[i][j].getIcon();
-                    System.out.println(i + " " + j);
+                    temp = currentImageIcon;
                     if (currentImageIcon.getDescription().equals(axeIcon.getDescription())) {
                         //check updown left right for where this piece can go
                         for (int k = j - 1; k >= 0; k--) {
@@ -307,9 +313,8 @@ public class Hnefatafl{
                             if (!king && ((i == 0 && k == 0) || (i == 10 && k == 0) || (i == 0 && k == 10) || (i == 10 && k == 10))) {
                                 break;
                             }
-                            System.out.println("score " + surroundingPoints(i, k));
-                            if (score < surroundingPoints(i, k)) {
-                                score = surroundingPoints(i, k);
+                            if (score < surroundingPoints(i, k, temp)) {
+                                score = surroundingPoints(i, k, temp);
                                 start[0] = i;
                                 start[1] = j;
                                 destination[0] = i;
@@ -326,8 +331,8 @@ public class Hnefatafl{
                             if (!king && ((i == 0 && k == 0) || (i == 10 && k == 0) || (i == 0 && k == 10) || (i == 10 && k == 10))) {
                                 break;
                             }
-                            if (score < surroundingPoints(i, k)) {
-                                score = surroundingPoints(i, k);
+                            if (score < surroundingPoints(i, k, temp)) {
+                                score = surroundingPoints(i, k, temp);
                                 start[0] = i;
                                 start[1] = j;
                                 destination[0] = i;
@@ -343,8 +348,8 @@ public class Hnefatafl{
                             if (!king && ((j == 0 && k == 0) || (j == 10 && k == 0) || (j == 0 && k == 10) || (j == 10 && k == 10))) {
                                 break;
                             }
-                            if (score < surroundingPoints(k, j)) {
-                                score = surroundingPoints(k, j);
+                            if (score < surroundingPoints(k, j, temp)) {
+                                score = surroundingPoints(k, j, temp);
                                 start[0] = i;
                                 start[1] = j;
                                 destination[0] = k;
@@ -360,8 +365,8 @@ public class Hnefatafl{
                             if (!king && ((j == 0 && k == 0) || (j == 10 && k == 0) || (j == 0 && k == 10) || (j == 10 && k == 10))) {
                                 break;
                             }
-                            if (score < surroundingPoints(k, j)) {
-                                score = surroundingPoints(k, j);
+                            if (score < surroundingPoints(k, j, temp)) {
+                                score = surroundingPoints(k, j, temp);
                                 start[0] = i;
                                 start[1] = j;
                                 destination[0] = k;
@@ -372,11 +377,10 @@ public class Hnefatafl{
                 }
             }
         } else {
-            System.out.println("notfirstperson");
             for (int i = 0; i < gameWidth; i++) {
                 for (int j = 0; j < gameHeight; j++) {
                     currentImageIcon = (ImageIcon) _buttons[i][j].getIcon();
-
+                    temp = currentImageIcon;
                     if (currentImageIcon.getDescription().equals(kingIcon.getDescription())) {
                         king = true;
                     } else {
@@ -401,9 +405,8 @@ public class Hnefatafl{
                             if (!king && ((i == 0 && k == 0) || (i == 10 && k == 0) || (i == 0 && k == 10) || (i == 10 && k == 10))) {
                                 break;
                             }
-                            if (score < surroundingPoints(i, k)) {
-                                score = surroundingPoints(i, k);
-                                System.out.println("here");
+                            if (score < surroundingPoints(i, k, temp)) {
+                                score = surroundingPoints(i, k, temp);
                                 start[0] = i;
                                 start[1] = j;
                                 destination[0] = i;
@@ -426,9 +429,8 @@ public class Hnefatafl{
                             if (!king && ((i == 0 && k == 0) || (i == 10 && k == 0) || (i == 0 && k == 10) || (i == 10 && k == 10))) {
                                 break;
                             }
-                            if (score < surroundingPoints(i, k)) {
-                                score = surroundingPoints(i, k);
-                                System.out.println("here");
+                            if (score < surroundingPoints(i, k, temp)) {
+                                score = surroundingPoints(i, k, temp);
                                 start[0] = i;
                                 start[1] = j;
                                 destination[0] = i;
@@ -451,9 +453,8 @@ public class Hnefatafl{
                             if (!king && ((j == 0 && k == 0) || (j == 10 && k == 0) || (j == 0 && k == 10) || (j == 10 && k == 10))) {
                                 break;
                             }
-                            if (score < surroundingPoints(k, j)) {
-                                score = surroundingPoints(k, j);
-                                System.out.println("here");
+                            if (score < surroundingPoints(k, j, temp)) {
+                                score = surroundingPoints(k, j, temp);
                                 start[0] = i;
                                 start[1] = j;
                                 destination[0] = k;
@@ -476,9 +477,8 @@ public class Hnefatafl{
                             if (!king && ((j == 0 && k == 0) || (j == 10 && k == 0) || (j == 0 && k == 10) || (j == 10 && k == 10))) {
                                 break;
                             }
-                            if (score < surroundingPoints(k, j)) {
-                                score = surroundingPoints(k, j);
-                                System.out.println("here");
+                            if (score < surroundingPoints(k, j, temp)) {
+                                score = surroundingPoints(k, j, temp);
                                 start[0] = i;
                                 start[1] = j;
                                 destination[0] = k;
@@ -489,17 +489,12 @@ public class Hnefatafl{
                 }
             }
         }
-        System.out.println(score);
-        System.out.println(start[0]);
-        System.out.println(start[1]);
-        System.out.println(destination[0]);
-        System.out.println(destination[1]);
+        
         displayCorrectChoice(start, destination);
     }
 
-    public int surroundingPoints(int x, int y) {
+    public int surroundingPoints(int x, int y, ImageIcon currentImageIcon) {
         int score = 1;
-        ImageIcon currentImageIcon = (ImageIcon) _buttons[x][y].getIcon();
         //up down left right
         //checkNorth
         if (currentImageIcon.getDescription().equals(axeIcon.getDescription())) {
@@ -725,7 +720,6 @@ public class Hnefatafl{
     }
 
     public int checkWest(int x, int y) {
-        System.out.println("checkWest " + x + " " + y);
         ImageIcon currentImageIcon = (ImageIcon) _buttons[x - 1][y].getIcon();
         if (currentImageIcon.getDescription().equals(axeIcon.getDescription())) {
             return 1;
@@ -752,84 +746,83 @@ public class Hnefatafl{
 
         // Every time we click the button, it will perform
         // the following action.
-
         @Override
         public void actionPerformed(ActionEvent e) {
 
             JButton temp = (JButton) e.getSource();
-            ImageIcon currentImageIcon = (ImageIcon)temp.getIcon();
+            ImageIcon currentImageIcon = (ImageIcon) temp.getIcon();
             int noPiecesCheck;
 
-            if(_firstClick == null && currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())){
+            if (_firstClick == null && currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())) {
                 //Spit out some error message saying there is no game piece here
-            }
-            else{
+            } else {
                 //Turn enforcing
-                if(_firstClick == null){
+                if (_firstClick == null) {
                     _firstClick = (JButton) e.getSource();
-                    firstClickImageIcon = (ImageIcon)_firstClick.getIcon();
-                    if(isFirstPlayer){
-                        if(firstClickImageIcon.getDescription().equals(defenseIcon.getDescription()) || firstClickImageIcon.getDescription().equals(kingIcon.getDescription())){
+                    firstClickImageIcon = (ImageIcon) _firstClick.getIcon();
+                    if (isFirstPlayer) {
+                        if (firstClickImageIcon.getDescription().equals(defenseIcon.getDescription()) || firstClickImageIcon.getDescription().equals(kingIcon.getDescription())) {
                             _firstClick = null;
                             //Might want to add more functionality later. To have a pop up telling user it is not their turn.
 
                         }
-                    }
-                    else if(!isFirstPlayer){
-                        if(firstClickImageIcon.getDescription().equals(axeIcon.getDescription())){
+                    } else if (!isFirstPlayer) {
+                        if (firstClickImageIcon.getDescription().equals(axeIcon.getDescription())) {
                             _firstClick = null;
-                             //Might want to add more functionality later. To have a pop up telling user it is not their turn.
+                            //Might want to add more functionality later. To have a pop up telling user it is not their turn.
                         }
                     }
 
-                }
-                else{
+                } else {
                     _secondClick = (JButton) e.getSource();
-                    secondClickImageIcon = (ImageIcon)_secondClick.getIcon();
-                    if(gameLogic.isValidMove(gameLogic.getXandY(_firstClick, _buttons), gameLogic.getXandY(_secondClick, _buttons), firstClickImageIcon.getDescription().equals(kingIcon.getDescription()), _buttons)){
-                        if(firstClickImageIcon.getDescription().equals(axeIcon.getDescription())) {
+                    secondClickImageIcon = (ImageIcon) _secondClick.getIcon();
+                    if (gameLogic.isValidMove(gameLogic.getXandY(_firstClick, _buttons), gameLogic.getXandY(_secondClick, _buttons), firstClickImageIcon.getDescription().equals(kingIcon.getDescription()), _buttons)) {
+                        if (firstClickImageIcon.getDescription().equals(axeIcon.getDescription())) {
+
                             _secondClick.setIcon(axeIcon);
                             //attackPieces(JButton piecePlacement, ImageIcon emptyImageIcon, ImageIcon kingIcon, ImageIcon axeIcon, ImageIcon defenseIcon, int gameWidth, int gameHeight, JButton[][] _buttons)
                             _buttons = gameLogic.attackPieces(_secondClick, emptyImageIcon, kingIcon, axeIcon, defenseIcon, _buttons);
+                            isFirstPlayer = false;
+                            axeTimer.stopTimerThread();
                             shieldStarted = true;
-                            shieldTimer.continueTimerThread();
-                            isFirstPlayer=false;
-                            axeTimer.pauseTimerThread();
+                            shieldTimer.startTimerThread();
+
                             turn.setText("Shield Moves");
-                        }
-                        else if(firstClickImageIcon.getDescription().equals(defenseIcon.getDescription())
-                                || firstClickImageIcon.getDescription().equals(kingIcon.getDescription()))
-                        {
-                            if(firstClickImageIcon.getDescription().equals(kingIcon.getDescription())){
+
+                            removeCorrectChoice();
+                        } else if (firstClickImageIcon.getDescription().equals(defenseIcon.getDescription())
+                                || firstClickImageIcon.getDescription().equals(kingIcon.getDescription())) {
+                            if (firstClickImageIcon.getDescription().equals(kingIcon.getDescription())) {
                                 _secondClick.setIcon(kingIcon);
                                 _buttons = gameLogic.attackPieces(_secondClick, emptyImageIcon, kingIcon, axeIcon, defenseIcon, _buttons);
 
-                            }
-                            else{
+                            } else {
                                 _secondClick.setIcon(defenseIcon);
                                 _buttons = gameLogic.attackPieces(_secondClick, emptyImageIcon, kingIcon, axeIcon, defenseIcon, _buttons);
 
                             }
 
-                            if(((gameLogic.getXandY(_secondClick, _buttons)[0] == 0 && gameLogic.getXandY(_secondClick, _buttons)[1] == 0)
+                            if (((gameLogic.getXandY(_secondClick, _buttons)[0] == 0 && gameLogic.getXandY(_secondClick, _buttons)[1] == 0)
                                     || (gameLogic.getXandY(_secondClick, _buttons)[0] == 0 && gameLogic.getXandY(_secondClick, _buttons)[1] == 10)
                                     || (gameLogic.getXandY(_secondClick, _buttons)[0] == 10 && gameLogic.getXandY(_secondClick, _buttons)[1] == 0)
                                     || (gameLogic.getXandY(_secondClick, _buttons)[0] == 10 && gameLogic.getXandY(_secondClick, _buttons)[1] == 10))
-                                    && firstClickImageIcon.getDescription().equals("K"))
-                            {
+                                    && firstClickImageIcon.getDescription().equals("K")) {
                                 turn.setText("Shield Wins!");
-                                for(int i = 0; i < 11; i++){
-                                    for(int j = 0; j < 11; j++){
+                                for (int i = 0; i < 11; i++) {
+                                    for (int j = 0; j < 11; j++) {
                                         _buttons[i][j].setEnabled(false);
                                     }
                                 }
-                            }
-                            else{
-                                isFirstPlayer=true;
+                            } else {
+                                isFirstPlayer = true;
                                 axeStarted = true;
-                                axeTimer.continueTimerThread();
-                                shieldTimer.pauseTimerThread();
-                                turn.setText("Axe Moves");                                
+                                axeTimer.startTimerThread();
+                                
+                                turn.setText("Axe Moves");
+
+                                removeCorrectChoice();
+
+                                shieldTimer.stopTimerThread();
                             }
                         }
                         _firstClick.setIcon(emptyImageIcon);
@@ -839,25 +832,23 @@ public class Hnefatafl{
                         //check if there are no pieces left to see if theres a winner
                         noPiecesCheck = gameLogic.piecesLeft(axeIcon, kingIcon, _buttons);
                         //shields win
-                        if(noPiecesCheck == 1 || (axeTimer.isNull() && axeStarted)){
+                        if (noPiecesCheck == 1 || (axeTimer.isNull() && axeStarted)) {
                             turn.setText("Shield Wins!");
-                            for(int i = 0; i < 11; i++){
-                                for(int j = 0; j < 11; j++){
+                            for (int i = 0; i < 11; i++) {
+                                for (int j = 0; j < 11; j++) {
                                     _buttons[i][j].setEnabled(false);
                                 }
                             }
-                        }
-                        //axes win
-                        else if(noPiecesCheck == 2 || (shieldTimer.isNull() && shieldStarted)){
+                        } //axes win
+                        else if (noPiecesCheck == 2 || (shieldTimer.isNull() && shieldStarted)) {
                             turn.setText("Axes Wins!");
-                            for(int i = 0; i < 11; i++){
-                                for(int j = 0; j < 11; j++){
+                            for (int i = 0; i < 11; i++) {
+                                for (int j = 0; j < 11; j++) {
                                     _buttons[i][j].setEnabled(false);
                                 }
                             }
                         }
-                    }
-                    else{
+                    } else {
                         _firstClick = null;
                         _secondClick = null;
                     }
@@ -990,10 +981,17 @@ public class Hnefatafl{
      *
      * the current user that hits the resign button should forfeit and the next
      */
-	private class ResignButtonListener implements ActionListener{
+    private class ResignButtonListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
             endGame(isFirstPlayer);
+        }
+    }
+    
+    private class bestButtonListener implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            showCorrectChoice();
         }
     }
 
