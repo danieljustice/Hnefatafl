@@ -235,6 +235,25 @@ public class Hnefatafl{
 
     }
 
+    public void endGame(Boolean firstPlayerWon){
+        if(firstPlayerWon){
+            turn.setText("Shields Wins!");
+            for(int i = 0; i < 11; i++){
+                for(int j = 0; j < 11; j++){
+                    _buttons[i][j].setEnabled(false);
+                }
+            }
+        }
+        else{
+            turn.setText("Axes Wins!");
+            for(int i = 0; i < 11; i++){
+                for(int j = 0; j < 11; j++){
+                    _buttons[i][j].setEnabled(false);
+                }
+            }
+        }
+    }
+
     /**
      * Main method
      */
@@ -499,32 +518,21 @@ public class Hnefatafl{
 	private class ResignButtonListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(isFirstPlayer){
-				turn.setText("Shields Wins!");
-				for(int i = 0; i < 11; i++){
-					for(int j = 0; j < 11; j++){
-						_buttons[i][j].setEnabled(false);
-					}
-				}
-			}
-			else{
-				turn.setText("Axes Wins!");
-				for(int i = 0; i < 11; i++){
-					for(int j = 0; j < 11; j++){
-						_buttons[i][j].setEnabled(false);
-					}
-				}
-			}
+            endGame(isFirstPlayer);
         }
     }
+
     private class TimePropertyChangeListener implements PropertyChangeListener{
         @Override
         public void propertyChange(PropertyChangeEvent e) {
             // do stuff here
-            boolean isText = e.getPropertyName().equalsIgnoreCase("text");
-            boolean isAtZero = e.getNewValue().equals("0");
-            if(isText && isAtZero){
-                System.out.println("Should call an end game function here");
+            if(e.getNewValue() != null){
+                boolean isText = e.getPropertyName().equalsIgnoreCase("text");
+                boolean isAtZero = e.getNewValue().equals("0");
+                if(isText && isAtZero){
+                    System.out.println("Should call an end game function here");
+                    endGame(isFirstPlayer);   
+                }
             }
         }
     }
