@@ -235,6 +235,12 @@ public class Hnefatafl{
 
     }
 
+    /**
+     * Ends the game by taking in a boolean to determine which side won.  
+     * A text box will be changed to announce who won and all the pieces will
+     * become immovable.
+     * @param firstPlayerWon Boolean true means first player one, false for Second player winning
+     */
     public void endGame(Boolean firstPlayerWon){
         if(firstPlayerWon){
             turn.setText("Shields Wins!");
@@ -522,15 +528,24 @@ public class Hnefatafl{
         }
     }
 
+    /**
+     * Custom Property Change Listener that handles when either 
+     * clocktimer reaches the time zero (0).  When one does, that 
+     * player loses and the endgame script is called.
+     */
     private class TimePropertyChangeListener implements PropertyChangeListener{
         @Override
         public void propertyChange(PropertyChangeEvent e) {
-            // do stuff here
+            // If this is null, do nothing (catches a bug that happens when a new game is created)
             if(e.getNewValue() != null){
+                //Checks to see if it was the text property that changed
                 boolean isText = e.getPropertyName().equalsIgnoreCase("text");
+                //Checks to see if the new value is 0
                 boolean isAtZero = e.getNewValue().equals("0");
+                
                 if(isText && isAtZero){
-                    System.out.println("Should call an end game function here");
+                   //Uncomment for debug purposes
+                   //System.out.println("Should call an end game function here");
                     endGame(isFirstPlayer);   
                 }
             }
