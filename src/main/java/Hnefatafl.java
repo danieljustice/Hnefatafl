@@ -11,17 +11,17 @@ public class Hnefatafl extends ClockTimer{
 
     public int gameWidth = 11;
     public int gameHeight = 11;
-    private int frameWidth = 950;
+    private int frameWidth = 1000;
     private int frameHeight = 950;
     private JFrame _frame = new JFrame("Hnefatafl");
     private JPanel _ttt = new JPanel();
-    JLabel turn = new JLabel("          Axe Moves");
+    JLabel turn = new JLabel("  Axe Moves   ");
     private JPanel _newPanel = new JPanel();
-    private JPanel _timerPanel = new JPanel();
+    private JPanel _axeTimerPanel = new JPanel();
+    private JPanel _shieldTimerPanel = new JPanel();
     private JPanel _axeScorePanel = new JPanel();
     private JPanel _shieldScorePanel = new JPanel();
     public GameLogic gameLogic = new GameLogic(gameWidth, gameHeight);
-
 
     private JButton _firstClick = null;
     private JButton _secondClick = null;
@@ -38,7 +38,8 @@ public class Hnefatafl extends ClockTimer{
     public ImageIcon emptyImageIcon;
     public Image backgroundIcon;
 
-
+    private GamePieces axePieces = null;
+    private GamePieces shieldPieces = null;
     private ClockTimer axeTimer = new ClockTimer();
     private ClockTimer shieldTimer = new ClockTimer();
     public Hnefatafl() {
@@ -110,17 +111,21 @@ public class Hnefatafl extends ClockTimer{
     */
 	public boolean drawClock(){
         
-		_timerPanel = new JPanel();
+        _axeTimerPanel = new JPanel();
+        _shieldTimerPanel = new JPanel();
+		//_timerPanel = new JPanel();
+
         //_timerPanel.setDefaultLookAndFeelDecorated(true);
 		//_timerPanel.setSize(300,150);
 		//_timerPanel.setLayout(new GridLayout(1, 1));
         JLabel axeLabel = new JLabel("  Axe Timer:");
         JLabel shieldLabel = new JLabel("Shield Timer:");
-        _timerPanel.add(axeLabel);
-		_timerPanel.add(axeTimer);
-        _timerPanel.add(shieldLabel);
-		_timerPanel.add(shieldTimer);
-		_timerPanel.setVisible(true);
+        _axeTimerPanel.add(axeLabel);
+		_axeTimerPanel.add(axeTimer);
+        _shieldTimerPanel.add(shieldLabel);
+		_shieldTimerPanel.add(shieldTimer);
+        _axeTimerPanel.setVisible(true);
+		_shieldTimerPanel.setVisible(true);
 	    return true;
 	}
 
@@ -128,14 +133,16 @@ public class Hnefatafl extends ClockTimer{
     *
     */
     public boolean drawPieceRemaining(){
+        axePieces = new GamePieces(0);
+        shieldPieces = new GamePieces(0);
         _shieldScorePanel = new JPanel();
-        JLabel shieldLabel = new JLabel("Shield pieces remaining:");
+        JLabel shieldLabel = new JLabel("Shield Remaining:");
         _shieldScorePanel.add(shieldLabel);
-        _shieldScorePanel.add(new JLabel("10"));
+        _shieldScorePanel.add(shieldPieces);
         _axeScorePanel = new JPanel();
-        JLabel axeLabel = new JLabel("  Axe pieces remaining:");
+        JLabel axeLabel = new JLabel("Axe Remaining:");
         _axeScorePanel.add(axeLabel);
-        _axeScorePanel.add(new JLabel("15")); //add ability to show remaining pieces       
+        _axeScorePanel.add(axePieces); //add ability to show remaining pieces       
         _shieldScorePanel.setVisible(true);
         _axeScorePanel.setVisible(true);
         return true;
@@ -150,7 +157,7 @@ public class Hnefatafl extends ClockTimer{
 
         JToolBar tools = new JToolBar();
         tools.setFloatable(false);
-        tools.setLayout(new GridLayout(2, 1));
+        //tools.setLayout(new GridLayout(2, 1));
         _frame.add(tools, BorderLayout.PAGE_START);
 
         JButton newButton = new JButton("New"); //no functions
@@ -183,13 +190,14 @@ public class Hnefatafl extends ClockTimer{
         //tools.addSeparator();
         //tools.addSeparator();
         //tools.addSeparator();
-       // tools.addSeparator();
+        //tools.addSeparator();
         //tools.addSeparator();
         //tools.addSeparator();
         
 
         
-        tools.add(_timerPanel, BorderLayout.WEST);
+        tools.add(_axeTimerPanel);
+        tools.add(_shieldTimerPanel);
         tools.add(_axeScorePanel);
         tools.add(_shieldScorePanel);
         setupGame();
@@ -360,7 +368,7 @@ public class Hnefatafl extends ClockTimer{
                             shieldStarted = true;
                             shieldTimer.startTimerThread();
 
-                            turn.setText("Shield Moves          ");
+                            turn.setText("      Shield Moves          ");
                         }
                         else if(firstClickImageIcon.getDescription().equals(defenseIcon.getDescription())
                                 || firstClickImageIcon.getDescription().equals(kingIcon.getDescription()))
@@ -382,7 +390,7 @@ public class Hnefatafl extends ClockTimer{
                                     || (gameLogic.getXandY(_secondClick, _buttons)[0] == 10 && gameLogic.getXandY(_secondClick, _buttons)[1] == 10))
                                     && firstClickImageIcon.getDescription().equals("K"))
                             {
-                                turn.setText("Shield Wins!      ");
+                                turn.setText("      Shield Wins!      ");
                                 for(int i = 0; i < 11; i++){
                                     for(int j = 0; j < 11; j++){
                                         _buttons[i][j].setEnabled(false);
@@ -393,7 +401,7 @@ public class Hnefatafl extends ClockTimer{
                                 isFirstPlayer=true;
                                     axeStarted = true;
                                    axeTimer.startTimerThread();
-                                turn.setText("Axe Moves     ");
+                                turn.setText("      Axe Moves     ");
 
                                 shieldTimer.stopTimerThread();
                             }
@@ -406,7 +414,7 @@ public class Hnefatafl extends ClockTimer{
                         noPiecesCheck = gameLogic.piecesLeft(axeIcon, kingIcon, _buttons);
                         //shields win
                         if(noPiecesCheck == 1 || (axeTimer.isNull() && axeStarted) || axeTimer.timeLeft == 0){
-                            turn.setText("Shield Wins!          ");
+                            turn.setText("      Shield Wins!          ");
                             for(int i = 0; i < 11; i++){
                                 for(int j = 0; j < 11; j++){
                                     _buttons[i][j].setEnabled(false);
@@ -415,7 +423,7 @@ public class Hnefatafl extends ClockTimer{
                         }
                         //axes win
                         else if(noPiecesCheck == 2 || (shieldTimer.isNull() && shieldStarted) || shieldTimer.timeLeft == 0){
-                            turn.setText("Axes Wins!        ");
+                            turn.setText("      Axes Wins!        ");
                             for(int i = 0; i < 11; i++){
                                 for(int j = 0; j < 11; j++){
                                     _buttons[i][j].setEnabled(false);
@@ -556,7 +564,7 @@ public class Hnefatafl extends ClockTimer{
         @Override
         public void actionPerformed(ActionEvent e) {
             if(isFirstPlayer){
-				turn.setText("Shields Wins!");
+				turn.setText("    Shields Wins!");
 				for(int i = 0; i < 11; i++){
 					for(int j = 0; j < 11; j++){
 						_buttons[i][j].setEnabled(false);
@@ -564,7 +572,7 @@ public class Hnefatafl extends ClockTimer{
 				}
 			}
 			else{
-				turn.setText("Axes Wins!");
+				turn.setText("    Axes Wins!");
 				for(int i = 0; i < 11; i++){
 					for(int j = 0; j < 11; j++){
 						_buttons[i][j].setEnabled(false);

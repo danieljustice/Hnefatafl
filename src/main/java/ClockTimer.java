@@ -13,7 +13,7 @@ public class ClockTimer extends JLabel{
 	Thread timerThread;
 	public boolean shouldHalt = false;
 
-	private static final int initTime = 5;
+	private static final int initTime = 300;
 	private static final int turnTime = 3;
 
 	int timeLeft = initTime;
