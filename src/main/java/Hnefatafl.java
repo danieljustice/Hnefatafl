@@ -47,8 +47,7 @@ public class Hnefatafl{
     private ClockTimer shieldTimer = null;
     private GamePieces axePieces = null;
     private GamePieces shieldPieces = null;
-    private ClockTimer axeTimer = new ClockTimer();
-    private ClockTimer shieldTimer = new ClockTimer();
+
     public Hnefatafl() {
         //add listeners to the clocktimers
         axeTimer = new ClockTimer();
@@ -89,7 +88,7 @@ public class Hnefatafl{
     *
     */
 	public boolean drawClock(){
-        
+
         _axeTimerPanel = new JPanel();
         _shieldTimerPanel = new JPanel();
         JLabel axeLabel = new JLabel("  Axe Timer:");
@@ -116,7 +115,7 @@ public class Hnefatafl{
         _axeScorePanel = new JPanel();
         JLabel axeLabel = new JLabel("Axe Remaining:");
         _axeScorePanel.add(axeLabel);
-        _axeScorePanel.add(axePieces); //add ability to show remaining pieces       
+        _axeScorePanel.add(axePieces); //add ability to show remaining pieces
         _shieldScorePanel.setVisible(true);
         _axeScorePanel.setVisible(true);
         return true;
@@ -179,9 +178,9 @@ public class Hnefatafl{
         //tools.addSeparator();
         //tools.addSeparator();
         //tools.addSeparator();
-        
 
-        
+
+
         tools.add(_axeTimerPanel);
         tools.add(_shieldTimerPanel);
         tools.add(_axeScorePanel);
@@ -429,12 +428,12 @@ public class Hnefatafl{
                         //check if there are no pieces left to see if theres a winner
                         noPiecesCheck = gameLogic.piecesLeft(axeIcon, kingIcon, defenseIcon, _buttons);
 						int[] tempPieces = gameLogic.numPiecesLeft();
-						
+
 						axeGamePieces = tempPieces[0];
 						shieldGamePieces = tempPieces[1];
-						
+
 						redrawPieceRemaining();
-						
+
                         //shields win
                         if(noPiecesCheck == 1 || (axeTimer.isNull() && axeStarted) || axeTimer.timeLeft == 0){
                             turn.setText("      Shield Wins!          ");
@@ -581,8 +580,7 @@ public class Hnefatafl{
                     turn = (JLabel) oip.readObject();
                     int axeTime = (int) oip.readObject();
                     int shieldTime = (int) oip.readObject();
-                    System.out.println(axeTime);
-                    System.out.println(shieldTime);
+
                     axeTimer = new ClockTimer(axeTime);
                     axeTimer.addPropertyChangeListener(new TimePropertyChangeListener());
                     shieldTimer = new ClockTimer(shieldTime);

@@ -17,6 +17,8 @@ public class ClockTimer extends JLabel{
 	private static final int initTime = 300;
 	private static final int turnTime = 3;
 
+	SimpleDateFormat sdf = null;
+
 	int timeLeft;
 
 	public ClockTimer(int startTime) {
