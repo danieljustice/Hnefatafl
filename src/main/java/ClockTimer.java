@@ -19,13 +19,14 @@ public class ClockTimer extends JLabel implements ActionListener {
 	private static final int initTime = 300;
 	private static final int turnTime = 3;
 
-	int timeLeft = initTime;
+	int timeLeft;
 
 	public ClockTimer(int startTime) {
 		setForeground(Color.BLACK);
 		sdf = new SimpleDateFormat("mm:ss");
 		setFont(new Font("arial", Font.BOLD, 15));
 		setHorizontalAlignment(SwingConstants.CENTER);
+		timeLeft = startTime;
 		this.setText("" + startTime);
 		this.startTimerThread();
 	}
@@ -100,6 +101,11 @@ public class ClockTimer extends JLabel implements ActionListener {
 		}else{
 			//this.setText("Game Over!");
 		}
+	}
+
+	public void pauseTimerThreadNoIncrement(){
+		timeLeft = timeLeft - turnTime;
+		pauseTimerThread();
 	}
 
 	public void continueTimerThread(){
