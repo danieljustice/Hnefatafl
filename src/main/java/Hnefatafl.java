@@ -1,4 +1,4 @@
-import java.awt.*;
+    import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
@@ -13,15 +13,20 @@ public class Hnefatafl{
 
     public int gameWidth = 11;
     public int gameHeight = 11;
-    private int frameWidth = 850;
-    private int frameHeight = 850;
+    private int frameWidth = 1000;
+    private int frameHeight = 950;
+    private int axeGamePieces = 24;
+    private int shieldGamePieces = 13;
+
     private JFrame _frame = new JFrame("Hnefatafl");
     private JPanel _ttt = new JPanel();
-    JLabel turn = new JLabel("Axe Moves");
+    JLabel turn = new JLabel("  Axe Moves     ");
     private JPanel _newPanel = new JPanel();
-    private JPanel _timerPanel = new JPanel();
+    private JPanel _axeTimerPanel = new JPanel();
+    private JPanel _shieldTimerPanel = new JPanel();
+    private JPanel _axeScorePanel = new JPanel();
+    private JPanel _shieldScorePanel = new JPanel();
     public GameLogic gameLogic = new GameLogic(gameWidth, gameHeight);
-
 
     private JButton _firstClick = null;
     private JButton _secondClick = null;
@@ -38,7 +43,8 @@ public class Hnefatafl{
     public ImageIcon emptyImageIcon;
     public Image backgroundIcon;
 
-
+    private GamePieces axePieces = null;
+    private GamePieces shieldPieces = null;
     private ClockTimer axeTimer = new ClockTimer();
     private ClockTimer shieldTimer = new ClockTimer();
     public Hnefatafl() {
@@ -49,6 +55,7 @@ public class Hnefatafl{
         //pull in images for icons on the buttons
         if(loadImages()){
         	drawClock();
+            drawPieceRemaining();
             drawBoard();
         }
     }
@@ -78,16 +85,50 @@ public class Hnefatafl{
     *
     */
 	public boolean drawClock(){
-
-		//JFrame.setDefaultLookAndFeelDecorated(true);
-		_timerPanel = new JPanel();
-		//_timerPanel.setSize(300,150);
-		_timerPanel.setLayout(new GridLayout(1, 1));
-		_timerPanel.add(axeTimer);
-		_timerPanel.add(shieldTimer);
-		_timerPanel.setVisible(true);
+        
+        _axeTimerPanel = new JPanel();
+        _shieldTimerPanel = new JPanel();
+        JLabel axeLabel = new JLabel("  Axe Timer:");
+        JLabel shieldLabel = new JLabel("Shield Timer:");
+        _axeTimerPanel.add(axeLabel);
+		_axeTimerPanel.add(axeTimer);
+        _shieldTimerPanel.add(shieldLabel);
+		_shieldTimerPanel.add(shieldTimer);
+        _axeTimerPanel.setVisible(true);
+		_shieldTimerPanel.setVisible(true);
 	    return true;
 	}
+
+    /*
+    *
+    */
+    public boolean drawPieceRemaining(){
+        axePieces = new GamePieces(axeGamePieces);
+        shieldPieces = new GamePieces(shieldGamePieces);
+        _shieldScorePanel = new JPanel();
+        JLabel shieldLabel = new JLabel("Shield Remaining:");
+        _shieldScorePanel.add(shieldLabel);
+        _shieldScorePanel.add(shieldPieces);
+        _axeScorePanel = new JPanel();
+        JLabel axeLabel = new JLabel("Axe Remaining:");
+        _axeScorePanel.add(axeLabel);
+        _axeScorePanel.add(axePieces); //add ability to show remaining pieces       
+        _shieldScorePanel.setVisible(true);
+        _axeScorePanel.setVisible(true);
+        return true;
+    }
+
+    public boolean redrawPieceRemaining(){
+        _shieldScorePanel.remove(shieldPieces);
+        shieldPieces.setPieces(shieldGamePieces);
+        _shieldScorePanel.add(shieldPieces);
+        _shieldScorePanel.setVisible(true);
+        _axeScorePanel.remove(axePieces);
+        axePieces.setPieces(axeGamePieces);
+        _axeScorePanel.add(axePieces);
+        _axeScorePanel.setVisible(true);
+        return true;
+    }
     /*
      * Draws the board panel itself and then calls the method to set the initial game state.
      */
@@ -98,42 +139,49 @@ public class Hnefatafl{
 
         JToolBar tools = new JToolBar();
         tools.setFloatable(false);
+        //tools.setLayout(new GridLayout(2, 1));
         _frame.add(tools, BorderLayout.PAGE_START);
-
 
         JButton newButton = new JButton("New"); //no functions
         ActionListener newButtonListener = new NewButtonListener();
         newButton.addActionListener(newButtonListener);
         tools.add(newButton);
-        tools.addSeparator();
+        //tools.addSeparator();
 
         JButton saveButton = new JButton("Save"); //no functions
         ActionListener saveButtonListener = new SaveButtonListener();
         saveButton.addActionListener(saveButtonListener);
         tools.add(saveButton);
-        tools.addSeparator();
+        //tools.addSeparator();
 
         JButton loadButton = new JButton("Load"); //no functions
         ActionListener loadButtonListener = new LoadButtonListener();
         loadButton.addActionListener(loadButtonListener);
         tools.add(loadButton);
-        tools.addSeparator();
+        //tools.addSeparator();
 
-	JButton resignButton = new JButton("Resign");
+        JButton resignButton = new JButton("Resign");
         ActionListener resignButtonListener = new ResignButtonListener();
-	resignButton.addActionListener(resignButtonListener);
-	tools.add(resignButton); //no functions
+        resignButton.addActionListener(resignButtonListener);
+        tools.add(resignButton); //no functions
 
-        tools.addSeparator();
-        tools.addSeparator();
-        tools.addSeparator();
-        tools.addSeparator();
-        tools.addSeparator();
-        tools.addSeparator();
-        tools.addSeparator();
-        tools.addSeparator();
+        //tools.addSeparator();
         tools.add(turn);
-        tools.add(_timerPanel, BorderLayout.PAGE_START);
+
+        //tools.addSeparator();
+        //tools.addSeparator();
+        //tools.addSeparator();
+        //tools.addSeparator();
+        //tools.addSeparator();
+        //tools.addSeparator();
+        //tools.addSeparator();
+        
+
+        
+        tools.add(_axeTimerPanel);
+        tools.add(_shieldTimerPanel);
+        tools.add(_axeScorePanel);
+        tools.add(_shieldScorePanel);
         setupGame();
 
         _frame.setVisible(true);
@@ -148,6 +196,7 @@ public class Hnefatafl{
     public void reloadBoard() {
         _frame.dispose();
         drawClock();
+        redrawPieceRemaining();
         drawBoard();
     }
 
@@ -348,7 +397,7 @@ public class Hnefatafl{
                                     || (gameLogic.getXandY(_secondClick, _buttons)[0] == 10 && gameLogic.getXandY(_secondClick, _buttons)[1] == 10))
                                     && firstClickImageIcon.getDescription().equals("K"))
                             {
-                                turn.setText("Shield Wins!");
+                                turn.setText("      Shield Wins!      ");
                                 for(int i = 0; i < 11; i++){
                                     for(int j = 0; j < 11; j++){
                                         _buttons[i][j].setEnabled(false);
@@ -368,10 +417,17 @@ public class Hnefatafl{
                         _secondClick = null;
 
                         //check if there are no pieces left to see if theres a winner
-                        noPiecesCheck = gameLogic.piecesLeft(axeIcon, kingIcon, _buttons);
+                        noPiecesCheck = gameLogic.piecesLeft(axeIcon, kingIcon, defenseIcon, _buttons);
+						int[] tempPieces = gameLogic.numPiecesLeft();
+						
+						axeGamePieces = tempPieces[0];
+						shieldGamePieces = tempPieces[1];
+						
+						redrawPieceRemaining();
+						
                         //shields win
-                        if(noPiecesCheck == 1 || (axeTimer.isNull() && axeStarted)){
-                            turn.setText("Shield Wins!");
+                        if(noPiecesCheck == 1 || (axeTimer.isNull() && axeStarted) || axeTimer.timeLeft == 0){
+                            turn.setText("      Shield Wins!          ");
                             for(int i = 0; i < 11; i++){
                                 for(int j = 0; j < 11; j++){
                                     _buttons[i][j].setEnabled(false);
@@ -379,8 +435,8 @@ public class Hnefatafl{
                             }
                         }
                         //axes win
-                        else if(noPiecesCheck == 2 || (shieldTimer.isNull() && shieldStarted)){
-                            turn.setText("Axes Wins!");
+                        else if(noPiecesCheck == 2 || (shieldTimer.isNull() && shieldStarted) || shieldTimer.timeLeft == 0){
+                            turn.setText("      Axes Wins!        ");
                             for(int i = 0; i < 11; i++){
                                 for(int j = 0; j < 11; j++){
                                     _buttons[i][j].setEnabled(false);
@@ -409,13 +465,15 @@ public class Hnefatafl{
             _buttons = new JButton[gameWidth][gameHeight];
             // Set the first player's turn
             isFirstPlayer = true;
-            turn.setText("Axe Moves");
+            turn.setText("  Axe Moves     ");
             axeTimer = new ClockTimer();
             axeTimer.addPropertyChangeListener(new TimePropertyChangeListener());
             shieldTimer = new ClockTimer();
             shieldTimer.addPropertyChangeListener(new TimePropertyChangeListener());
             axeStarted = false;
             shieldStarted = false;
+            axeGamePieces = 24;
+            shieldGamePieces = 13;
             reloadBoard();
         }
     }
@@ -524,6 +582,22 @@ public class Hnefatafl{
 	private class ResignButtonListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
+            if(isFirstPlayer){
+				turn.setText("    Shields Wins!");
+				for(int i = 0; i < 11; i++){
+					for(int j = 0; j < 11; j++){
+						_buttons[i][j].setEnabled(false);
+					}
+				}
+			}
+			else{
+				turn.setText("    Axes Wins!");
+				for(int i = 0; i < 11; i++){
+					for(int j = 0; j < 11; j++){
+						_buttons[i][j].setEnabled(false);
+					}
+				}
+			}
             endGame(isFirstPlayer);
         }
     }
