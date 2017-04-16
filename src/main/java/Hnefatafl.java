@@ -7,6 +7,7 @@ import java.beans.PropertyChangeListener;
 import java.io.*;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.border.LineBorder;
 import org.omg.CORBA.SystemException;
 
 public class Hnefatafl{
@@ -165,10 +166,15 @@ public class Hnefatafl{
 
         JButton resignButton = new JButton("Resign");
         ActionListener resignButtonListener = new ResignButtonListener();
+
         resignButton.addActionListener(resignButtonListener);
         tools.add(resignButton); //no functions
 
-        //tools.addSeparator();
+        JButton bestButton = new JButton("Best Move");
+        ActionListener bestButtonListener = new bestButtonListener();
+        bestButton.addActionListener(bestButtonListener);
+        tools.add(bestButton); 
+
         tools.add(turn);
 
         //tools.addSeparator();
@@ -320,6 +326,463 @@ public class Hnefatafl{
         //game.drawBoard();
     }
 
+    public void displayCorrectChoice(int[] start, int[] destination) {
+        _buttons[start[0]][start[1]].setBorder(new LineBorder(Color.YELLOW));
+        _buttons[destination[0]][destination[1]].setBorder(new LineBorder(Color.YELLOW));
+    }
+
+    public void removeCorrectChoice() {
+        javax.swing.border.Border emptyBorder = BorderFactory.createEmptyBorder();
+        for (int i = 0; i < 11; i++) {
+            for (int j = 0; j < 11; j++) {
+
+                _buttons[i][j].setBorder(emptyBorder);
+            }
+        }
+    }
+
+    public void showCorrectChoice() {
+        ImageIcon currentImageIcon;
+        ImageIcon temp;
+        int score = 0;
+        int[] start = new int[2];
+        int[] destination = new int[2];
+        boolean king = false;
+
+        if (isFirstPlayer) {
+            for (int i = 0; i < gameWidth; i++) {
+                for (int j = 0; j < gameHeight; j++) {
+                    currentImageIcon = (ImageIcon) _buttons[i][j].getIcon();
+                    temp = currentImageIcon;
+                    if (currentImageIcon.getDescription().equals(axeIcon.getDescription())) {
+                        //check updown left right for where this piece can go
+                        for (int k = j - 1; k >= 0; k--) {
+
+                            currentImageIcon = (ImageIcon) _buttons[i][k].getIcon();
+                            if (!currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())) {
+                                break;
+                            }
+                            if (!king && ((i == 0 && k == 0) || (i == 10 && k == 0) || (i == 0 && k == 10) || (i == 10 && k == 10))) {
+                                break;
+                            }
+                            if (score < surroundingPoints(i, k, temp)) {
+                                score = surroundingPoints(i, k, temp);
+                                start[0] = i;
+                                start[1] = j;
+                                destination[0] = i;
+                                destination[1] = k;
+                            }
+
+                        }
+
+                        for (int k = j + 1; k < 11; k++) {
+                            currentImageIcon = (ImageIcon) _buttons[i][k].getIcon();
+                            if (!currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())) {
+                                break;
+                            }
+                            if (!king && ((i == 0 && k == 0) || (i == 10 && k == 0) || (i == 0 && k == 10) || (i == 10 && k == 10))) {
+                                break;
+                            }
+                            if (score < surroundingPoints(i, k, temp)) {
+                                score = surroundingPoints(i, k, temp);
+                                start[0] = i;
+                                start[1] = j;
+                                destination[0] = i;
+                                destination[1] = k;
+                            }
+                        }
+
+                        for (int k = i - 1; k >= 0; k--) {
+                            currentImageIcon = (ImageIcon) _buttons[k][j].getIcon();
+                            if (!currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())) {
+                                break;
+                            }
+                            if (!king && ((j == 0 && k == 0) || (j == 10 && k == 0) || (j == 0 && k == 10) || (j == 10 && k == 10))) {
+                                break;
+                            }
+                            if (score < surroundingPoints(k, j, temp)) {
+                                score = surroundingPoints(k, j, temp);
+                                start[0] = i;
+                                start[1] = j;
+                                destination[0] = k;
+                                destination[1] = j;
+                            }
+                        }
+
+                        for (int k = i + 1; k < 11; k++) {
+                            currentImageIcon = (ImageIcon) _buttons[k][j].getIcon();
+                            if (!currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())) {
+                                break;
+                            }
+                            if (!king && ((j == 0 && k == 0) || (j == 10 && k == 0) || (j == 0 && k == 10) || (j == 10 && k == 10))) {
+                                break;
+                            }
+                            if (score < surroundingPoints(k, j, temp)) {
+                                score = surroundingPoints(k, j, temp);
+                                start[0] = i;
+                                start[1] = j;
+                                destination[0] = k;
+                                destination[1] = j;
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            for (int i = 0; i < gameWidth; i++) {
+                for (int j = 0; j < gameHeight; j++) {
+                    currentImageIcon = (ImageIcon) _buttons[i][j].getIcon();
+                    temp = currentImageIcon;
+                    if (currentImageIcon.getDescription().equals(kingIcon.getDescription())) {
+                        king = true;
+                    } else {
+                        king = false;
+                    }
+
+                    if (currentImageIcon.getDescription().equals(defenseIcon.getDescription()) || currentImageIcon.getDescription().equals(kingIcon.getDescription())) {
+                        //check updown left right for where this piece can go
+
+                        for (int k = j - 1; k >= 0; k--) {
+                            currentImageIcon = (ImageIcon) _buttons[i][k].getIcon();
+                            if (!currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())) {
+                                break;
+                            }
+                            if (king && ((i == 0 && k == 0) || (i == 10 && k == 0) || (i == 0 && k == 10) || (i == 10 && k == 10))) {
+                                score = 99;
+                                start[0] = i;
+                                start[1] = j;
+                                destination[0] = i;
+                                destination[1] = k;
+                            }
+                            if (!king && ((i == 0 && k == 0) || (i == 10 && k == 0) || (i == 0 && k == 10) || (i == 10 && k == 10))) {
+                                break;
+                            }
+                            if (score < surroundingPoints(i, k, temp)) {
+                                score = surroundingPoints(i, k, temp);
+                                start[0] = i;
+                                start[1] = j;
+                                destination[0] = i;
+                                destination[1] = k;
+                            }
+                        }
+
+                        for (int k = j + 1; k < 11; k++) {
+                            currentImageIcon = (ImageIcon) _buttons[i][k].getIcon();
+                            if (!currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())) {
+                                break;
+                            }
+                            if (king && ((i == 0 && k == 0) || (i == 10 && k == 0) || (i == 0 && k == 10) || (i == 10 && k == 10))) {
+                                score = 99;
+                                start[0] = i;
+                                start[1] = j;
+                                destination[0] = i;
+                                destination[1] = k;
+                            }
+                            if (!king && ((i == 0 && k == 0) || (i == 10 && k == 0) || (i == 0 && k == 10) || (i == 10 && k == 10))) {
+                                break;
+                            }
+                            if (score < surroundingPoints(i, k, temp)) {
+                                score = surroundingPoints(i, k, temp);
+                                start[0] = i;
+                                start[1] = j;
+                                destination[0] = i;
+                                destination[1] = k;
+                            }
+                        }
+
+                        for (int k = i - 1; k >= 0; k--) {
+                            currentImageIcon = (ImageIcon) _buttons[k][j].getIcon();
+                            if (!currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())) {
+                                break;
+                            }
+                            if (king && ((j == 0 && k == 0) || (j == 10 && k == 0) || (j == 0 && k == 10) || (j == 10 && k == 10))) {
+                                score = 99;
+                                start[0] = i;
+                                start[1] = j;
+                                destination[0] = k;
+                                destination[1] = j;
+                            }
+                            if (!king && ((j == 0 && k == 0) || (j == 10 && k == 0) || (j == 0 && k == 10) || (j == 10 && k == 10))) {
+                                break;
+                            }
+                            if (score < surroundingPoints(k, j, temp)) {
+                                score = surroundingPoints(k, j, temp);
+                                start[0] = i;
+                                start[1] = j;
+                                destination[0] = k;
+                                destination[1] = j;
+                            }
+                        }
+
+                        for (int k = i + 1; k < 11; k++) {
+                            currentImageIcon = (ImageIcon) _buttons[k][j].getIcon();
+                            if (!currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())) {
+                                break;
+                            }
+                            if (king && ((j == 0 && k == 0) || (j == 10 && k == 0) || (j == 0 && k == 10) || (j == 10 && k == 10))) {
+                                score = 99;
+                                start[0] = i;
+                                start[1] = j;
+                                destination[0] = k;
+                                destination[1] = j;
+                            }
+                            if (!king && ((j == 0 && k == 0) || (j == 10 && k == 0) || (j == 0 && k == 10) || (j == 10 && k == 10))) {
+                                break;
+                            }
+                            if (score < surroundingPoints(k, j, temp)) {
+                                score = surroundingPoints(k, j, temp);
+                                start[0] = i;
+                                start[1] = j;
+                                destination[0] = k;
+                                destination[1] = j;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        displayCorrectChoice(start, destination);
+    }
+
+    public int surroundingPoints(int x, int y, ImageIcon currentImageIcon) {
+        int score = 1;
+        //up down left right
+        //checkNorth
+        if (currentImageIcon.getDescription().equals(axeIcon.getDescription())) {
+            if (y > 0) {
+                if (checkNorth(x, y) == 1) {
+                    score += 3;
+                } else if (checkNorth(x, y) == 2) {
+                    if (y - 1 > 0) {
+                        if (checkNorth(x, y - 1) == 1) {
+                            score += 6;
+                        } else {
+                            if (checkNorth(x, y - 1) != 0) {
+                                return 1;
+                            } else {
+                                score += 2;
+                            }
+                        }
+                    } else {
+                        score += 2;
+                    }
+                } else if (checkNorth(x, y) == 3) {
+                    score += 5;
+                } else {
+                    score += 4;
+                }
+            }
+            if (y < 10) {
+                if (checkSouth(x, y) == 1) {
+                    score += 3;
+                } else if (checkSouth(x, y) == 2) {
+                    if (y + 1 < 10) {
+                        if (checkSouth(x, y + 1) == 1) {
+                            score += 6;
+                        } else {
+                            if (checkSouth(x, y + 1) != 0) {
+                                return 1;
+                            } else {
+                                score += 2;
+                            }
+                        }
+                    } else {
+                        score += 2;
+                    }
+                } else if (checkSouth(x, y) == 3) {
+                    score += 5;
+                } else {
+                    score += 4;
+                }
+            }
+            if (x > 0) {
+                if (checkWest(x, y) == 1) {
+                    score += 3;
+                } else if (checkWest(x, y) == 2) {
+                    if (x - 1 > 0) {
+                        if (checkWest(x - 1, y) == 1) {
+                            score += 6;
+                        } else {
+                            if (checkWest(x - 1, y) != 0) {
+                                return 1;
+                            } else {
+                                score += 2;
+                            }
+                        }
+                    } else {
+                        score += 2;
+                    }
+                } else if (checkWest(x, y) == 3) {
+                    score += 5;
+                } else {
+                    score += 4;
+                }
+            }
+            if (x < 10) {
+                if (checkEast(x, y) == 1) {
+                    score += 3;
+                } else if (checkEast(x, y) == 2) {
+                    if (x + 1 < 10) {
+                        if (checkEast(x + 1, y) == 1) {
+                            score += 6;
+                        } else {
+                            if (checkEast(x + 1, y) != 0) {
+                                return 1;
+                            } else {
+                                score += 2;
+                            }
+                        }
+                    } else {
+                        score += 2;
+                    }
+                } else if (checkEast(x, y) == 3) {
+                    score += 5;
+                } else {
+                    score += 4;
+                }
+            }
+        } else {
+            if (y > 0) {
+                if (checkNorth(x, y) == 2) {
+                    score += 3;
+                } else if (checkNorth(x, y) == 1) {
+                    if (y - 1 > 0) {
+                        if (checkNorth(x, y - 1) == 2) {
+                            score += 6;
+                        } else {
+                            if (checkNorth(x, y - 1) != 0) {
+                                return 1;
+                            } else {
+                                score += 2;
+                            }
+                        }
+                    } else {
+                        score += 2;
+                    }
+                } else if (checkNorth(x, y) == 0) {
+                    score += 4;
+                }
+            }
+            if (y < 10) {
+                if (checkSouth(x, y) == 2) {
+                    score += 3;
+                } else if (checkSouth(x, y) == 1) {
+                    if (y + 1 < 10) {
+                        if (checkSouth(x, y + 1) == 2) {
+                            score += 6;
+                        } else {
+                            if (checkSouth(x, y + 1) != 0) {
+                                return 1;
+                            } else {
+                                score += 2;
+                            }
+                        }
+                    } else {
+                        score += 2;
+                    }
+                } else if (checkSouth(x, y) == 0) {
+                    score += 4;
+                }
+            }
+            if (x > 0) {
+                if (checkWest(x, y) == 2) {
+                    score += 3;
+                } else if (checkWest(x, y) == 1) {
+                    if (x - 1 > 0) {
+                        if (checkWest(x - 1, y) == 2) {
+                            score += 6;
+                        } else {
+                            if (checkWest(x - 1, y) != 0) {
+                                return 1;
+                            } else {
+                                score += 2;
+                            }
+                        }
+                    } else {
+                        score += 2;
+                    }
+                } else if (checkWest(x, y) == 0) {
+                    score += 4;
+                }
+            }
+            if (x < 10) {
+                if (checkEast(x, y) == 2) {
+                    score += 3;
+                } else if (checkEast(x, y) == 1) {
+                    if (x + 1 < 10) {
+                        if (checkEast(x + 1, y) == 2) {
+                            score += 6;
+                        } else {
+                            if (checkEast(x + 1, y) != 0) {
+                                return 1;
+                            } else {
+                                score += 2;
+                            }
+                        }
+                    } else {
+                        score += 2;
+                    }
+                } else if (checkEast(x, y) == 0) {
+                    score += 4;
+                }
+            }
+        }
+        
+        return score;
+    }
+
+    public int checkNorth(int x, int y) {
+        ImageIcon currentImageIcon = (ImageIcon) _buttons[x][y - 1].getIcon();
+        if (currentImageIcon.getDescription().equals(axeIcon.getDescription())) {
+            return 1;
+        } else if (currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())) {
+            return 0;
+        } else if (currentImageIcon.getDescription().equals(kingIcon.getDescription())) {
+            return 3;
+        } else {
+            return 2;
+        }
+    }
+
+    public int checkSouth(int x, int y) {
+        ImageIcon currentImageIcon = (ImageIcon) _buttons[x][y + 1].getIcon();
+        if (currentImageIcon.getDescription().equals(axeIcon.getDescription())) {
+            return 1;
+        } else if (currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())) {
+            return 0;
+        } else if (currentImageIcon.getDescription().equals(kingIcon.getDescription())) {
+            return 3;
+        } else {
+            return 2;
+        }
+    }
+
+    public int checkEast(int x, int y) {
+        ImageIcon currentImageIcon = (ImageIcon) _buttons[x + 1][y].getIcon();
+        if (currentImageIcon.getDescription().equals(axeIcon.getDescription())) {
+            return 1;
+        } else if (currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())) {
+            return 0;
+        } else if (currentImageIcon.getDescription().equals(kingIcon.getDescription())) {
+            return 3;
+        } else {
+            return 2;
+        }
+    }
+
+    public int checkWest(int x, int y) {
+        ImageIcon currentImageIcon = (ImageIcon) _buttons[x - 1][y].getIcon();
+        if (currentImageIcon.getDescription().equals(axeIcon.getDescription())) {
+            return 1;
+        } else if (currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())) {
+            return 0;
+        } else if (currentImageIcon.getDescription().equals(kingIcon.getDescription())) {
+            return 3;
+        } else {
+            return 2;
+        }
+    }
     // #################################################################
     // Button listeners
     // #################################################################
@@ -335,7 +798,6 @@ public class Hnefatafl{
 
         // Every time we click the button, it will perform
         // the following action.
-
         @Override
         public void actionPerformed(ActionEvent e) {
 
@@ -346,61 +808,59 @@ public class Hnefatafl{
             }
 
             JButton temp = (JButton) e.getSource();
-            ImageIcon currentImageIcon = (ImageIcon)temp.getIcon();
+            ImageIcon currentImageIcon = (ImageIcon) temp.getIcon();
             int noPiecesCheck;
 
-            if(_firstClick == null && currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())){
+            if (_firstClick == null && currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())) {
                 //Spit out some error message saying there is no game piece here
-            }
-            else{
+            } else {
                 //Turn enforcing
-                if(_firstClick == null){
+                if (_firstClick == null) {
                     _firstClick = (JButton) e.getSource();
-                    firstClickImageIcon = (ImageIcon)_firstClick.getIcon();
-                    if(isFirstPlayer){
-                        if(firstClickImageIcon.getDescription().equals(defenseIcon.getDescription()) || firstClickImageIcon.getDescription().equals(kingIcon.getDescription())){
+                    firstClickImageIcon = (ImageIcon) _firstClick.getIcon();
+                    if (isFirstPlayer) {
+                        if (firstClickImageIcon.getDescription().equals(defenseIcon.getDescription()) || firstClickImageIcon.getDescription().equals(kingIcon.getDescription())) {
                             _firstClick = null;
                             //Might want to add more functionality later. To have a pop up telling user it is not their turn.
 
                         }
-                    }
-                    else if(!isFirstPlayer){
-                        if(firstClickImageIcon.getDescription().equals(axeIcon.getDescription())){
+                    } else if (!isFirstPlayer) {
+                        if (firstClickImageIcon.getDescription().equals(axeIcon.getDescription())) {
                             _firstClick = null;
-                             //Might want to add more functionality later. To have a pop up telling user it is not their turn.
+                            //Might want to add more functionality later. To have a pop up telling user it is not their turn.
                         }
                     }
 
-                }
-                else{
+                } else {
                     _secondClick = (JButton) e.getSource();
-                    secondClickImageIcon = (ImageIcon)_secondClick.getIcon();
-                    if(gameLogic.isValidMove(gameLogic.getXandY(_firstClick, _buttons), gameLogic.getXandY(_secondClick, _buttons), firstClickImageIcon.getDescription().equals(kingIcon.getDescription()), _buttons)){
-                        if(firstClickImageIcon.getDescription().equals(axeIcon.getDescription())) {
+                    secondClickImageIcon = (ImageIcon) _secondClick.getIcon();
+                    if (gameLogic.isValidMove(gameLogic.getXandY(_firstClick, _buttons), gameLogic.getXandY(_secondClick, _buttons), firstClickImageIcon.getDescription().equals(kingIcon.getDescription()), _buttons)) {
+                        if (firstClickImageIcon.getDescription().equals(axeIcon.getDescription())) {
+
                             _secondClick.setIcon(axeIcon);
                             //attackPieces(JButton piecePlacement, ImageIcon emptyImageIcon, ImageIcon kingIcon, ImageIcon axeIcon, ImageIcon defenseIcon, int gameWidth, int gameHeight, JButton[][] _buttons)
                             _buttons = gameLogic.attackPieces(_secondClick, emptyImageIcon, kingIcon, axeIcon, defenseIcon, _buttons);
+                            isFirstPlayer = false;
+                            axeTimer.stopTimerThread();
                             shieldStarted = true;
-                            shieldTimer.continueTimerThread();
-                            isFirstPlayer=false;
-                            axeTimer.pauseTimerThread();
+                            shieldTimer.startTimerThread();
+
                             turn.setText("Shield Moves");
-                        }
-                        else if(firstClickImageIcon.getDescription().equals(defenseIcon.getDescription())
-                                || firstClickImageIcon.getDescription().equals(kingIcon.getDescription()))
-                        {
-                            if(firstClickImageIcon.getDescription().equals(kingIcon.getDescription())){
+
+                            removeCorrectChoice();
+                        } else if (firstClickImageIcon.getDescription().equals(defenseIcon.getDescription())
+                                || firstClickImageIcon.getDescription().equals(kingIcon.getDescription())) {
+                            if (firstClickImageIcon.getDescription().equals(kingIcon.getDescription())) {
                                 _secondClick.setIcon(kingIcon);
                                 _buttons = gameLogic.attackPieces(_secondClick, emptyImageIcon, kingIcon, axeIcon, defenseIcon, _buttons);
 
-                            }
-                            else{
+                            } else {
                                 _secondClick.setIcon(defenseIcon);
                                 _buttons = gameLogic.attackPieces(_secondClick, emptyImageIcon, kingIcon, axeIcon, defenseIcon, _buttons);
 
                             }
 
-                            if(((gameLogic.getXandY(_secondClick, _buttons)[0] == 0 && gameLogic.getXandY(_secondClick, _buttons)[1] == 0)
+                            if (((gameLogic.getXandY(_secondClick, _buttons)[0] == 0 && gameLogic.getXandY(_secondClick, _buttons)[1] == 0)
                                     || (gameLogic.getXandY(_secondClick, _buttons)[0] == 0 && gameLogic.getXandY(_secondClick, _buttons)[1] == 10)
                                     || (gameLogic.getXandY(_secondClick, _buttons)[0] == 10 && gameLogic.getXandY(_secondClick, _buttons)[1] == 0)
                                     || (gameLogic.getXandY(_secondClick, _buttons)[0] == 10 && gameLogic.getXandY(_secondClick, _buttons)[1] == 10))
@@ -408,18 +868,21 @@ public class Hnefatafl{
                             {
                                 turn.setText("      Shield Wins!      ");
                                 for(int i = 0; i < 11; i++){
-                                    for(int j = 0; j < 11; j++){
+									for(int j = 0; j < 11; j++){
                                         _buttons[i][j].setEnabled(false);
                                     }
-                                }
-                            }
-                            else{
-                                isFirstPlayer=true;
+								}
+                                
+                            } else {
+                                isFirstPlayer = true;
                                 axeStarted = true;
+
                                 axeTimer.continueTimerThread();
                                 shieldTimer.pauseTimerThread();
+                                removeCorrectChoice();
                                 turn.setText("Axe Moves");
-                            }
+
+                              }
                         }
                         _firstClick.setIcon(emptyImageIcon);
                         _firstClick = null;
@@ -452,10 +915,10 @@ public class Hnefatafl{
                                 }
                             }
                         }
-                    }
-                    else{
-                        _firstClick = null;
-                        _secondClick = null;
+						else {
+							_firstClick = null;
+							_secondClick = null;
+						}
                     }
                 }
             }
@@ -612,7 +1075,7 @@ public class Hnefatafl{
      *
      * the current user that hits the resign button should forfeit and the next
      */
-	private class ResignButtonListener implements ActionListener{
+    private class ResignButtonListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
             if(isFirstPlayer){
@@ -632,6 +1095,13 @@ public class Hnefatafl{
 				}
 			}
             endGame(isFirstPlayer);
+        }
+    }
+    
+    private class bestButtonListener implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            showCorrectChoice();
         }
     }
 
