@@ -14,8 +14,9 @@ public class ClockTimer extends JLabel implements ActionListener {
 	SimpleDateFormat sdf;
 	Thread timerThread;
 	public boolean shouldHalt = false;
+	public boolean isPaused = true;
 
-	private static final int initTime = 300;
+	private static final int initTime = 3;
 	private static final int turnTime = 3;
 
 	int timeLeft = initTime;
@@ -26,6 +27,7 @@ public class ClockTimer extends JLabel implements ActionListener {
 		setFont(new Font("arial", Font.BOLD, 15));
 		setHorizontalAlignment(SwingConstants.CENTER);
 		this.setText("" + startTime);
+		this.startTimerThread();
 	}
 
 	public ClockTimer() {
@@ -41,17 +43,34 @@ public class ClockTimer extends JLabel implements ActionListener {
 	//starts any thread passed into this function
 	public void startTimerThread(){
 		try {
-			int startTime = Integer.parseInt(this.getText());
+			//int startTime = Integer.parseInt(this.getText());
+			//int curTime = startTime;
 			shouldHalt = false;
 			timerThread = new Thread(() -> {
-			for (int j = startTime; j >= 0; j--) {
+			while(timeLeft > 0) {
 				if(shouldHalt){
 					break;
 				}
-				this.setText("" + j);
+				if(!isPaused){
+					timeLeft = timeLeft - 1;
+				}
+				this.setText("" + timeLeft);
+				//System.out.println(j + "...");
+
+				// This thread will sleep for >= 1000 milliseconds (1 second)
+				// In practice it will be very close to 1000 milliseconds
+				// Do not rely on Java (or the JVM in general) for hard
+				// real-time guarantees!
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException iex) {
+				// ignore
+				}
 			}
+			timerThread = null;
 	    });
 		timerThread.start();
+		// timerThread.join();
 		} catch (Exception e) {
 			//TODO: handle exception
 		}
@@ -64,9 +83,6 @@ public class ClockTimer extends JLabel implements ActionListener {
 				shouldHalt = true;
 				timerThread.join(0);
 				int newTime = Integer.parseInt(this.getText()) + turnTime;
-				if(newTime > 300){
-					newTime = 300;
-				}
 				this.setText("" + newTime);
 			} catch (InterruptedException iex) {
 				System.out.println("Some sort of error joining threads. Got no clue why.\n" + iex);
@@ -76,6 +92,19 @@ public class ClockTimer extends JLabel implements ActionListener {
 		}
 	}
 
+	public void pauseTimerThread(){
+		isPaused = true;
+		timeLeft = timeLeft + turnTime;
+		if(!isNull()){
+			this.setText("" + timeLeft);
+		}else{
+			this.setText("Game Over!");
+		}
+	}
+
+	public void continueTimerThread(){
+		isPaused = false;
+	}
 	public boolean isNull() {
 		return(timerThread == null);
 	}

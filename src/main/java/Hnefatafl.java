@@ -7,7 +7,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import org.omg.CORBA.SystemException;
 
-public class Hnefatafl extends ClockTimer{
+public class Hnefatafl{
 
     public int gameWidth = 11;
     public int gameHeight = 11;
@@ -291,11 +291,10 @@ public class Hnefatafl extends ClockTimer{
                             _secondClick.setIcon(axeIcon);
                             //attackPieces(JButton piecePlacement, ImageIcon emptyImageIcon, ImageIcon kingIcon, ImageIcon axeIcon, ImageIcon defenseIcon, int gameWidth, int gameHeight, JButton[][] _buttons)
                             _buttons = gameLogic.attackPieces(_secondClick, emptyImageIcon, kingIcon, axeIcon, defenseIcon, _buttons);
-                            isFirstPlayer=false;
-                            axeTimer.stopTimerThread();
                             shieldStarted = true;
-                            shieldTimer.startTimerThread();
-
+                            shieldTimer.continueTimerThread();
+                            isFirstPlayer=false;
+                            axeTimer.pauseTimerThread();
                             turn.setText("Shield Moves");
                         }
                         else if(firstClickImageIcon.getDescription().equals(defenseIcon.getDescription())
@@ -327,11 +326,10 @@ public class Hnefatafl extends ClockTimer{
                             }
                             else{
                                 isFirstPlayer=true;
-                                    axeStarted = true;
-                                   axeTimer.startTimerThread();
-                                turn.setText("Axe Moves");
-
-                                shieldTimer.stopTimerThread();
+                                axeStarted = true;
+                                axeTimer.continueTimerThread();
+                                shieldTimer.pauseTimerThread();
+                                turn.setText("Axe Moves");                                
                             }
                         }
                         _firstClick.setIcon(emptyImageIcon);
