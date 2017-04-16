@@ -2,12 +2,14 @@
 import java.awt.event.*;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.*;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import org.omg.CORBA.SystemException;
 
-public class Hnefatafl extends ClockTimer{
+public class Hnefatafl{
 
     public int gameWidth = 11;
     public int gameHeight = 11;
@@ -46,6 +48,10 @@ public class Hnefatafl extends ClockTimer{
     private ClockTimer axeTimer = new ClockTimer();
     private ClockTimer shieldTimer = new ClockTimer();
     public Hnefatafl() {
+        //add listeners to the clocktimers
+        axeTimer.addPropertyChangeListener(new TimePropertyChangeListener());
+        shieldTimer.addPropertyChangeListener(new TimePropertyChangeListener());
+
         //pull in images for icons on the buttons
         if(loadImages()){
         	drawClock();
@@ -60,52 +66,18 @@ public class Hnefatafl extends ClockTimer{
     **/
     public boolean loadImages(){
         boolean success = true;
-        try {
-            defenseIcon = new ImageIcon(ImageIO.read(new File("src/Assets/First Shield.png")));
-            defenseIcon.setDescription("shield");
-        } catch (Exception e) {
-            //TODO: handle exception
-            System.out.println("Shield: " + e);
-            success = false;
-        }
+        
+        defenseIcon = ImageFactory.createImageIcon("src/Assets/First Shield.png", "shield");
+        
+        axeIcon = ImageFactory.createImageIcon("src/Assets/First Axe.png", "axe");
+        
+        kingIcon = ImageFactory.createImageIcon("src/Assets/Crown.png", "king");
+        
+        emptyImageIcon = ImageFactory.createImageIcon("src/Assets/empty.png", "empty");
 
+        backgroundIcon = ImageFactory.createBufferedImage("src/Assets/simpleBoard.png");
 
-        try {
-            axeIcon = new ImageIcon(ImageIO.read(new File("src/Assets/First Axe.png")));
-            axeIcon.setDescription("axe");
-        } catch (Exception e) {
-            //TODO: handle exception
-            System.out.println("Axe: " + e);
-            success = false;
-        }
-
-        try {
-            kingIcon = new ImageIcon(ImageIO.read(new File("src/Crown.PNG")));
-
-            kingIcon.setDescription("king");
-        } catch (Exception e) {
-            //TODO: handle exception
-            System.out.println("Crown: " + e);
-            success = false;
-        }
-
-
-        try {
-            emptyImageIcon = new ImageIcon(ImageIO.read(new File("src/Assets/empty.png")));
-            emptyImageIcon.setDescription("empty");
-
-        } catch (Exception e) {
-            //TODO: handle exception
-            System.out.println("Empty: " + e);
-            success = false;
-        }
-        try {
-            backgroundIcon = ImageIO.read(new File("src/Assets/simpleBoard.png"));
-        } catch (Exception e) {
-            //TODO: handle exception
-            System.out.println("Board: " + e);
-            success = false;
-        }
+       
         return success;
     }
 
@@ -313,6 +285,31 @@ public class Hnefatafl extends ClockTimer{
     }
 
     /**
+     * Ends the game by taking in a boolean to determine which side won.  
+     * A text box will be changed to announce who won and all the pieces will
+     * become immovable.
+     * @param firstPlayerWon Boolean true means first player one, false for Second player winning
+     */
+    public void endGame(Boolean firstPlayerWon){
+        if(firstPlayerWon){
+            turn.setText("Shields Wins!");
+            for(int i = 0; i < 11; i++){
+                for(int j = 0; j < 11; j++){
+                    _buttons[i][j].setEnabled(false);
+                }
+            }
+        }
+        else{
+            turn.setText("Axes Wins!");
+            for(int i = 0; i < 11; i++){
+                for(int j = 0; j < 11; j++){
+                    _buttons[i][j].setEnabled(false);
+                }
+            }
+        }
+    }
+
+    /**
      * Main method
      */
     public static void main(String[] args) {
@@ -374,12 +371,11 @@ public class Hnefatafl extends ClockTimer{
                             _secondClick.setIcon(axeIcon);
                             //attackPieces(JButton piecePlacement, ImageIcon emptyImageIcon, ImageIcon kingIcon, ImageIcon axeIcon, ImageIcon defenseIcon, int gameWidth, int gameHeight, JButton[][] _buttons)
                             _buttons = gameLogic.attackPieces(_secondClick, emptyImageIcon, kingIcon, axeIcon, defenseIcon, _buttons);
-                            isFirstPlayer=false;
-                            axeTimer.stopTimerThread();
                             shieldStarted = true;
-                            shieldTimer.startTimerThread();
-
-                            turn.setText("  Shield Moves ");
+                            shieldTimer.continueTimerThread();
+                            isFirstPlayer=false;
+                            axeTimer.pauseTimerThread();
+                            turn.setText("Shield Moves");
                         }
                         else if(firstClickImageIcon.getDescription().equals(defenseIcon.getDescription())
                                 || firstClickImageIcon.getDescription().equals(kingIcon.getDescription()))
@@ -410,11 +406,10 @@ public class Hnefatafl extends ClockTimer{
                             }
                             else{
                                 isFirstPlayer=true;
-                                    axeStarted = true;
-                                   axeTimer.startTimerThread();
-                                turn.setText("  Axe Moves     ");
-
-                                shieldTimer.stopTimerThread();
+                                axeStarted = true;
+                                axeTimer.continueTimerThread();
+                                shieldTimer.pauseTimerThread();
+                                turn.setText("Axe Moves");                                
                             }
                         }
                         _firstClick.setIcon(emptyImageIcon);
@@ -472,7 +467,9 @@ public class Hnefatafl extends ClockTimer{
             isFirstPlayer = true;
             turn.setText("  Axe Moves     ");
             axeTimer = new ClockTimer();
+            axeTimer.addPropertyChangeListener(new TimePropertyChangeListener());
             shieldTimer = new ClockTimer();
+            shieldTimer.addPropertyChangeListener(new TimePropertyChangeListener());
             axeStarted = false;
             shieldStarted = false;
             axeGamePieces = 24;
@@ -557,7 +554,9 @@ public class Hnefatafl extends ClockTimer{
                     int axeTime = (int) oip.readObject();
                     int shieldTime = (int) oip.readObject();
                     axeTimer = new ClockTimer(axeTime);
+                    axeTimer.addPropertyChangeListener(new TimePropertyChangeListener());
                     shieldTimer = new ClockTimer(shieldTime);
+                    shieldTimer.addPropertyChangeListener(new TimePropertyChangeListener());
                     oip.close();
                     fip.close();
                     JOptionPane.showMessageDialog(null, "File loaded!");
@@ -599,6 +598,31 @@ public class Hnefatafl extends ClockTimer{
 					}
 				}
 			}
+            endGame(isFirstPlayer);
+        }
+    }
+
+    /**
+     * Custom Property Change Listener that handles when either 
+     * clocktimer reaches the time zero (0).  When one does, that 
+     * player loses and the endgame script is called.
+     */
+    private class TimePropertyChangeListener implements PropertyChangeListener{
+        @Override
+        public void propertyChange(PropertyChangeEvent e) {
+            // If this is null, do nothing (catches a bug that happens when a new game is created)
+            if(e.getNewValue() != null){
+                //Checks to see if it was the text property that changed
+                boolean isText = e.getPropertyName().equalsIgnoreCase("text");
+                //Checks to see if the new value is 0
+                boolean isAtZero = e.getNewValue().equals("0");
+                
+                if(isText && isAtZero){
+                   //Uncomment for debug purposes
+                   //System.out.println("Should call an end game function here");
+                    endGame(isFirstPlayer);   
+                }
+            }
         }
     }
 }
