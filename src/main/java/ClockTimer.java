@@ -8,10 +8,8 @@ import javax.swing.SwingConstants;
 import java.text.*;
 import java.util.Date;
 
-public class ClockTimer extends JLabel implements ActionListener {
+public class ClockTimer extends JLabel{
 
-	private static final long serialVersionUID = 1L;
-	SimpleDateFormat sdf;
 	Thread timerThread;
 	public boolean shouldHalt = false;
 	public boolean isPaused = true;
@@ -23,22 +21,18 @@ public class ClockTimer extends JLabel implements ActionListener {
 
 	public ClockTimer(int startTime) {
 		setForeground(Color.BLACK);
+    
 		sdf = new SimpleDateFormat("mm:ss");
 		setFont(new Font("arial", Font.BOLD, 15));
 		setHorizontalAlignment(SwingConstants.CENTER);
 		timeLeft = startTime;
+
 		this.setText("" + startTime);
 		this.startTimerThread();
 	}
 
 	public ClockTimer() {
 		this(initTime);
-	}
-
-
-	public void actionPerformed(ActionEvent ae) {
-		Date t = new Date();
-		setText(sdf.format(t));
 	}
 
 	//starts any thread passed into this function
