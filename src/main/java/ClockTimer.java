@@ -17,10 +17,16 @@ public class ClockTimer extends JLabel{
 	private static final int initTime = 300;
 	private static final int turnTime = 3;
 
-	int timeLeft = initTime;
+	SimpleDateFormat sdf = null;
+
+	int timeLeft;
 
 	public ClockTimer(int startTime) {
 		setForeground(Color.BLACK);
+		sdf = new SimpleDateFormat("mm:ss");
+		setFont(new Font("arial", Font.BOLD, 15));
+		setHorizontalAlignment(SwingConstants.CENTER);
+		timeLeft = startTime;
 		setFont(new Font("Courier", Font.PLAIN, 36));
 		this.setText("" + startTime);
 		this.startTimerThread();
@@ -90,6 +96,11 @@ public class ClockTimer extends JLabel{
 		}else{
 			//this.setText("Game Over!");
 		}
+	}
+
+	public void pauseTimerThreadNoIncrement(){
+		timeLeft = timeLeft - turnTime;
+		pauseTimerThread();
 	}
 
 	public void continueTimerThread(){
