@@ -16,7 +16,7 @@ public class ClockTimer extends JLabel implements ActionListener {
 	public boolean shouldHalt = false;
 	public boolean isPaused = true;
 
-	private static final int initTime = 3;
+	private static final int initTime = 300;
 	private static final int turnTime = 3;
 
 	int timeLeft = initTime;
