@@ -1,4 +1,4 @@
-import java.awt.*;
+    import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
@@ -475,6 +475,8 @@ public class Hnefatafl extends ClockTimer{
             shieldTimer = new ClockTimer();
             axeStarted = false;
             shieldStarted = false;
+            axeGamePieces = 24;
+            shieldGamePieces = 13;
             reloadBoard();
         }
     }
