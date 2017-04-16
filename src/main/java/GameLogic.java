@@ -402,10 +402,10 @@ public class GameLogic implements GameLogicInterface{
 
     public String[][] createStringMatrix(JButton[][] _buttons){
         String[][] stringMatrix = new String[gameHeight][gameWidth];
-        for(int y = 0; y < gameHeight; i++){
-            for(int x = 0; x < gameWidth; i++){
+        for(int y = 0; y < gameHeight; y++){
+            for(int x = 0; x < gameWidth; x++){
                 ImageIcon currentImageIcon = (ImageIcon) _buttons[y][x].getIcon();
-                stringMatrix = currentImageIcon.getDescription();
+                stringMatrix[y][x] = currentImageIcon.getDescription();
             }
         }
         return stringMatrix;
@@ -445,7 +445,7 @@ public class GameLogic implements GameLogicInterface{
         boolean east = false;
         boolean south = false;
         boolean west = false;
-        JButton[][] newStringMatrix = new String[_buttons.length][_buttons.length];
+        String[][] newStringMatrix = new String[stringMatrix.length][stringMatrix.length];
         
         for(int i = 0; i < stringMatrix.length; i++){
 
@@ -459,14 +459,13 @@ public class GameLogic implements GameLogicInterface{
         //sets current button description to a shield to prevent going back over a button that has already been visited
         newStringMatrix[y][x] = "shield";
         //Check North
-        if(y+1 > gameHeight-1){
+        if(y+1 > gameHeight-1 && y+1 > 0){
             north = false;
         }else{
-            ImageIcon currentImageIcon = (ImageIcon) _buttons[y+1][x].getIcon();
-            System.out.println("North is empty: " + currentImageIcon.getDescription().equals("empty") + currentImageIcon.getDescription());
-            if(currentImageIcon.getDescription().equals("empty")){
-                north = checkSurroundings(newButtons, y + 1, x);
-            }else if(currentImageIcon.getDescription().equals("shield")){
+
+            if(newStringMatrix[y+1][x].equals("empty")){
+                north = checkSurroundings(newStringMatrix, y + 1, x);
+            }else if(newStringMatrix[y+1][x].equals("shield")){
                 north = true;
             }else{
                 north = false;
@@ -474,13 +473,13 @@ public class GameLogic implements GameLogicInterface{
         }
 
         //Check East
-        if(x+1 > gameWidth-1){
+        if(x+1 > gameWidth-1 && x+1 > 0){
             east = false;
         }else{
-            ImageIcon currentImageIcon = (ImageIcon) _buttons[y][x+1].getIcon();
-            if(currentImageIcon.getDescription().equals("empty")){
-                east = checkSurroundings(newButtons, y, x + 1);
-            }else if(currentImageIcon.getDescription().equals("shield")){
+
+            if(newStringMatrix[y][x+1].equals("empty")){
+                east = checkSurroundings(newStringMatrix, y, x + 1);
+            }else if(newStringMatrix[y][x+1].equals("shield")){
                 east = true;
             }else{
                 east = false;
@@ -489,13 +488,13 @@ public class GameLogic implements GameLogicInterface{
             
 
         //Check South
-        if(y-1 > gameHeight-1){
+        if(y-1 > gameHeight-1 && y-1 < gameHeight-1){
             south = false;
         }else{
-            ImageIcon currentImageIcon = (ImageIcon) _buttons[y-1][x].getIcon();
-            if(currentImageIcon.getDescription().equals("empty")){
-                south = checkSurroundings(newButtons, y-1, x);
-            }else if(currentImageIcon.getDescription().equals("shield")){
+            
+            if(newStringMatrix[y-1][x].equals("empty")){
+                south = checkSurroundings(newStringMatrix, y-1, x);
+            }else if(newStringMatrix[y-1][x].equals("shield")){
                 south = true;
             }else{
                 south = false;
@@ -503,13 +502,13 @@ public class GameLogic implements GameLogicInterface{
         }
 
         //Check West
-        if(x-1 > gameWidth-1){
+        if(x-1 > gameWidth-1 && x-1 < gameWidth-1){
             west = false;
         }else{
-            ImageIcon currentImageIcon = (ImageIcon) _buttons[y][x-1].getIcon();
-            if(currentImageIcon.getDescription().equals("empty")){
-                west = checkSurroundings(newButtons, y, x - 1);
-            }else if(currentImageIcon.getDescription().equals("shield")){
+
+            if(newStringMatrix[y][x-1].equals("empty")){
+                west = checkSurroundings(newStringMatrix, y, x - 1);
+            }else if(newStringMatrix[y][x-1].equals("shield")){
                 west = true;
             }else{
                 west = false;
