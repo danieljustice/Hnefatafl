@@ -375,7 +375,8 @@ public class Hnefatafl{
                             shieldTimer.continueTimerThread();
                             isFirstPlayer=false;
                             axeTimer.pauseTimerThread();
-                            turn.setText("Shield Moves");
+                            turn.setText("  Shield Moves ");
+
                         }
                         else if(firstClickImageIcon.getDescription().equals(defenseIcon.getDescription())
                                 || firstClickImageIcon.getDescription().equals(kingIcon.getDescription()))
@@ -405,11 +406,10 @@ public class Hnefatafl{
                                 }
                             }
                             else{
-                                isFirstPlayer=true;
                                 axeStarted = true;
                                 axeTimer.continueTimerThread();
                                 shieldTimer.pauseTimerThread();
-                                turn.setText("Axe Moves");                                
+                                turn.setText("  Axe Moves     ");                             
                             }
                         }
                         _firstClick.setIcon(emptyImageIcon);

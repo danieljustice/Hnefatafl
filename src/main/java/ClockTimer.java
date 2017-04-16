@@ -57,7 +57,11 @@ public class ClockTimer extends JLabel{
 				// ignore
 				}
 			}
+<<<<<<< HEAD
+			return;
+=======
 			timerThread = null;
+>>>>>>> master
 	    });
 		timerThread.start();
 		// timerThread.join();
