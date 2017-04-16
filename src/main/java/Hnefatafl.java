@@ -13,7 +13,7 @@ public class Hnefatafl extends ClockTimer{
     public int gameHeight = 11;
     private int frameWidth = 1000;
     private int frameHeight = 950;
-    private int axeGamePieces = 20;
+    private int axeGamePieces = 24;
     private int shieldGamePieces = 13;
 
     private JFrame _frame = new JFrame("Hnefatafl");
@@ -422,7 +422,14 @@ public class Hnefatafl extends ClockTimer{
                         _secondClick = null;
 
                         //check if there are no pieces left to see if theres a winner
-                        noPiecesCheck = gameLogic.piecesLeft(axeIcon, kingIcon, _buttons);
+                        noPiecesCheck = gameLogic.piecesLeft(axeIcon, kingIcon, defenseIcon, _buttons);
+						int[] tempPieces = gameLogic.numPiecesLeft();
+						
+						axeGamePieces = tempPieces[0];
+						shieldGamePieces = tempPieces[1];
+						
+						redrawPieceRemaining();
+						
                         //shields win
                         if(noPiecesCheck == 1 || (axeTimer.isNull() && axeStarted) || axeTimer.timeLeft == 0){
                             turn.setText("      Shield Wins!          ");

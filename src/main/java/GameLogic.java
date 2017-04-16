@@ -9,6 +9,9 @@ public class GameLogic implements GameLogicInterface{
 
     private int gameWidth;
     private int gameHeight;
+	
+    public int attackPieces = 20;
+	public int defensePieces = 13;
 
     public GameLogic(int gameWidth, int gameHeight) {
         this.gameWidth = gameWidth;
@@ -165,10 +168,11 @@ public class GameLogic implements GameLogicInterface{
     *  @param Not Available
     *  @return returns int 0 for no winning condition, int 1 for king surrounded shields lose, int 2 for axe defeated for no more pieces
     */
-    public int piecesLeft(ImageIcon axeIcon, ImageIcon kingIcon, JButton[][] _buttons){
+    public int piecesLeft(ImageIcon axeIcon, ImageIcon kingIcon, ImageIcon defenseIcon, JButton[][] _buttons){
         ImageIcon currentImageIcon;
         int surroundedKingSides = 0;
-        int attackPieces = 0;
+        attackPieces = 0;
+		defensePieces = 0;
 
         //loop through the 3d array of jbuttons
         for(int i=0; i <gameWidth; i++){
@@ -185,6 +189,8 @@ public class GameLogic implements GameLogicInterface{
                     //i+-1 j+-1
                     //check the pieces east north south and west
                     ImageIcon surroundingImageIcon;
+					
+					defensePieces++;
 
                     if(i - 1 >= 0){
                         //north
@@ -235,6 +241,9 @@ public class GameLogic implements GameLogicInterface{
                         surroundedKingSides++;
                     }
                 }
+				else if(currentImageIcon.getDescription().equals(defenseIcon.getDescription())){
+					defensePieces++;
+				}
             }
         }
         if(attackPieces == 0){
@@ -348,4 +357,16 @@ public class GameLogic implements GameLogicInterface{
             return true;
         return false;
     }
+	
+	/** to retrieve remaining pieces
+     *
+     * @return pieces remaining
+     */
+	public int[] numPiecesLeft(){
+		int[] temp = new int[2];
+		temp[0] = attackPieces;
+		temp[1] = defensePieces;
+		
+		return temp;
+	}
 }
