@@ -1,5 +1,11 @@
+import java.awt.Point;
+
+import javax.print.attribute.standard.RequestingUserName;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.text.StyledEditorKit.BoldAction;
+
+import jdk.nashorn.internal.ir.ReturnNode;
 
 /**
  *
@@ -347,5 +353,206 @@ public class GameLogic implements GameLogicInterface{
         if( !currentImageIcon.getDescription().equals("empty"))
             return true;
         return false;
+    }
+
+
+    public boolean exitFort(JButton[][] _buttons){
+        Boolean isExitFort = false;
+        Boolean isOnEdge = kingIsAtEdge(_buttons);
+
+        Point kingPosition = findKing(_buttons);
+     //   System.out.println("King is at: " + kingPosition.toString());
+        //if king is on the board
+        if(kingPosition != null){
+            boolean emptyNorth = checkIfEmpty(_buttons, kingPosition.y + 1, kingPosition.x);
+            boolean emptyEast = checkIfEmpty(_buttons, kingPosition.y, kingPosition.x+1);
+            boolean emptySouth = checkIfEmpty(_buttons, kingPosition.y-1, kingPosition.x);
+            boolean emptyWest = checkIfEmpty(_buttons, kingPosition.y, kingPosition.x-1);
+
+            boolean north = true;
+            boolean south = true;
+            boolean east = true;
+            boolean west = true;
+
+            String[][] stringMatrix = createStringMatrix(_buttons);
+            //if there is at least one empty spot next to the king
+            if(emptyNorth){
+                //recursively check surroundings to see if it is an exit fort
+                north = checkSurroundings(stringMatrix, kingPosition.y+1, kingPosition.x);
+            }
+            if(emptyNorth){
+                //recursively check surroundings to see if it is an exit fort
+                east = checkSurroundings(stringMatrix, kingPosition.y, kingPosition.x+1);
+            }
+            if(emptyNorth){
+                //recursively check surroundings to see if it is an exit fort
+                south = checkSurroundings(stringMatrix, kingPosition.y-1, kingPosition.x);
+            }
+            if(emptyNorth){
+                //recursively check surroundings to see if it is an exit fort
+                west = checkSurroundings(stringMatrix, kingPosition.y, kingPosition.x-1);
+            }
+            isExitFort = ((!north) || (!east) || (!south) || (!west));
+        }
+
+        
+        return isExitFort;
+    }
+
+
+    public String[][] createStringMatrix(JButton[][] _buttons){
+        String[][] stringMatrix = new String[gameHeight][gameWidth];
+        for(int y = 0; y < gameHeight; i++){
+            for(int x = 0; x < gameWidth; i++){
+                ImageIcon currentImageIcon = (ImageIcon) _buttons[y][x].getIcon();
+                stringMatrix = currentImageIcon.getDescription();
+            }
+        }
+        return stringMatrix;
+    }
+    public Point findKing(JButton[][] _buttons){
+        Point position = null;  
+
+        for(int y = 0; y < gameHeight; y++){
+            for(int x = 0; x < gameWidth; x++){
+                ImageIcon currentImageIcon = (ImageIcon) _buttons[y][x].getIcon();
+                if(currentImageIcon.getDescription().equals("king")){
+                    position = new Point(x, y);
+                    return position;
+                }
+            }
+        }
+        return position;
+    }
+
+    public boolean checkIfEmpty(JButton[][] _buttons, int y, int x){
+        boolean isEmpty = false;
+        //not empty if the position is off the game board
+        if(y < 0 || x < 0 || y > gameHeight-1 || x > gameWidth -1){
+            return false;
+        }
+        ImageIcon currentImageIcon = (ImageIcon) _buttons[y][x].getIcon();
+        if(currentImageIcon.getDescription().equals("empty")){
+            isEmpty = true;
+        }
+        return isEmpty;
+    }
+
+
+    //This is the recursive function that will determine if there are no axes within the shield fort surrounding the king
+    public boolean checkSurroundings(String[][] stringMatrix, int y, int x){
+        boolean north = false;
+        boolean east = false;
+        boolean south = false;
+        boolean west = false;
+        JButton[][] newStringMatrix = new String[_buttons.length][_buttons.length];
+        
+        for(int i = 0; i < stringMatrix.length; i++){
+
+            for(int j = 0; j < stringMatrix[i].length; j++){
+                
+                newStringMatrix[i][j] = stringMatrix[i][j];
+            }
+            
+        }
+
+        //sets current button description to a shield to prevent going back over a button that has already been visited
+        newStringMatrix[y][x] = "shield";
+        //Check North
+        if(y+1 > gameHeight-1){
+            north = false;
+        }else{
+            ImageIcon currentImageIcon = (ImageIcon) _buttons[y+1][x].getIcon();
+            System.out.println("North is empty: " + currentImageIcon.getDescription().equals("empty") + currentImageIcon.getDescription());
+            if(currentImageIcon.getDescription().equals("empty")){
+                north = checkSurroundings(newButtons, y + 1, x);
+            }else if(currentImageIcon.getDescription().equals("shield")){
+                north = true;
+            }else{
+                north = false;
+            }
+        }
+
+        //Check East
+        if(x+1 > gameWidth-1){
+            east = false;
+        }else{
+            ImageIcon currentImageIcon = (ImageIcon) _buttons[y][x+1].getIcon();
+            if(currentImageIcon.getDescription().equals("empty")){
+                east = checkSurroundings(newButtons, y, x + 1);
+            }else if(currentImageIcon.getDescription().equals("shield")){
+                east = true;
+            }else{
+                east = false;
+            }
+        }
+            
+
+        //Check South
+        if(y-1 > gameHeight-1){
+            south = false;
+        }else{
+            ImageIcon currentImageIcon = (ImageIcon) _buttons[y-1][x].getIcon();
+            if(currentImageIcon.getDescription().equals("empty")){
+                south = checkSurroundings(newButtons, y-1, x);
+            }else if(currentImageIcon.getDescription().equals("shield")){
+                south = true;
+            }else{
+                south = false;
+            }
+        }
+
+        //Check West
+        if(x-1 > gameWidth-1){
+            west = false;
+        }else{
+            ImageIcon currentImageIcon = (ImageIcon) _buttons[y][x-1].getIcon();
+            if(currentImageIcon.getDescription().equals("empty")){
+                west = checkSurroundings(newButtons, y, x - 1);
+            }else if(currentImageIcon.getDescription().equals("shield")){
+                west = true;
+            }else{
+                west = false;
+            }
+        }
+        System.out.println("Surroundings at x = " + x + " y = " + y + " are valid: " +north + east + south + west);
+        return north && east && south && west;
+    }
+    public Boolean kingIsAtEdge(JButton[][] _buttons){
+        Boolean kingOnTopRow = false;
+        Boolean kingOnBotRow = false;
+        Boolean kingOnLeftCol = false;
+        Boolean kingOnRightCol = false;
+        //checks for if king is in the top row
+        for(int i =0; i < _buttons.length; i++){
+            ImageIcon currentImageIcon = (ImageIcon) _buttons[0][i].getIcon();
+            if(currentImageIcon.getDescription().equals("king")){
+                kingOnTopRow = true;
+            }
+        }
+        //checks for if the king is in the bottom row
+        for(int i =0; i < _buttons.length; i++){
+            ImageIcon currentImageIcon = (ImageIcon) _buttons[10][i].getIcon();
+            if(currentImageIcon.getDescription().equals("king")){
+                kingOnBotRow = true;
+            }
+        }
+        //checks for if the king is in the left column
+        for(int i =0; i < _buttons.length; i++){
+            ImageIcon currentImageIcon = (ImageIcon) _buttons[i][0].getIcon();
+            if(currentImageIcon.getDescription().equals("king")){
+                kingOnLeftCol = true;
+            }
+        }
+        //checks for if the king is int he righ column  
+        for(int i =0; i < _buttons.length; i++){
+            ImageIcon currentImageIcon = (ImageIcon) _buttons[i][10].getIcon();
+            if(currentImageIcon.getDescription().equals("king")){
+                kingOnRightCol = true;
+            }
+        }
+
+        
+        return kingOnTopRow || kingOnBotRow || kingOnLeftCol || kingOnRightCol;
     }
 }
