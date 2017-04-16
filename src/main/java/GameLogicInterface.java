@@ -49,5 +49,11 @@ public interface GameLogicInterface {
      * @return true if the space is occupied by axe, shield or king
      */
     public boolean isSpaceOccupied(int[] destination, JButton[][] _buttons );
+	
+	/** to retrieve remaining pieces
+     *
+     * @return pieces remaining
+     */
+	public int[] numPiecesLeft;
 
 }
