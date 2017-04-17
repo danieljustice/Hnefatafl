@@ -412,7 +412,7 @@ public class Hnefatafl{
                                     || (gameLogic.getXandY(_secondClick, _buttons)[0] == 10 && gameLogic.getXandY(_secondClick, _buttons)[1] == 10))
                                     && firstClickImageIcon.getDescription().equals("king"))
                             {
-                                endGame("      Shield Wins!      ");
+                                endGame(!isFirstPlayer);
                             }
                             else{
                                 isFirstPlayer=true;
@@ -438,11 +438,11 @@ public class Hnefatafl{
 
                         //shields win
                         if(noPiecesCheck == 1 || (axeTimer.isNull() && axeStarted) || axeTimer.timeLeft == 0){
-                            endGame("      Shield Wins!          ");
+                            endGame(!isFirstPlayer);
                         }
                         //axes win
                         else if(noPiecesCheck == 2 || (shieldTimer.isNull() && shieldStarted) || shieldTimer.timeLeft == 0){
-                            endGame("      Axes Wins!        ");
+                            endGame(isFirstPlayer);
                         }
                     }
                     else{
@@ -658,4 +658,3 @@ public class Hnefatafl{
         }
     }
 }
-

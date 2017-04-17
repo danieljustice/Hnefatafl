@@ -102,4 +102,6 @@ public interface GameLogicInterface {
 	 */
     public int checkWest(int x, int y, JButton[][] _buttons, ImageIcon axeIcon, ImageIcon emptyImageIcon, ImageIcon kingIcon);
 
+	
+	public JButton[][] shieldWall(JButton[][] _buttons, ImageIcon axeIcon, ImageIcon emptyImageIcon, ImageIcon kingIcon, ImageIcon defenseIcon);
 }
