@@ -240,7 +240,7 @@ public class GameLogic implements GameLogicInterface{
                         //east
 
                         surroundingImageIcon = (ImageIcon)_buttons[i][j + 1].getIcon();
-                        if(surroundingImageIcon.getDescription().equals(axeIcon.getDescription())){
+                        if(surroundingImageIcon.getDescription().equals(axeIcon.getDescription()) || j + 1 == Math.floor(gameHeight/2)){
                             surroundedKingSides++;
                         }
                     }
