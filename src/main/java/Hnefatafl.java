@@ -447,10 +447,14 @@ public class Hnefatafl{
                     }
                 }
             }
+            //checks for Exit Fort Win condition
             if(gameLogic.exitFort(_buttons)){
                 endGame(shieldWinMessage);
             }
-            System.out.println(gameLogic.encircled(_buttons));
+            //checks for Encirclement Win Condition
+            if(gameLogic.encircled(_buttons)){
+                endGame(axeWinMessage);
+            }
         }
     }
 

@@ -389,15 +389,6 @@ public class GameLogic implements GameLogicInterface{
             //if there are no shields, then it is an encirclement
             isEncircled = true;
         }
-        
-        for(int y = 0; y < gameHeight; y++){
-            for(int x = 0; x < gameWidth; x++){
-                System.out.print(stringMatrix[y][x]+"\t");
-            }
-            System.out.println();
-        }
-        System.out.println();
-        System.out.println();
         return isEncircled;
     }
 
@@ -409,7 +400,7 @@ public class GameLogic implements GameLogicInterface{
         boolean south = false;
         boolean west = false;
 
-        System.out.println(y + " " + x);
+        //System.out.println(y + " " + x);
         //if touching this algorithm touches the edge of the board this is not an encirclement
         if(x < 0 || x > gameWidth-1 || y < 0 || y > gameHeight - 1 ){
             return false;
@@ -445,9 +436,8 @@ public class GameLogic implements GameLogicInterface{
                 north = true;
             }
             
-            // System.out.println("Checking east");
             if(!stringMatrix[y][x+1].equals("traversed")){
-                System.out.println("Checking east");
+                //System.out.println("Checking east");
                 east = crawlEncirclement(stringMatrix, y, x+1);
                 if(!east){
                     return false;
@@ -455,9 +445,8 @@ public class GameLogic implements GameLogicInterface{
             }else{
                 east = true;
             }
-            // System.out.println("Checking south");
             if(!stringMatrix[y-1][x].equals("traversed")){
-                System.out.println("Checking south");
+                //System.out.println("Checking south");
                 south = crawlEncirclement(stringMatrix, y-1, x);
                 if(!south){
                     return false;
@@ -465,9 +454,8 @@ public class GameLogic implements GameLogicInterface{
             }else{
                 south = true;
             }
-           // System.out.println("Checking west");
             if(!stringMatrix[y][x-1].equals("traversed")){
-                System.out.println("Checking west");
+                //System.out.println("Checking west");
                 west = crawlEncirclement(stringMatrix, y, x-1);
                 if(!west){
                     return false;
@@ -476,7 +464,6 @@ public class GameLogic implements GameLogicInterface{
                 west = true;
             }
         }
-        System.out.println(north + " " + east + " " + south + " " + west);
         isEncircled = north && south && east && west;
         return isEncircled;
     }
