@@ -361,7 +361,6 @@ public class GameLogic implements GameLogicInterface{
         Boolean isOnEdge = kingIsAtEdge(_buttons);
 
         Point kingPosition = findKing(_buttons);
-     //   System.out.println("King is at: " + kingPosition.toString());
         //if king is on the board
         if(isOnEdge){
             if(kingPosition != null){
@@ -369,36 +368,13 @@ public class GameLogic implements GameLogicInterface{
                 boolean emptyEast = checkIfEmpty(_buttons, kingPosition.y, kingPosition.x+1);
                 boolean emptySouth = checkIfEmpty(_buttons, kingPosition.y-1, kingPosition.x);
                 boolean emptyWest = checkIfEmpty(_buttons, kingPosition.y, kingPosition.x-1);
+                //if there is at least one empty spot next to the king
                 if(emptyNorth || emptyEast || emptySouth || emptyWest){
-                    // boolean north = false;
-                    // boolean south = false;
-                    // boolean east = false;
-                    // boolean west = false;
-
+                    //change button matrix to string matrix because cannot clone buttons
                     String[][] stringMatrix = createStringMatrix(_buttons);
+                    //make sure the king is seen as "visited" or as a shield
                     stringMatrix[kingPosition.y][kingPosition.x] = "shield";
-                    // //if there is at least one empty spot next to the king
-                    // if(emptyNorth){
-                    //     //recursively check surroundings to see if it is an exit fort
-                    //     System.out.println("Calling north recursive call");
-                    //     north = checkSurroundings(stringMatrix, kingPosition.y+1, kingPosition.x);
-                    // }
-                    // if(emptyEast){
-                    //     //recursively check surroundings to see if it is an exit fort
-                    //     System.out.println("Calling east recursive call");
-                    //     east = checkSurroundings(stringMatrix, kingPosition.y, kingPosition.x+1);
-                    // }
-                    // if(emptySouth){
-                    //     //recursively check surroundings to see if it is an exit fort
-                    //     System.out.println("Calling south recursive call");
-                    //     south = checkSurroundings(stringMatrix, kingPosition.y-1, kingPosition.x);
-                    // }
-                    // if(emptyWest){
-                    //     //recursively check surroundings to see if it is an exit fort
-                    //     System.out.println("Calling west recursive call");
-                    //     west = checkSurroundings(stringMatrix, kingPosition.y, kingPosition.x-1);
-                    // }
-                    // isExitFort = north || east || south || west;
+                    //call to recursive function to find if this is an exit fort
                     isExitFort = checkSurroundings(stringMatrix, kingPosition.y, kingPosition.x);
                 }
                 
@@ -453,7 +429,6 @@ public class GameLogic implements GameLogicInterface{
         if(x < 0 || x > gameWidth-1 || y < 0 || y > gameHeight - 1 ){
             return true;
         }
-        //System.out.println(y + " " + x);
         boolean north = false;
         boolean east = false;
         boolean south = false;
@@ -475,7 +450,6 @@ public class GameLogic implements GameLogicInterface{
         if(y+1 > gameHeight-1 || y+1 < 0){
             north = true;
         }else{
-            //System.out.println(y + " " + gameHeight + " " +  x);
             if(newStringMatrix[y+1][x].equals("empty")){
                 north = checkSurroundings(newStringMatrix, y + 1, x);
                 if(north == false){
@@ -539,7 +513,6 @@ public class GameLogic implements GameLogicInterface{
                 west = false;
             }
         }
-        //System.out.println("Surroundings at x = " + x + " y = " + y + " are valid: " +north + east + south + west);
         return north && east && south && west;
     }
     public Boolean kingIsAtEdge(JButton[][] _buttons){
