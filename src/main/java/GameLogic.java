@@ -363,38 +363,47 @@ public class GameLogic implements GameLogicInterface{
         Point kingPosition = findKing(_buttons);
      //   System.out.println("King is at: " + kingPosition.toString());
         //if king is on the board
-        if(kingPosition != null){
-            boolean emptyNorth = checkIfEmpty(_buttons, kingPosition.y + 1, kingPosition.x);
-            boolean emptyEast = checkIfEmpty(_buttons, kingPosition.y, kingPosition.x+1);
-            boolean emptySouth = checkIfEmpty(_buttons, kingPosition.y-1, kingPosition.x);
-            boolean emptyWest = checkIfEmpty(_buttons, kingPosition.y, kingPosition.x-1);
+        if(isOnEdge){
+            if(kingPosition != null){
+                boolean emptyNorth = checkIfEmpty(_buttons, kingPosition.y + 1, kingPosition.x);
+                boolean emptyEast = checkIfEmpty(_buttons, kingPosition.y, kingPosition.x+1);
+                boolean emptySouth = checkIfEmpty(_buttons, kingPosition.y-1, kingPosition.x);
+                boolean emptyWest = checkIfEmpty(_buttons, kingPosition.y, kingPosition.x-1);
+                if(emptyNorth || emptyEast || emptySouth || emptyWest){
+                    // boolean north = false;
+                    // boolean south = false;
+                    // boolean east = false;
+                    // boolean west = false;
 
-            boolean north = true;
-            boolean south = true;
-            boolean east = true;
-            boolean west = true;
-
-            String[][] stringMatrix = createStringMatrix(_buttons);
-            //if there is at least one empty spot next to the king
-            if(emptyNorth){
-                //recursively check surroundings to see if it is an exit fort
-                north = checkSurroundings(stringMatrix, kingPosition.y+1, kingPosition.x);
+                    String[][] stringMatrix = createStringMatrix(_buttons);
+                    stringMatrix[kingPosition.y][kingPosition.x] = "shield";
+                    // //if there is at least one empty spot next to the king
+                    // if(emptyNorth){
+                    //     //recursively check surroundings to see if it is an exit fort
+                    //     System.out.println("Calling north recursive call");
+                    //     north = checkSurroundings(stringMatrix, kingPosition.y+1, kingPosition.x);
+                    // }
+                    // if(emptyEast){
+                    //     //recursively check surroundings to see if it is an exit fort
+                    //     System.out.println("Calling east recursive call");
+                    //     east = checkSurroundings(stringMatrix, kingPosition.y, kingPosition.x+1);
+                    // }
+                    // if(emptySouth){
+                    //     //recursively check surroundings to see if it is an exit fort
+                    //     System.out.println("Calling south recursive call");
+                    //     south = checkSurroundings(stringMatrix, kingPosition.y-1, kingPosition.x);
+                    // }
+                    // if(emptyWest){
+                    //     //recursively check surroundings to see if it is an exit fort
+                    //     System.out.println("Calling west recursive call");
+                    //     west = checkSurroundings(stringMatrix, kingPosition.y, kingPosition.x-1);
+                    // }
+                    // isExitFort = north || east || south || west;
+                    isExitFort = checkSurroundings(stringMatrix, kingPosition.y, kingPosition.x);
+                }
+                
             }
-            if(emptyNorth){
-                //recursively check surroundings to see if it is an exit fort
-                east = checkSurroundings(stringMatrix, kingPosition.y, kingPosition.x+1);
-            }
-            if(emptyNorth){
-                //recursively check surroundings to see if it is an exit fort
-                south = checkSurroundings(stringMatrix, kingPosition.y-1, kingPosition.x);
-            }
-            if(emptyNorth){
-                //recursively check surroundings to see if it is an exit fort
-                west = checkSurroundings(stringMatrix, kingPosition.y, kingPosition.x-1);
-            }
-            isExitFort = ((!north) || (!east) || (!south) || (!west));
         }
-
         
         return isExitFort;
     }
@@ -441,6 +450,10 @@ public class GameLogic implements GameLogicInterface{
 
     //This is the recursive function that will determine if there are no axes within the shield fort surrounding the king
     public boolean checkSurroundings(String[][] stringMatrix, int y, int x){
+        if(x < 0 || x > gameWidth-1 || y < 0 || y > gameHeight - 1 ){
+            return true;
+        }
+        //System.out.println(y + " " + x);
         boolean north = false;
         boolean east = false;
         boolean south = false;
@@ -459,12 +472,15 @@ public class GameLogic implements GameLogicInterface{
         //sets current button description to a shield to prevent going back over a button that has already been visited
         newStringMatrix[y][x] = "shield";
         //Check North
-        if(y+1 > gameHeight-1 && y+1 > 0){
-            north = false;
+        if(y+1 > gameHeight-1 || y+1 < 0){
+            north = true;
         }else{
-
+            //System.out.println(y + " " + gameHeight + " " +  x);
             if(newStringMatrix[y+1][x].equals("empty")){
                 north = checkSurroundings(newStringMatrix, y + 1, x);
+                if(north == false){
+                    return false;
+                }
             }else if(newStringMatrix[y+1][x].equals("shield")){
                 north = true;
             }else{
@@ -473,12 +489,15 @@ public class GameLogic implements GameLogicInterface{
         }
 
         //Check East
-        if(x+1 > gameWidth-1 && x+1 > 0){
-            east = false;
+        if(x+1 > gameWidth-1 || x+1 < 0){
+            east = true;
         }else{
 
             if(newStringMatrix[y][x+1].equals("empty")){
                 east = checkSurroundings(newStringMatrix, y, x + 1);
+                if(east == false){
+                    return false;
+                }
             }else if(newStringMatrix[y][x+1].equals("shield")){
                 east = true;
             }else{
@@ -488,12 +507,15 @@ public class GameLogic implements GameLogicInterface{
             
 
         //Check South
-        if(y-1 > gameHeight-1 && y-1 < gameHeight-1){
-            south = false;
+        if(y-1 > gameHeight-1 || y-1 < 0){
+            south = true;
         }else{
             
             if(newStringMatrix[y-1][x].equals("empty")){
                 south = checkSurroundings(newStringMatrix, y-1, x);
+                if(south == false){
+                    return false;
+                }
             }else if(newStringMatrix[y-1][x].equals("shield")){
                 south = true;
             }else{
@@ -502,19 +524,22 @@ public class GameLogic implements GameLogicInterface{
         }
 
         //Check West
-        if(x-1 > gameWidth-1 && x-1 < gameWidth-1){
-            west = false;
+        if(x-1 > gameWidth-1 || x-1 < 0){
+            west = true;
         }else{
 
             if(newStringMatrix[y][x-1].equals("empty")){
                 west = checkSurroundings(newStringMatrix, y, x - 1);
+                if(west == false){
+                    return false;
+                }
             }else if(newStringMatrix[y][x-1].equals("shield")){
                 west = true;
             }else{
                 west = false;
             }
         }
-        System.out.println("Surroundings at x = " + x + " y = " + y + " are valid: " +north + east + south + west);
+        //System.out.println("Surroundings at x = " + x + " y = " + y + " are valid: " +north + east + south + west);
         return north && east && south && west;
     }
     public Boolean kingIsAtEdge(JButton[][] _buttons){

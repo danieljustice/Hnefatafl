@@ -287,15 +287,6 @@ public class Hnefatafl{
         @Override
         public void actionPerformed(ActionEvent e) {
 
-            for(int y = 0; y < gameHeight; y++){
-                for(int x = 0; x < gameWidth; x++){
-                ImageIcon currentImageIcon = (ImageIcon) _buttons[y][x].getIcon();
-                    System.out.print(currentImageIcon.getDescription()+ "\t");
-                }   
-                System.out.println();    
-            }   
-            System.out.println(); 
-            System.out.println(); 
                
             JButton temp = (JButton) e.getSource();
             ImageIcon currentImageIcon = (ImageIcon)temp.getIcon();
@@ -366,7 +357,6 @@ public class Hnefatafl{
                                 }
                             }
                             else{
-                                //System.out.println("Is Exit Fort: " + gameLogic.exitFort(_buttons));
                                 isFirstPlayer=true;
                                 axeStarted = true;
                                 axeTimer.continueTimerThread();
@@ -405,7 +395,9 @@ public class Hnefatafl{
                     }
                 }
             }
-            System.out.println("Is Exit Fort: " + gameLogic.exitFort(_buttons));
+            if(gameLogic.exitFort(_buttons)){
+                endGame(true);
+            }
         }
     }
 
