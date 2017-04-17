@@ -39,6 +39,11 @@ public class Hnefatafl{
     private boolean shieldStarted = false;
 
     public JButton[][] _buttons = new JButton[gameWidth][gameHeight];
+    private JButton saveButton;
+    private JButton newButton;
+    private JButton resignButton;
+    private JButton loadButton;
+    private JButton bestButton;
     public ImageIcon defenseIcon;
     public ImageIcon axeIcon;
     public ImageIcon kingIcon;
@@ -147,33 +152,38 @@ public class Hnefatafl{
         //tools.setLayout(new GridLayout(2, 1));
         _frame.add(tools, BorderLayout.PAGE_START);
 
-        JButton newButton = new JButton("New"); //no functions
+        newButton = new JButton("New"); //no functions
         ActionListener newButtonListener = new NewButtonListener();
         newButton.addActionListener(newButtonListener);
         tools.add(newButton);
+        newButton.setEnabled(true);
         //tools.addSeparator();
 
-        JButton saveButton = new JButton("Save"); //no functions
+        saveButton = new JButton("Save"); //no functions
         ActionListener saveButtonListener = new SaveButtonListener();
         saveButton.addActionListener(saveButtonListener);
         tools.add(saveButton);
+        saveButton.setEnabled(true);
         //tools.addSeparator();
 
-        JButton loadButton = new JButton("Load"); //no functions
+        loadButton = new JButton("Load"); //no functions
         ActionListener loadButtonListener = new LoadButtonListener();
         loadButton.addActionListener(loadButtonListener);
         tools.add(loadButton);
+        loadButton.setEnabled(true);
         //tools.addSeparator();
 
-        JButton resignButton = new JButton("Resign");
+        resignButton = new JButton("Resign");
         ActionListener resignButtonListener = new ResignButtonListener();
         resignButton.addActionListener(resignButtonListener);
         tools.add(resignButton); //no functions
+        resignButton.setEnabled(true);
 
-		JButton bestButton = new JButton("Best Move");
+		bestButton = new JButton("Best Move");
         ActionListener bestButtonListener = new bestButtonListener();
 		bestButton.addActionListener(bestButtonListener);
 		tools.add(bestButton);
+        bestButton.setEnabled(true);
 
         //tools.addSeparator();
         tools.add(turn);
@@ -310,6 +320,9 @@ public class Hnefatafl{
         }
         axeTimer.pauseTimerThreadNoIncrement();
         shieldTimer.pauseTimerThreadNoIncrement();
+        saveButton.setEnabled(false);
+        resignButton.setEnabled(false);
+        bestButton.setEnabled(false);
     }
 
     /**
