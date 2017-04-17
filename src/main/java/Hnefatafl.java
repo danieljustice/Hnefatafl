@@ -17,6 +17,8 @@ public class Hnefatafl{
     private int frameHeight = 950;
     private int axeGamePieces = 24;
     private int shieldGamePieces = 13;
+    private static final String axeWinMessage = "      Axes Win!      ";
+    private static final String shieldWinMessage = "      Shields Win!      ";
 
     private JFrame _frame = new JFrame("Hnefatafl");
     private JPanel _ttt = new JPanel();
@@ -293,28 +295,21 @@ public class Hnefatafl{
     }
 
     /**
-     * Ends the game by taking in a boolean to determine which side won.
-     * A text box will be changed to announce who won and all the pieces will
-     * become immovable.
-     * @param firstPlayerWon Boolean true means first player one, false for Second player winning
+     * Method handles disabling buttons and setting the win message at
+     * the end of the game.
+     * Also pauses timers to prevent the loser from gaining a win status
+     * when the original winner's clock reaches 0 post-game.
+     * @param msg [description]
      */
-    public void endGame(Boolean firstPlayerWon){
-        if(firstPlayerWon){
-            turn.setText("Shields Wins!");
-            for(int i = 0; i < 11; i++){
-                for(int j = 0; j < 11; j++){
-                    _buttons[i][j].setEnabled(false);
-                }
+    public void endGame(String msg) {
+        turn.setText(msg);
+        for(int i = 0; i < 11; i++){
+            for(int j = 0; j < 11; j++){
+                _buttons[i][j].setEnabled(false);
             }
         }
-        else{
-            turn.setText("Axes Wins!");
-            for(int i = 0; i < 11; i++){
-                for(int j = 0; j < 11; j++){
-                    _buttons[i][j].setEnabled(false);
-                }
-            }
-        }
+        axeTimer.pauseTimerThreadNoIncrement();
+        shieldTimer.pauseTimerThreadNoIncrement();
     }
 
     /**
@@ -412,7 +407,7 @@ public class Hnefatafl{
                                     || (gameLogic.getXandY(_secondClick, _buttons)[0] == 10 && gameLogic.getXandY(_secondClick, _buttons)[1] == 10))
                                     && firstClickImageIcon.getDescription().equals("king"))
                             {
-                                endGame("      Shield Wins!      ");
+                                endGame(shieldWinMessage);
                             }
                             else{
                                 isFirstPlayer=true;
@@ -438,11 +433,11 @@ public class Hnefatafl{
 
                         //shields win
                         if(noPiecesCheck == 1 || (axeTimer.isNull() && axeStarted) || axeTimer.timeLeft == 0){
-                            endGame("      Shield Wins!          ");
+                            endGame(shieldWinMessage);
                         }
                         //axes win
                         else if(noPiecesCheck == 2 || (shieldTimer.isNull() && shieldStarted) || shieldTimer.timeLeft == 0){
-                            endGame("      Axes Wins!        ");
+                            endGame(axeWinMessage);
                         }
                     }
                     else{
@@ -608,29 +603,23 @@ public class Hnefatafl{
         @Override
         public void actionPerformed(ActionEvent e) {
             if(isFirstPlayer){
-				turn.setText("    Shields Wins!");
-				for(int i = 0; i < 11; i++){
-					for(int j = 0; j < 11; j++){
-						_buttons[i][j].setEnabled(false);
-					}
-				}
+				endGame(shieldWinMessage);
 			}
 			else{
-				turn.setText("    Axes Wins!");
-				for(int i = 0; i < 11; i++){
-					for(int j = 0; j < 11; j++){
-						_buttons[i][j].setEnabled(false);
-					}
-				}
+				endGame(axeWinMessage);
 			}
-            endGame(isFirstPlayer);
+
         }
     }
 
+    /**
+     * Custom action listener handles binding to the "Best Move" button,
+     * which is our implementation of one of the Hard tasks.
+     */
 	private class bestButtonListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
-            _buttons = gameLogic.showCorrectChoice(_buttons, axeIcon, emptyImageIcon, kingIcon, defenseIcon, isFirstPlayer); 
+            _buttons = gameLogic.showCorrectChoice(_buttons, axeIcon, emptyImageIcon, kingIcon, defenseIcon, isFirstPlayer);
         }
     }
 
@@ -652,7 +641,11 @@ public class Hnefatafl{
                 if(isText && isAtZero){
                    //Uncomment for debug purposes
                    //System.out.println("Should call an end game function here");
-                    endGame(isFirstPlayer);
+                    if(isFirstPlayer) {
+                        endGame(shieldWinMessage);
+                    } else {
+                        endGame(axeWinMessage);
+                    }
                 }
             }
         }
