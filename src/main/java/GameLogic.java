@@ -1,5 +1,9 @@
+import java.awt.*;
+import java.awt.event.*;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.border.LineBorder;
+import javax.swing.*;
 
 /**
  *
@@ -41,8 +45,8 @@ public class GameLogic implements GameLogicInterface{
         }
         return new int[2];
     }
-
-    /**
+	
+	/**
     *
     * kill pieces as they are surrounded Othello style (King is an exception)
     * @param piecePlacement Jbutton that is where the latest piece was placed to see if a piece is destroyed
@@ -369,4 +373,464 @@ public class GameLogic implements GameLogicInterface{
 		
 		return temp;
 	}
+	
+	public JButton[][] displayCorrectChoice(int[] start, int[] destination, JButton[][] _buttons) {
+        _buttons[start[0]][start[1]].setBorder(new LineBorder(Color.YELLOW, 5));
+        _buttons[destination[0]][destination[1]].setBorder(new LineBorder(Color.YELLOW, 5));
+		return _buttons;
+    }
+
+    public JButton[][] removeCorrectChoice(JButton[][] _buttons) {
+        javax.swing.border.Border emptyBorder = BorderFactory.createEmptyBorder();
+        for (int i = 0; i < 11; i++) {
+            for (int j = 0; j < 11; j++) {
+
+                _buttons[i][j].setBorder(emptyBorder);
+            }
+        }
+		return _buttons;
+    }
+
+    public JButton[][] showCorrectChoice(JButton[][] _buttons, ImageIcon axeIcon, ImageIcon emptyImageIcon, ImageIcon kingIcon, ImageIcon defenseIcon, boolean isFirstPlayer) {
+        ImageIcon currentImageIcon;
+        ImageIcon temp;
+        int score = 0;
+        int[] start = new int[2];
+        int[] destination = new int[2];
+        boolean king = false;
+
+        if (isFirstPlayer) {
+            for (int i = 0; i < gameWidth; i++) {
+                for (int j = 0; j < gameHeight; j++) {
+                    currentImageIcon = (ImageIcon) _buttons[i][j].getIcon();
+                    temp = currentImageIcon;
+                    if (currentImageIcon.getDescription().equals(axeIcon.getDescription())) {
+                        //check updown left right for where this piece can go
+                        for (int k = j - 1; k >= 0; k--) {
+
+                            currentImageIcon = (ImageIcon) _buttons[i][k].getIcon();
+                            if (!currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())) {
+                                break;
+                            }
+                            if (!king && ((i == 0 && k == 0) || (i == 10 && k == 0) || (i == 0 && k == 10) || (i == 10 && k == 10))) {
+                                break;
+                            }
+                            if (score < surroundingPoints(i, k, temp, _buttons, axeIcon, emptyImageIcon, kingIcon)) {
+                                score = surroundingPoints(i, k, temp, _buttons, axeIcon, emptyImageIcon, kingIcon);
+                                start[0] = i;
+                                start[1] = j;
+                                destination[0] = i;
+                                destination[1] = k;
+                            }
+
+                        }
+
+                        for (int k = j + 1; k < 11; k++) {
+                            currentImageIcon = (ImageIcon) _buttons[i][k].getIcon();
+                            if (!currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())) {
+                                break;
+                            }
+                            if (!king && ((i == 0 && k == 0) || (i == 10 && k == 0) || (i == 0 && k == 10) || (i == 10 && k == 10))) {
+                                break;
+                            }
+                            if (score < surroundingPoints(i, k, temp, _buttons, axeIcon, emptyImageIcon, kingIcon)) {
+                                score = surroundingPoints(i, k, temp, _buttons, axeIcon, emptyImageIcon, kingIcon);
+                                start[0] = i;
+                                start[1] = j;
+                                destination[0] = i;
+                                destination[1] = k;
+                            }
+                        }
+
+                        for (int k = i - 1; k >= 0; k--) {
+                            currentImageIcon = (ImageIcon) _buttons[k][j].getIcon();
+                            if (!currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())) {
+                                break;
+                            }
+                            if (!king && ((j == 0 && k == 0) || (j == 10 && k == 0) || (j == 0 && k == 10) || (j == 10 && k == 10))) {
+                                break;
+                            }
+                            if (score < surroundingPoints(k, j, temp, _buttons, axeIcon, emptyImageIcon, kingIcon)) {
+                                score = surroundingPoints(k, j, temp, _buttons, axeIcon, emptyImageIcon, kingIcon);
+                                start[0] = i;
+                                start[1] = j;
+                                destination[0] = k;
+                                destination[1] = j;
+                            }
+                        }
+
+                        for (int k = i + 1; k < 11; k++) {
+                            currentImageIcon = (ImageIcon) _buttons[k][j].getIcon();
+                            if (!currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())) {
+                                break;
+                            }
+                            if (!king && ((j == 0 && k == 0) || (j == 10 && k == 0) || (j == 0 && k == 10) || (j == 10 && k == 10))) {
+                                break;
+                            }
+                            if (score < surroundingPoints(k, j, temp, _buttons, axeIcon, emptyImageIcon, kingIcon)) {
+                                score = surroundingPoints(k, j, temp, _buttons, axeIcon, emptyImageIcon, kingIcon);
+                                start[0] = i;
+                                start[1] = j;
+                                destination[0] = k;
+                                destination[1] = j;
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            for (int i = 0; i < gameWidth; i++) {
+                for (int j = 0; j < gameHeight; j++) {
+                    currentImageIcon = (ImageIcon) _buttons[i][j].getIcon();
+                    temp = currentImageIcon;
+                    if (currentImageIcon.getDescription().equals(kingIcon.getDescription())) {
+                        king = true;
+                    } else {
+                        king = false;
+                    }
+
+                    if (currentImageIcon.getDescription().equals(defenseIcon.getDescription()) || currentImageIcon.getDescription().equals(kingIcon.getDescription())) {
+                        //check updown left right for where this piece can go
+
+                        for (int k = j - 1; k >= 0; k--) {
+                            currentImageIcon = (ImageIcon) _buttons[i][k].getIcon();
+                            if (!currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())) {
+                                break;
+                            }
+                            if (king && ((i == 0 && k == 0) || (i == 10 && k == 0) || (i == 0 && k == 10) || (i == 10 && k == 10))) {
+                                score = 99;
+                                start[0] = i;
+                                start[1] = j;
+                                destination[0] = i;
+                                destination[1] = k;
+                            }
+                            if (!king && ((i == 0 && k == 0) || (i == 10 && k == 0) || (i == 0 && k == 10) || (i == 10 && k == 10))) {
+                                break;
+                            }
+                            if (score < surroundingPoints(i, k, temp, _buttons, axeIcon, emptyImageIcon, kingIcon)) {
+                                score = surroundingPoints(i, k, temp, _buttons, axeIcon, emptyImageIcon, kingIcon);
+                                start[0] = i;
+                                start[1] = j;
+                                destination[0] = i;
+                                destination[1] = k;
+                            }
+                        }
+
+                        for (int k = j + 1; k < 11; k++) {
+                            currentImageIcon = (ImageIcon) _buttons[i][k].getIcon();
+                            if (!currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())) {
+                                break;
+                            }
+                            if (king && ((i == 0 && k == 0) || (i == 10 && k == 0) || (i == 0 && k == 10) || (i == 10 && k == 10))) {
+                                score = 99;
+                                start[0] = i;
+                                start[1] = j;
+                                destination[0] = i;
+                                destination[1] = k;
+                            }
+                            if (!king && ((i == 0 && k == 0) || (i == 10 && k == 0) || (i == 0 && k == 10) || (i == 10 && k == 10))) {
+                                break;
+                            }
+                            if (score < surroundingPoints(i, k, temp, _buttons, axeIcon, emptyImageIcon, kingIcon)) {
+                                score = surroundingPoints(i, k, temp, _buttons, axeIcon, emptyImageIcon, kingIcon);
+                                start[0] = i;
+                                start[1] = j;
+                                destination[0] = i;
+                                destination[1] = k;
+                            }
+                        }
+
+                        for (int k = i - 1; k >= 0; k--) {
+                            currentImageIcon = (ImageIcon) _buttons[k][j].getIcon();
+                            if (!currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())) {
+                                break;
+                            }
+                            if (king && ((j == 0 && k == 0) || (j == 10 && k == 0) || (j == 0 && k == 10) || (j == 10 && k == 10))) {
+                                score = 99;
+                                start[0] = i;
+                                start[1] = j;
+                                destination[0] = k;
+                                destination[1] = j;
+                            }
+                            if (!king && ((j == 0 && k == 0) || (j == 10 && k == 0) || (j == 0 && k == 10) || (j == 10 && k == 10))) {
+                                break;
+                            }
+                            if (score < surroundingPoints(k, j, temp, _buttons, axeIcon, emptyImageIcon, kingIcon)) {
+                                score = surroundingPoints(k, j, temp, _buttons, axeIcon, emptyImageIcon, kingIcon);
+                                start[0] = i;
+                                start[1] = j;
+                                destination[0] = k;
+                                destination[1] = j;
+                            }
+                        }
+
+                        for (int k = i + 1; k < 11; k++) {
+                            currentImageIcon = (ImageIcon) _buttons[k][j].getIcon();
+                            if (!currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())) {
+                                break;
+                            }
+                            if (king && ((j == 0 && k == 0) || (j == 10 && k == 0) || (j == 0 && k == 10) || (j == 10 && k == 10))) {
+                                score = 99;
+                                start[0] = i;
+                                start[1] = j;
+                                destination[0] = k;
+                                destination[1] = j;
+                            }
+                            if (!king && ((j == 0 && k == 0) || (j == 10 && k == 0) || (j == 0 && k == 10) || (j == 10 && k == 10))) {
+                                break;
+                            }
+                            if (score < surroundingPoints(k, j, temp, _buttons, axeIcon, emptyImageIcon, kingIcon)) {
+                                score = surroundingPoints(k, j, temp, _buttons, axeIcon, emptyImageIcon, kingIcon);
+                                start[0] = i;
+                                start[1] = j;
+                                destination[0] = k;
+                                destination[1] = j;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        return displayCorrectChoice(start, destination, _buttons);
+    }
+
+    public int surroundingPoints(int x, int y, ImageIcon currentImageIcon, JButton[][] _buttons, ImageIcon axeIcon, ImageIcon emptyImageIcon, ImageIcon kingIcon) {
+        int score = 1;
+        //up down left right
+        //checkNorth
+        if (currentImageIcon.getDescription().equals(axeIcon.getDescription())) {
+            if (y > 0) {
+                if (checkNorth(x, y, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                    score += 3;
+                } else if (checkNorth(x, y, _buttons, axeIcon, emptyImageIcon, kingIcon) == 2) {
+                    if (y - 1 > 0) {
+                        if (checkNorth(x, y - 1, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                            score += 6;
+                        } else {
+                            if (checkNorth(x, y - 1, _buttons, axeIcon, emptyImageIcon, kingIcon) != 0) {
+                                return 1;
+                            } else {
+                                score += 2;
+                            }
+                        }
+                    } else {
+                        score += 2;
+                    }
+                } else if (checkNorth(x, y, _buttons, axeIcon, emptyImageIcon, kingIcon) == 3) {
+                    score += 5;
+                } else {
+                    score += 4;
+                }
+            }
+            if (y < 10) {
+                if (checkSouth(x, y, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                    score += 3;
+                } else if (checkSouth(x, y, _buttons, axeIcon, emptyImageIcon, kingIcon) == 2) {
+                    if (y + 1 < 10) {
+                        if (checkSouth(x, y + 1, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                            score += 6;
+                        } else {
+                            if (checkSouth(x, y + 1, _buttons, axeIcon, emptyImageIcon, kingIcon) != 0) {
+                                return 1;
+                            } else {
+                                score += 2;
+                            }
+                        }
+                    } else {
+                        score += 2;
+                    }
+                } else if (checkSouth(x, y, _buttons, axeIcon, emptyImageIcon, kingIcon) == 3) {
+                    score += 5;
+                } else {
+                    score += 4;
+                }
+            }
+            if (x > 0) {
+                if (checkWest(x, y, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                    score += 3;
+                } else if (checkWest(x, y, _buttons, axeIcon, emptyImageIcon, kingIcon) == 2) {
+                    if (x - 1 > 0) {
+                        if (checkWest(x - 1, y, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                            score += 6;
+                        } else {
+                            if (checkWest(x - 1, y, _buttons, axeIcon, emptyImageIcon, kingIcon) != 0) {
+                                return 1;
+                            } else {
+                                score += 2;
+                            }
+                        }
+                    } else {
+                        score += 2;
+                    }
+                } else if (checkWest(x, y, _buttons, axeIcon, emptyImageIcon, kingIcon) == 3) {
+                    score += 5;
+                } else {
+                    score += 4;
+                }
+            }
+            if (x < 10) {
+                if (checkEast(x, y, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                    score += 3;
+                } else if (checkEast(x, y, _buttons, axeIcon, emptyImageIcon, kingIcon) == 2) {
+                    if (x + 1 < 10) {
+                        if (checkEast(x + 1, y, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                            score += 6;
+                        } else {
+                            if (checkEast(x + 1, y, _buttons, axeIcon, emptyImageIcon, kingIcon) != 0) {
+                                return 1;
+                            } else {
+                                score += 2;
+                            }
+                        }
+                    } else {
+                        score += 2;
+                    }
+                } else if (checkEast(x, y, _buttons, axeIcon, emptyImageIcon, kingIcon) == 3) {
+                    score += 5;
+                } else {
+                    score += 4;
+                }
+            }
+        } else {
+            if (y > 0) {
+                if (checkNorth(x, y, _buttons, axeIcon, emptyImageIcon, kingIcon) == 2) {
+                    score += 3;
+                } else if (checkNorth(x, y, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                    if (y - 1 > 0) {
+                        if (checkNorth(x, y - 1, _buttons, axeIcon, emptyImageIcon, kingIcon) == 2) {
+                            score += 6;
+                        } else {
+                            if (checkNorth(x, y - 1, _buttons, axeIcon, emptyImageIcon, kingIcon) != 0) {
+                                return 1;
+                            } else {
+                                score += 2;
+                            }
+                        }
+                    } else {
+                        score += 2;
+                    }
+                } else if (checkNorth(x, y, _buttons, axeIcon, emptyImageIcon, kingIcon) == 0) {
+                    score += 4;
+                }
+            }
+            if (y < 10) {
+                if (checkSouth(x, y, _buttons, axeIcon, emptyImageIcon, kingIcon) == 2) {
+                    score += 3;
+                } else if (checkSouth(x, y, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                    if (y + 1 < 10) {
+                        if (checkSouth(x, y + 1, _buttons, axeIcon, emptyImageIcon, kingIcon) == 2) {
+                            score += 6;
+                        } else {
+                            if (checkSouth(x, y + 1, _buttons, axeIcon, emptyImageIcon, kingIcon) != 0) {
+                                return 1;
+                            } else {
+                                score += 2;
+                            }
+                        }
+                    } else {
+                        score += 2;
+                    }
+                } else if (checkSouth(x, y, _buttons, axeIcon, emptyImageIcon, kingIcon) == 0) {
+                    score += 4;
+                }
+            }
+            if (x > 0) {
+                if (checkWest(x, y, _buttons, axeIcon, emptyImageIcon, kingIcon) == 2) {
+                    score += 3;
+                } else if (checkWest(x, y, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                    if (x - 1 > 0) {
+                        if (checkWest(x - 1, y, _buttons, axeIcon, emptyImageIcon, kingIcon) == 2) {
+                            score += 6;
+                        } else {
+                            if (checkWest(x - 1, y, _buttons, axeIcon, emptyImageIcon, kingIcon) != 0) {
+                                return 1;
+                            } else {
+                                score += 2;
+                            }
+                        }
+                    } else {
+                        score += 2;
+                    }
+                } else if (checkWest(x, y, _buttons, axeIcon, emptyImageIcon, kingIcon) == 0) {
+                    score += 4;
+                }
+            }
+            if (x < 10) {
+                if (checkEast(x, y, _buttons, axeIcon, emptyImageIcon, kingIcon) == 2) {
+                    score += 3;
+                } else if (checkEast(x, y, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                    if (x + 1 < 10) {
+                        if (checkEast(x + 1, y, _buttons, axeIcon, emptyImageIcon, kingIcon) == 2) {
+                            score += 6;
+                        } else {
+                            if (checkEast(x + 1, y, _buttons, axeIcon, emptyImageIcon, kingIcon) != 0) {
+                                return 1;
+                            } else {
+                                score += 2;
+                            }
+                        }
+                    } else {
+                        score += 2;
+                    }
+                } else if (checkEast(x, y, _buttons, axeIcon, emptyImageIcon, kingIcon) == 0) {
+                    score += 4;
+                }
+            }
+        }
+        
+        return score;
+    }
+
+    public int checkNorth(int x, int y, JButton[][] _buttons, ImageIcon axeIcon, ImageIcon emptyImageIcon, ImageIcon kingIcon) {
+        ImageIcon currentImageIcon = (ImageIcon) _buttons[x][y - 1].getIcon();
+        if (currentImageIcon.getDescription().equals(axeIcon.getDescription())) {
+            return 1;
+        } else if (currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())) {
+            return 0;
+        } else if (currentImageIcon.getDescription().equals(kingIcon.getDescription())) {
+            return 3;
+        } else {
+            return 2;
+        }
+    }
+
+    public int checkSouth(int x, int y, JButton[][] _buttons, ImageIcon axeIcon, ImageIcon emptyImageIcon, ImageIcon kingIcon) {
+        ImageIcon currentImageIcon = (ImageIcon) _buttons[x][y + 1].getIcon();
+        if (currentImageIcon.getDescription().equals(axeIcon.getDescription())) {
+            return 1;
+        } else if (currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())) {
+            return 0;
+        } else if (currentImageIcon.getDescription().equals(kingIcon.getDescription())) {
+            return 3;
+        } else {
+            return 2;
+        }
+    }
+
+    public int checkEast(int x, int y, JButton[][] _buttons, ImageIcon axeIcon, ImageIcon emptyImageIcon, ImageIcon kingIcon) {
+        ImageIcon currentImageIcon = (ImageIcon) _buttons[x + 1][y].getIcon();
+        if (currentImageIcon.getDescription().equals(axeIcon.getDescription())) {
+            return 1;
+        } else if (currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())) {
+            return 0;
+        } else if (currentImageIcon.getDescription().equals(kingIcon.getDescription())) {
+            return 3;
+        } else {
+            return 2;
+        }
+    }
+
+    public int checkWest(int x, int y, JButton[][] _buttons, ImageIcon axeIcon, ImageIcon emptyImageIcon, ImageIcon kingIcon) {
+        ImageIcon currentImageIcon = (ImageIcon) _buttons[x - 1][y].getIcon();
+        if (currentImageIcon.getDescription().equals(axeIcon.getDescription())) {
+            return 1;
+        } else if (currentImageIcon.getDescription().equals(emptyImageIcon.getDescription())) {
+            return 0;
+        } else if (currentImageIcon.getDescription().equals(kingIcon.getDescription())) {
+            return 3;
+        } else {
+            return 2;
+        }
+    }
 }
