@@ -570,7 +570,7 @@ public class GameLogic implements GameLogicInterface {
         return kingOnTopRow || kingOnBotRow || kingOnLeftCol || kingOnRightCol;
     }
 	
-
+    /**
      *
      * @return pieces remaining
      */
