@@ -5,6 +5,8 @@ import javax.swing.JButton;
 import javax.swing.text.StyledEditorKit.BoldAction;
 import java.awt.*;
 import java.awt.event.*;
+import java.net.SocketTimeoutException;
+
 import javax.swing.border.LineBorder;
 import javax.swing.*;
 
@@ -353,9 +355,11 @@ public class GameLogic implements GameLogicInterface {
         return true;
     }
 
+
     /**
      * This uses the same integer[] as getXandY and returns whether the
      * destination is occupied or not
+
      *
      * @param destination integer[] of size 2: index 0 is x cord, index 1 is y
      * cord
@@ -373,6 +377,104 @@ public class GameLogic implements GameLogicInterface {
     }
 
 
+
+    public boolean encircled(JButton[][] _buttons){
+        boolean isEncircled = false;
+        Point kingPosition = findKing(_buttons);
+        String[][] stringMatrix = createStringMatrix(_buttons);
+        //this traverses matrix, trying to overwrite all shields. 
+        //will return false if hits edge of map
+        if(crawlEncirclement(stringMatrix, kingPosition.y, kingPosition.x)){
+            //after crawling stringMatrix, check to see if there are any shields left
+            for(int y = 0; y < gameHeight; y++){
+                for(int x = 0; x < gameWidth; x++){
+                    //if a shield is left then it is not an encirclement, return false;
+                    if(stringMatrix[y][x].equals("shield")){
+                        return false;
+                    }
+                }
+            }
+            //if there are no shields, then it is an encirclement
+            isEncircled = true;
+        }
+        return isEncircled;
+    }
+
+
+    public boolean crawlEncirclement(String[][] stringMatrix, int y, int x){
+        boolean isEncircled = false;
+        boolean north = false;
+        boolean east = false;
+        boolean south = false;
+        boolean west = false;
+
+        //System.out.println(y + " " + x);
+        //if touching this algorithm touches the edge of the board this is not an encirclement
+        if(x < 0 || x > gameWidth-1 || y < 0 || y > gameHeight - 1 ){
+            return false;
+        }
+        //if this is an axe then this is holding true that it is and encirclement
+        //if traversed its also still keeping the encirclement true
+        if(stringMatrix[y][x].equals("axe") || stringMatrix.equals("traversed")){
+            isEncircled = true;
+            return true;
+        }
+        //if it is not an axe we need to continue traversing to find out if it is an encirclement
+        else{
+            stringMatrix[y][x] = "traversed";
+            // System.out.println("Checking north");
+            if(y+1 > gameHeight-1 || y+1 < 0){
+                return false;
+            }
+            if(x+1 > gameWidth-1 || x+1 < 0){
+                return false;
+            }
+            if(y-1 > gameHeight-1 || y-1 < 0){
+                return false;
+            }
+            if(x-1 > gameWidth-1 || x-1 < 0){
+                return false;   
+            }
+            if(!stringMatrix[y+1][x].equals("traversed")){
+                north = crawlEncirclement(stringMatrix, y+1, x);
+                if(!north){
+                    return false;
+                }
+            }else{
+                north = true;
+            }
+            
+            if(!stringMatrix[y][x+1].equals("traversed")){
+                //System.out.println("Checking east");
+                east = crawlEncirclement(stringMatrix, y, x+1);
+                if(!east){
+                    return false;
+                }
+            }else{
+                east = true;
+            }
+            if(!stringMatrix[y-1][x].equals("traversed")){
+                //System.out.println("Checking south");
+                south = crawlEncirclement(stringMatrix, y-1, x);
+                if(!south){
+                    return false;
+                }
+            }else{
+                south = true;
+            }
+            if(!stringMatrix[y][x-1].equals("traversed")){
+                //System.out.println("Checking west");
+                west = crawlEncirclement(stringMatrix, y, x-1);
+                if(!west){
+                    return false;
+                }
+            }else{
+                west = true;
+            }
+        }
+        isEncircled = north && south && east && west;
+        return isEncircled;
+    }
 
     public boolean exitFort(JButton[][] _buttons){
         Boolean isExitFort = false;
