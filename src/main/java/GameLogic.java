@@ -19,7 +19,7 @@ public class GameLogic implements GameLogicInterface{
 
     private int gameWidth;
     private int gameHeight;
-	
+
     public int attackPieces = 20;
 	public int defensePieces = 13;
 
@@ -51,7 +51,7 @@ public class GameLogic implements GameLogicInterface{
         }
         return new int[2];
     }
-	
+
 	/**
     *
     * kill pieces as they are surrounded Othello style (King is an exception)
@@ -199,13 +199,13 @@ public class GameLogic implements GameLogicInterface{
                     //i+-1 j+-1
                     //check the pieces east north south and west
                     ImageIcon surroundingImageIcon;
-					
+
 					defensePieces++;
 
                     if(i - 1 >= 0){
                         //north
                         surroundingImageIcon = (ImageIcon)_buttons[i - 1][j].getIcon();
-                        if(surroundingImageIcon.getDescription().equals(axeIcon.getDescription())){
+                        if(surroundingImageIcon.getDescription().equals(axeIcon.getDescription()) || i - 1 == Math.floor(gameWidth/2)){
                             surroundedKingSides++;
                         }
                     }
@@ -218,7 +218,7 @@ public class GameLogic implements GameLogicInterface{
                         //south
 
                         surroundingImageIcon = (ImageIcon)_buttons[i + 1][j].getIcon();
-                        if(surroundingImageIcon.getDescription().equals(axeIcon.getDescription())){
+                        if(surroundingImageIcon.getDescription().equals(axeIcon.getDescription()) || i + 1 == Math.floor(gameWidth/2)){
                             surroundedKingSides++;
                         }
                     }
@@ -230,7 +230,7 @@ public class GameLogic implements GameLogicInterface{
                         //west
 
                         surroundingImageIcon = (ImageIcon)_buttons[i][j - 1].getIcon();
-                        if(surroundingImageIcon.getDescription().equals(axeIcon.getDescription())){
+                        if(surroundingImageIcon.getDescription().equals(axeIcon.getDescription()) || j - 1 == Math.floor(gameHeight/2)){
                             surroundedKingSides++;
                         }
                     }
@@ -242,7 +242,7 @@ public class GameLogic implements GameLogicInterface{
                         //east
 
                         surroundingImageIcon = (ImageIcon)_buttons[i][j + 1].getIcon();
-                        if(surroundingImageIcon.getDescription().equals(axeIcon.getDescription())){
+                        if(surroundingImageIcon.getDescription().equals(axeIcon.getDescription()) || j + 1 == Math.floor(gameHeight/2)){
                             surroundedKingSides++;
                         }
                     }
@@ -488,10 +488,10 @@ public class GameLogic implements GameLogicInterface{
                     //call to recursive function to find if this is an exit fort
                     isExitFort = checkSurroundings(stringMatrix, kingPosition.y, kingPosition.x);
                 }
-                
+
             }
         }
-        
+
         return isExitFort;
     }
 
@@ -507,7 +507,7 @@ public class GameLogic implements GameLogicInterface{
         return stringMatrix;
     }
     public Point findKing(JButton[][] _buttons){
-        Point position = null;  
+        Point position = null;
 
         for(int y = 0; y < gameHeight; y++){
             for(int x = 0; x < gameWidth; x++){
@@ -545,14 +545,14 @@ public class GameLogic implements GameLogicInterface{
         boolean south = false;
         boolean west = false;
         String[][] newStringMatrix = new String[stringMatrix.length][stringMatrix.length];
-        
+
         for(int i = 0; i < stringMatrix.length; i++){
 
             for(int j = 0; j < stringMatrix[i].length; j++){
-                
+
                 newStringMatrix[i][j] = stringMatrix[i][j];
             }
-            
+
         }
 
         //sets current button description to a shield to prevent going back over a button that has already been visited
@@ -589,13 +589,13 @@ public class GameLogic implements GameLogicInterface{
                 east = false;
             }
         }
-            
+
 
         //Check South
         if(y-1 > gameHeight-1 || y-1 < 0){
             south = true;
         }else{
-            
+
             if(newStringMatrix[y-1][x].equals("empty")){
                 south = checkSurroundings(newStringMatrix, y-1, x);
                 if(south == false){
@@ -652,7 +652,7 @@ public class GameLogic implements GameLogicInterface{
                 kingOnLeftCol = true;
             }
         }
-        //checks for if the king is int he righ column  
+        //checks for if the king is int he righ column
         for(int i =0; i < _buttons.length; i++){
             ImageIcon currentImageIcon = (ImageIcon) _buttons[i][10].getIcon();
             if(currentImageIcon.getDescription().equals("king")){
@@ -660,10 +660,10 @@ public class GameLogic implements GameLogicInterface{
             }
         }
 
-        
+
         return kingOnTopRow || kingOnBotRow || kingOnLeftCol || kingOnRightCol;
     }
-	
+
 	/** to retrieve remaining pieces
      *
      * @return pieces remaining
@@ -672,10 +672,10 @@ public class GameLogic implements GameLogicInterface{
 		int[] temp = new int[2];
 		temp[0] = attackPieces;
 		temp[1] = defensePieces;
-		
+
 		return temp;
 	}
-	
+
 	public JButton[][] displayCorrectChoice(int[] start, int[] destination, JButton[][] _buttons) {
         _buttons[start[0]][start[1]].setBorder(new LineBorder(Color.YELLOW, 5));
         _buttons[destination[0]][destination[1]].setBorder(new LineBorder(Color.YELLOW, 5));
@@ -893,7 +893,7 @@ public class GameLogic implements GameLogicInterface{
                 }
             }
         }
-        
+
         return displayCorrectChoice(start, destination, _buttons);
     }
 
@@ -1080,7 +1080,7 @@ public class GameLogic implements GameLogicInterface{
                 }
             }
         }
-        
+
         return score;
     }
 
