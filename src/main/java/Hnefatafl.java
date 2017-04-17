@@ -167,11 +167,11 @@ public class Hnefatafl{
         ActionListener resignButtonListener = new ResignButtonListener();
         resignButton.addActionListener(resignButtonListener);
         tools.add(resignButton); //no functions
-		
+
 		JButton bestButton = new JButton("Best Move");
         ActionListener bestButtonListener = new bestButtonListener();
 		bestButton.addActionListener(bestButtonListener);
-		tools.add(bestButton); 
+		tools.add(bestButton);
 
         //tools.addSeparator();
         tools.add(turn);
@@ -324,7 +324,7 @@ public class Hnefatafl{
         Hnefatafl game = new Hnefatafl();
         //game.drawBoard();
     }
-	
+
     // #################################################################
     // Button listeners
     // #################################################################
@@ -412,12 +412,7 @@ public class Hnefatafl{
                                     || (gameLogic.getXandY(_secondClick, _buttons)[0] == 10 && gameLogic.getXandY(_secondClick, _buttons)[1] == 10))
                                     && firstClickImageIcon.getDescription().equals("king"))
                             {
-                                turn.setText("      Shield Wins!      ");
-                                for(int i = 0; i < 11; i++){
-                                    for(int j = 0; j < 11; j++){
-                                        _buttons[i][j].setEnabled(false);
-                                    }
-                                }
+                                endGame("      Shield Wins!      ");
                             }
                             else{
                                 isFirstPlayer=true;
@@ -443,21 +438,11 @@ public class Hnefatafl{
 
                         //shields win
                         if(noPiecesCheck == 1 || (axeTimer.isNull() && axeStarted) || axeTimer.timeLeft == 0){
-                            turn.setText("      Shield Wins!          ");
-                            for(int i = 0; i < 11; i++){
-                                for(int j = 0; j < 11; j++){
-                                    _buttons[i][j].setEnabled(false);
-                                }
-                            }
+                            endGame("      Shield Wins!          ");
                         }
                         //axes win
                         else if(noPiecesCheck == 2 || (shieldTimer.isNull() && shieldStarted) || shieldTimer.timeLeft == 0){
-                            turn.setText("      Axes Wins!        ");
-                            for(int i = 0; i < 11; i++){
-                                for(int j = 0; j < 11; j++){
-                                    _buttons[i][j].setEnabled(false);
-                                }
-                            }
+                            endGame("      Axes Wins!        ");
                         }
                     }
                     else{
@@ -648,7 +633,7 @@ public class Hnefatafl{
             _buttons = gameLogic.showCorrectChoice(_buttons, axeIcon, emptyImageIcon, kingIcon, defenseIcon, isFirstPlayer); 
         }
     }
-	
+
     /**
      * Custom Property Change Listener that handles when either
      * clocktimer reaches the time zero (0).  When one does, that
