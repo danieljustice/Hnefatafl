@@ -55,5 +55,51 @@ public interface GameLogicInterface {
      * @return pieces remaining
      */
 	public int[] numPiecesLeft();
+	
+	/**
+	 *  displays the best option
+	 *
+	 */
+	public JButton[][] displayCorrectChoice(int[] start, int[] destination, JButton[][] _buttons);
+
+	/**
+	 *  disables the display the best option
+	 *
+	 */
+    public JButton[][] removeCorrectChoice(JButton[][] _buttons);
+	/** find best option on board
+	 *  
+	 *
+	 */
+    public JButton[][] showCorrectChoice(JButton[][] _buttons, ImageIcon axeIcon, ImageIcon emptyImageIcon, ImageIcon kingIcon, ImageIcon defenseIcon, boolean isFirstPlayer); 
+	/** get weight of points of each space
+	 *  
+	 *
+	 */
+    public int surroundingPoints(int x, int y, ImageIcon currentImageIcon, JButton[][] _buttons, ImageIcon axeIcon, ImageIcon emptyImageIcon, ImageIcon kingIcon);
+    
+	/** check what is ontop of the button
+	 *  
+	 *
+	 */
+    public int checkNorth(int x, int y, JButton[][] _buttons, ImageIcon axeIcon, ImageIcon emptyImageIcon, ImageIcon kingIcon);
+
+	/** check what is below of the button
+	 *  
+	 *
+	 */
+    public int checkSouth(int x, int y, JButton[][] _buttons, ImageIcon axeIcon, ImageIcon emptyImageIcon, ImageIcon kingIcon);
+
+	/** check what is right of the button
+	 *  
+	 *
+	 */
+    public int checkEast(int x, int y, JButton[][] _buttons, ImageIcon axeIcon, ImageIcon emptyImageIcon, ImageIcon kingIcon);
+
+	/** check what is left of the button
+	 *  
+	 *
+	 */
+    public int checkWest(int x, int y, JButton[][] _buttons, ImageIcon axeIcon, ImageIcon emptyImageIcon, ImageIcon kingIcon);
 
 }
