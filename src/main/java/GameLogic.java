@@ -9,13 +9,13 @@ import javax.swing.*;
  *
  * @author Timothy Kang
  */
-public class GameLogic implements GameLogicInterface{
+public class GameLogic implements GameLogicInterface {
 
     private int gameWidth;
     private int gameHeight;
-	
+
     public int attackPieces = 20;
-	public int defensePieces = 13;
+    public int defensePieces = 13;
 
     public GameLogic(int gameWidth, int gameHeight) {
         this.gameWidth = gameWidth;
@@ -25,18 +25,18 @@ public class GameLogic implements GameLogicInterface{
     // #################################################################
     // Utility methods
     // #################################################################
-
     /**
      * Returns integer array contains xy coordinates for button pressed.
      *
-     * @param jb    JButton that holds the current pushed button
-     * @return  returns an integer array that contains, the buttons location as (x,y) = ([0],[1])
+     * @param jb JButton that holds the current pushed button
+     * @return returns an integer array that contains, the buttons location as
+     * (x,y) = ([0],[1])
      */
-    public int[] getXandY(JButton jb, JButton[][] _buttons){
+    public int[] getXandY(JButton jb, JButton[][] _buttons) {
         int[] xyCord = new int[2];
-        for(int i=0; i <gameWidth; i++){
-            for(int j=0; j <gameHeight;j++){
-                if(jb ==_buttons[j][i]){
+        for (int i = 0; i < gameWidth; i++) {
+            for (int j = 0; j < gameHeight; j++) {
+                if (jb == _buttons[j][i]) {
                     xyCord[0] = j;
                     xyCord[1] = i;
                     return xyCord;
@@ -45,44 +45,46 @@ public class GameLogic implements GameLogicInterface{
         }
         return new int[2];
     }
-	
-	/**
-    *
-    * kill pieces as they are surrounded Othello style (King is an exception)
-    * @param piecePlacement Jbutton that is where the latest piece was placed to see if a piece is destroyed
-    * @return returns boolean true if a piece is taken out
-    */
-    public JButton[][] attackPieces(JButton piecePlacement, ImageIcon emptyImageIcon, ImageIcon kingIcon, ImageIcon axeIcon, ImageIcon defenseIcon, JButton[][] _buttons){
+
+    /**
+     *
+     * kill pieces as they are surrounded Othello style (King is an exception)
+     *
+     * @param piecePlacement Jbutton that is where the latest piece was placed
+     * to see if a piece is destroyed
+     * @return returns boolean true if a piece is taken out
+     */
+    public JButton[][] attackPieces(JButton piecePlacement, ImageIcon emptyImageIcon, ImageIcon kingIcon, ImageIcon axeIcon, ImageIcon defenseIcon, JButton[][] _buttons) {
         int[] placement = getXandY(piecePlacement, _buttons);
         //testing for surrounding area
         //i+-2 j+-2
         //check the pieces east north south and west
-        ImageIcon currentImageIcon = (ImageIcon)piecePlacement.getIcon();
+        ImageIcon currentImageIcon = (ImageIcon) piecePlacement.getIcon();
         ImageIcon surroundingImageIcon;
         ImageIcon victimPiece;
-		
-		_buttons = shieldWall(_buttons, axeIcon, emptyImageIcon, kingIcon, defenseIcon);
 
-        if(placement[0] - 2 >= 0){
+        _buttons = shieldWall(_buttons, axeIcon, emptyImageIcon, kingIcon,defenseIcon);
+      
+
+        if (placement[0] - 2 >= 0) {
             //north
 
             //checks the north space piece and stores into this variable
-            surroundingImageIcon = (ImageIcon)_buttons[placement[0] - 2][placement[1]].getIcon();
+            surroundingImageIcon = (ImageIcon) _buttons[placement[0] - 2][placement[1]].getIcon();
 
             //checks if the originating piece is a king or shield
-            if(currentImageIcon.getDescription().equals(kingIcon.getDescription()) || currentImageIcon.getDescription().equals(defenseIcon.getDescription())){
-                if(surroundingImageIcon.getDescription().equals(defenseIcon.getDescription()) || surroundingImageIcon.getDescription().equals(kingIcon.getDescription())){
-                    victimPiece = (ImageIcon)_buttons[placement[0] - 1][placement[1]].getIcon();
-                    if(!(victimPiece.getDescription().equals(defenseIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
+            if (currentImageIcon.getDescription().equals(kingIcon.getDescription()) || currentImageIcon.getDescription().equals(defenseIcon.getDescription())) {
+                if (surroundingImageIcon.getDescription().equals(defenseIcon.getDescription()) || surroundingImageIcon.getDescription().equals(kingIcon.getDescription())) {
+                    victimPiece = (ImageIcon) _buttons[placement[0] - 1][placement[1]].getIcon();
+                    if (!(victimPiece.getDescription().equals(defenseIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))) {
                         _buttons[placement[0] - 1][placement[1]].setIcon(emptyImageIcon);
                     }
                 }
-            }
-            //else axe
-            else{
-                if(surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())){
-                    victimPiece = (ImageIcon)_buttons[placement[0] - 1][placement[1]].getIcon();
-                    if(!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
+            } //else axe
+            else {
+                if (surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())) {
+                    victimPiece = (ImageIcon) _buttons[placement[0] - 1][placement[1]].getIcon();
+                    if (!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))) {
                         _buttons[placement[0] - 1][placement[1]].setIcon(emptyImageIcon);
                     }
                 }
@@ -90,77 +92,74 @@ public class GameLogic implements GameLogicInterface{
 
         }
 
-        if(placement[0] + 2 < gameHeight){
+        if (placement[0] + 2 < gameHeight) {
             //south
 
             //checks the north space piece and stores into this variable
-            surroundingImageIcon = (ImageIcon)_buttons[placement[0] + 2][placement[1]].getIcon();
+            surroundingImageIcon = (ImageIcon) _buttons[placement[0] + 2][placement[1]].getIcon();
 
             //checks if the originating piece is a king or shield
-            if(currentImageIcon.getDescription().equals(kingIcon.getDescription()) || currentImageIcon.getDescription().equals(defenseIcon.getDescription())){
-                if(surroundingImageIcon.getDescription().equals(defenseIcon.getDescription()) || surroundingImageIcon.getDescription().equals(kingIcon.getDescription())){
-                    victimPiece = (ImageIcon)_buttons[placement[0] + 1][placement[1]].getIcon();
-                    if(!(victimPiece.getDescription().equals(defenseIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
+            if (currentImageIcon.getDescription().equals(kingIcon.getDescription()) || currentImageIcon.getDescription().equals(defenseIcon.getDescription())) {
+                if (surroundingImageIcon.getDescription().equals(defenseIcon.getDescription()) || surroundingImageIcon.getDescription().equals(kingIcon.getDescription())) {
+                    victimPiece = (ImageIcon) _buttons[placement[0] + 1][placement[1]].getIcon();
+                    if (!(victimPiece.getDescription().equals(defenseIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))) {
                         _buttons[placement[0] + 1][placement[1]].setIcon(emptyImageIcon);
                     }
                 }
-            }
-            //else axe
-            else{
-                if(surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())){
-                    victimPiece = (ImageIcon)_buttons[placement[0] + 1][placement[1]].getIcon();
-                    if(!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
+            } //else axe
+            else {
+                if (surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())) {
+                    victimPiece = (ImageIcon) _buttons[placement[0] + 1][placement[1]].getIcon();
+                    if (!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))) {
                         _buttons[placement[0] + 1][placement[1]].setIcon(emptyImageIcon);
                     }
                 }
             }
         }
-        if(placement[1] - 2 >= 0){
+        if (placement[1] - 2 >= 0) {
             //west
 
             //checks the north space piece and stores into this variable
-            surroundingImageIcon = (ImageIcon)_buttons[placement[0]][placement[1] - 2].getIcon();
+            surroundingImageIcon = (ImageIcon) _buttons[placement[0]][placement[1] - 2].getIcon();
 
             //checks if the originating piece is a king or shield
-            if(currentImageIcon.getDescription().equals(kingIcon.getDescription()) || currentImageIcon.getDescription().equals(defenseIcon.getDescription())){
-                if(surroundingImageIcon.getDescription().equals(defenseIcon.getDescription()) || surroundingImageIcon.getDescription().equals(kingIcon.getDescription())){
-                    victimPiece = (ImageIcon)_buttons[placement[0]][placement[1] - 1].getIcon();
-                    if(!(victimPiece.getDescription().equals(defenseIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
+            if (currentImageIcon.getDescription().equals(kingIcon.getDescription()) || currentImageIcon.getDescription().equals(defenseIcon.getDescription())) {
+                if (surroundingImageIcon.getDescription().equals(defenseIcon.getDescription()) || surroundingImageIcon.getDescription().equals(kingIcon.getDescription())) {
+                    victimPiece = (ImageIcon) _buttons[placement[0]][placement[1] - 1].getIcon();
+                    if (!(victimPiece.getDescription().equals(defenseIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))) {
                         _buttons[placement[0]][placement[1] - 1].setIcon(emptyImageIcon);
                     }
                 }
-            }
-            //else axe
-            else{
-                if(surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())){
-                    victimPiece = (ImageIcon)_buttons[placement[0]][placement[1] - 1].getIcon();
-                    if(!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
+            } //else axe
+            else {
+                if (surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())) {
+                    victimPiece = (ImageIcon) _buttons[placement[0]][placement[1] - 1].getIcon();
+                    if (!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))) {
                         _buttons[placement[0]][placement[1] - 1].setIcon(emptyImageIcon);
                     }
                 }
             }
         }
-        if(placement[1] + 2 < gameWidth){
+        if (placement[1] + 2 < gameWidth) {
             //east
 
             //checks the north space piece and stores into this variable
-            surroundingImageIcon = (ImageIcon)_buttons[placement[0]][placement[1] + 2].getIcon();
+            surroundingImageIcon = (ImageIcon) _buttons[placement[0]][placement[1] + 2].getIcon();
 
             //checks if the originating piece is a king or shield
-            if(currentImageIcon.getDescription().equals(kingIcon.getDescription()) || currentImageIcon.getDescription().equals(defenseIcon.getDescription())){
-                if(surroundingImageIcon.getDescription().equals(defenseIcon.getDescription()) || surroundingImageIcon.getDescription().equals(kingIcon.getDescription())){
-                    victimPiece = (ImageIcon)_buttons[placement[0]][placement[1] + 1].getIcon();
-                    if(!(victimPiece.getDescription().equals(defenseIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
+            if (currentImageIcon.getDescription().equals(kingIcon.getDescription()) || currentImageIcon.getDescription().equals(defenseIcon.getDescription())) {
+                if (surroundingImageIcon.getDescription().equals(defenseIcon.getDescription()) || surroundingImageIcon.getDescription().equals(kingIcon.getDescription())) {
+                    victimPiece = (ImageIcon) _buttons[placement[0]][placement[1] + 1].getIcon();
+                    if (!(victimPiece.getDescription().equals(defenseIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))) {
                         _buttons[placement[0]][placement[1] + 1].setIcon(emptyImageIcon);
                     }
                 }
-            }
-            //else axe
-            else{
-                if(surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())){
-                    victimPiece = (ImageIcon)_buttons[placement[0]][placement[1] + 1].getIcon();
-                    if(!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))){
-                        _buttons[placement[0] ][placement[1] + 1].setIcon(emptyImageIcon);
+            } //else axe
+            else {
+                if (surroundingImageIcon.getDescription().equals(currentImageIcon.getDescription())) {
+                    victimPiece = (ImageIcon) _buttons[placement[0]][placement[1] + 1].getIcon();
+                    if (!(victimPiece.getDescription().equals(currentImageIcon.getDescription()) || victimPiece.getDescription().equals(kingIcon.getDescription()))) {
+                        _buttons[placement[0]][placement[1] + 1].setIcon(emptyImageIcon);
                     }
                 }
             }
@@ -170,128 +169,124 @@ public class GameLogic implements GameLogicInterface{
     }
 
     /**
-    *  check if there are any pieces left for any team
-    *  @param Not Available
-    *  @return returns int 0 for no winning condition, int 1 for king surrounded shields lose, int 2 for axe defeated for no more pieces
-    */
-    public int piecesLeft(ImageIcon axeIcon, ImageIcon kingIcon, ImageIcon defenseIcon, JButton[][] _buttons){
+     * check if there are any pieces left for any team
+     *
+     * @param Not Available
+     * @return returns int 0 for no winning condition, int 1 for king surrounded
+     * shields lose, int 2 for axe defeated for no more pieces
+     */
+    public int piecesLeft(ImageIcon axeIcon, ImageIcon kingIcon, ImageIcon defenseIcon, JButton[][] _buttons) {
         ImageIcon currentImageIcon;
         int surroundedKingSides = 0;
         attackPieces = 0;
-		defensePieces = 0;
+        defensePieces = 0;
 
         //loop through the 3d array of jbuttons
-        for(int i=0; i <gameWidth; i++){
-            for(int j=0; j <gameHeight;j++){
+        for (int i = 0; i < gameWidth; i++) {
+            for (int j = 0; j < gameHeight; j++) {
                 //
-                currentImageIcon = (ImageIcon)_buttons[i][j].getIcon();
-                if(currentImageIcon.getDescription().equals(axeIcon.getDescription())){
+                currentImageIcon = (ImageIcon) _buttons[i][j].getIcon();
+                if (currentImageIcon.getDescription().equals(axeIcon.getDescription())) {
                     //see if there are pieces left for axes
                     attackPieces++;
-                }
-                else if(currentImageIcon.getDescription().equals(kingIcon.getDescription())){
+                } else if (currentImageIcon.getDescription().equals(kingIcon.getDescription())) {
                     //check if king is surrounded
                     //testing for surrounding area
                     //i+-1 j+-1
                     //check the pieces east north south and west
                     ImageIcon surroundingImageIcon;
-					
-					defensePieces++;
 
-                    if(i - 1 >= 0){
+                    defensePieces++;
+
+                    if (i - 1 >= 0) {
                         //north
-                        surroundingImageIcon = (ImageIcon)_buttons[i - 1][j].getIcon();
-                        if(surroundingImageIcon.getDescription().equals(axeIcon.getDescription())){
+                        surroundingImageIcon = (ImageIcon) _buttons[i - 1][j].getIcon();
+                        if (surroundingImageIcon.getDescription().equals(axeIcon.getDescription())) {
                             surroundedKingSides++;
                         }
-                    }
-                    else{
+                    } else {
                         //on edge
                         surroundedKingSides++;
                     }
 
-                    if(i + 1 < gameHeight){
+                    if (i + 1 < gameHeight) {
                         //south
 
-                        surroundingImageIcon = (ImageIcon)_buttons[i + 1][j].getIcon();
-                        if(surroundingImageIcon.getDescription().equals(axeIcon.getDescription())){
+                        surroundingImageIcon = (ImageIcon) _buttons[i + 1][j].getIcon();
+                        if (surroundingImageIcon.getDescription().equals(axeIcon.getDescription())) {
                             surroundedKingSides++;
                         }
-                    }
-                    else{
+                    } else {
                         //on edge
                         surroundedKingSides++;
                     }
-                    if(j - 1 >= 0){
+                    if (j - 1 >= 0) {
                         //west
 
-                        surroundingImageIcon = (ImageIcon)_buttons[i][j - 1].getIcon();
-                        if(surroundingImageIcon.getDescription().equals(axeIcon.getDescription())){
+                        surroundingImageIcon = (ImageIcon) _buttons[i][j - 1].getIcon();
+                        if (surroundingImageIcon.getDescription().equals(axeIcon.getDescription())) {
                             surroundedKingSides++;
                         }
-                    }
-                    else{
+                    } else {
                         //on edge
                         surroundedKingSides++;
                     }
-                    if(j + 1 < gameWidth){
+                    if (j + 1 < gameWidth) {
                         //east
 
-                        surroundingImageIcon = (ImageIcon)_buttons[i][j + 1].getIcon();
-                        if(surroundingImageIcon.getDescription().equals(axeIcon.getDescription())){
+                        surroundingImageIcon = (ImageIcon) _buttons[i][j + 1].getIcon();
+                        if (surroundingImageIcon.getDescription().equals(axeIcon.getDescription())) {
                             surroundedKingSides++;
                         }
-                    }
-                    else{
+                    } else {
                         //on edge
                         surroundedKingSides++;
                     }
+                } else if (currentImageIcon.getDescription().equals(defenseIcon.getDescription())) {
+                    defensePieces++;
                 }
-				else if(currentImageIcon.getDescription().equals(defenseIcon.getDescription())){
-					defensePieces++;
-				}
             }
         }
-        if(attackPieces == 0){
+        if (attackPieces == 0) {
             //axe defeated
             return 1;
-        }
-        else if(surroundedKingSides == 4){
+        } else if (surroundedKingSides == 4) {
             //shield defeated since king is surrounded
             return 2;
-        }
-        else{
+        } else {
             //keep playing
             return 0;
         }
     }
 
     /**
-     * Returns whether a move is valid based on input arrays which store x and y locations
+     * Returns whether a move is valid based on input arrays which store x and y
+     * locations
      *
      * @param start an integer array with 2 values, [0] index is x, [1] is y
-     * @param destination   an integer array with 2 values, [0] index is x, [1] is y
-     * @return  returns true if valid move, false if not
+     * @param destination an integer array with 2 values, [0] index is x, [1] is
+     * y
+     * @return returns true if valid move, false if not
      */
-    public boolean isValidMove(int[] start, int[] destination, boolean isKingPiece, JButton[][] _buttons){
+    public boolean isValidMove(int[] start, int[] destination, boolean isKingPiece, JButton[][] _buttons) {
 
-        if(start[0] == destination[0] && start[1] == destination[1] )
+        if (start[0] == destination[0] && start[1] == destination[1]) {
             return false;
-        else if(destination[0] == 5 && destination[1] == 5)
+        } else if (destination[0] == 5 && destination[1] == 5) {
             return false;
-        else if( (start[0] == destination[0] || start[1] == destination[1]) ){
+        } else if ((start[0] == destination[0] || start[1] == destination[1])) {
 
-            if(!isSpaceOccupied(destination, _buttons)){
+            if (!isSpaceOccupied(destination, _buttons)) {
 
-                if(canMoveToDestination(start, destination, _buttons)){
-                    if(!isKingPiece){
-                    //checks to see if a normal piece is trying to enter one of the corner squares
-                    if(destination[0] == 0 && destination[1] == 0 || destination[0] == 0 && destination[1] == 10
-                        || destination[0] == 10 && destination[1] == 0 || destination[0] == 10 && destination[1] == 10){
+                if (canMoveToDestination(start, destination, _buttons)) {
+                    if (!isKingPiece) {
+                        //checks to see if a normal piece is trying to enter one of the corner squares
+                        if (destination[0] == 0 && destination[1] == 0 || destination[0] == 0 && destination[1] == 10
+                                || destination[0] == 10 && destination[1] == 0 || destination[0] == 10 && destination[1] == 10) {
                             //check to see if pieces are in between
                             return false;
+                        }
                     }
-                }
                     return true;
                 }
             }
@@ -299,50 +294,53 @@ public class GameLogic implements GameLogicInterface{
         return false;
     }
 
-    /** Traverses through each space on the board to see if any of them are occupied.
+    /**
+     * Traverses through each space on the board to see if any of them are
+     * occupied.
      *
      * @param start integer[] with size 2: index 0 is x cord, index 1 is y cord
-     * @param destination start integer[] with size 2: index 0 is x cord, index 1 is y cord
-     * @return returns false if any spaces are occupied between the start and destination
+     * @param destination start integer[] with size 2: index 0 is x cord, index
+     * 1 is y cord
+     * @return returns false if any spaces are occupied between the start and
+     * destination
      */
-    public boolean canMoveToDestination(int[] start, int[] destination, JButton[][] _buttons ){
+    public boolean canMoveToDestination(int[] start, int[] destination, JButton[][] _buttons) {
         int[] counter = new int[2];
         counter[0] = start[0];
         counter[1] = start[1];
-        if(start[0] == destination[0]){
-            if(start[1] < destination[1]){
-            	counter[1]++;
-                while(counter[1] < destination[1]){
-                    if(isSpaceOccupied(counter, _buttons))
+        if (start[0] == destination[0]) {
+            if (start[1] < destination[1]) {
+                counter[1]++;
+                while (counter[1] < destination[1]) {
+                    if (isSpaceOccupied(counter, _buttons)) {
                         return false;
+                    }
                     counter[1]++;
                 }
-            }
-            else
-            {
-            	counter[1]--;
-                while(counter[1] > destination[1]){
-                    if(isSpaceOccupied(counter, _buttons ))
+            } else {
+                counter[1]--;
+                while (counter[1] > destination[1]) {
+                    if (isSpaceOccupied(counter, _buttons)) {
                         return false;
+                    }
                     counter[1]--;
                 }
             }
-        }
-        else if(start[1] == destination[1]){
-            if(start[0] < destination[0]){
+        } else if (start[1] == destination[1]) {
+            if (start[0] < destination[0]) {
                 counter[0]++;
-                while(counter[0] < destination[0]){
-                    if(isSpaceOccupied(counter, _buttons))
+                while (counter[0] < destination[0]) {
+                    if (isSpaceOccupied(counter, _buttons)) {
                         return false;
+                    }
                     counter[0]++;
                 }
-            }
-            else
-            {
-            	counter[0]--;
-                while(counter[0] > destination[0]){
-                    if(isSpaceOccupied(counter, _buttons))
+            } else {
+                counter[0]--;
+                while (counter[0] > destination[0]) {
+                    if (isSpaceOccupied(counter, _buttons)) {
                         return false;
+                    }
                     counter[0]--;
                 }
             }
@@ -350,36 +348,42 @@ public class GameLogic implements GameLogicInterface{
         return true;
     }
 
-    /** This uses the same integer[] as getXandY and returns whether the destination is occupied or not
+    /**
+     * This uses the same integer[] as getXandY and returns whether the
+     * destination is occupied or not
      *
-     * @param destination integer[] of size 2: index 0 is x cord, index 1 is y cord
+     * @param destination integer[] of size 2: index 0 is x cord, index 1 is y
+     * cord
      * @return true if the space is occupied by axe, shield or king
      */
-    public boolean isSpaceOccupied(int[] destination, JButton[][] _buttons ){
+    public boolean isSpaceOccupied(int[] destination, JButton[][] _buttons) {
         ImageIcon currentImageIcon = (ImageIcon) _buttons[destination[0]][destination[1]].getIcon();
-        if(currentImageIcon==null || currentImageIcon.getDescription() == null)
-        	return true;
-        if( !currentImageIcon.getDescription().equals("empty"))
+        if (currentImageIcon == null || currentImageIcon.getDescription() == null) {
             return true;
+        }
+        if (!currentImageIcon.getDescription().equals("empty")) {
+            return true;
+        }
         return false;
     }
-	
-	/** to retrieve remaining pieces
+
+    /**
+     * to retrieve remaining pieces
      *
      * @return pieces remaining
      */
-	public int[] numPiecesLeft(){
-		int[] temp = new int[2];
-		temp[0] = attackPieces;
-		temp[1] = defensePieces;
-		
-		return temp;
-	}
-	
-	public JButton[][] displayCorrectChoice(int[] start, int[] destination, JButton[][] _buttons) {
+    public int[] numPiecesLeft() {
+        int[] temp = new int[2];
+        temp[0] = attackPieces;
+        temp[1] = defensePieces;
+
+        return temp;
+    }
+
+    public JButton[][] displayCorrectChoice(int[] start, int[] destination, JButton[][] _buttons) {
         _buttons[start[0]][start[1]].setBorder(new LineBorder(Color.YELLOW, 5));
         _buttons[destination[0]][destination[1]].setBorder(new LineBorder(Color.YELLOW, 5));
-		return _buttons;
+        return _buttons;
     }
 
     public JButton[][] removeCorrectChoice(JButton[][] _buttons) {
@@ -390,7 +394,7 @@ public class GameLogic implements GameLogicInterface{
                 _buttons[i][j].setBorder(emptyBorder);
             }
         }
-		return _buttons;
+        return _buttons;
     }
 
     public JButton[][] showCorrectChoice(JButton[][] _buttons, ImageIcon axeIcon, ImageIcon emptyImageIcon, ImageIcon kingIcon, ImageIcon defenseIcon, boolean isFirstPlayer) {
@@ -593,7 +597,7 @@ public class GameLogic implements GameLogicInterface{
                 }
             }
         }
-        
+
         return displayCorrectChoice(start, destination, _buttons);
     }
 
@@ -780,7 +784,7 @@ public class GameLogic implements GameLogicInterface{
                 }
             }
         }
-        
+
         return score;
     }
 
@@ -835,72 +839,670 @@ public class GameLogic implements GameLogicInterface{
             return 2;
         }
     }
-	
-	public JButton[][] shieldWall(JButton[][] _buttons, ImageIcon axeIcon, ImageIcon emptyImageIcon, ImageIcon kingIcon, ImageIcon defenseIcon){
-		ImageIcon currentImageIcon;
-		boolean surrounded = false;
-		int piecesDeleted = 0;
-		int temp;
-		for(int i = 0; i < gameWidth; i++){
-			for(int j = 0; j < gameWidth; j++){
-				currentImageIcon = (ImageIcon) _buttons[i][j].getIcon();
-				if(currentImageIcon.getDescription().equals(axeIcon.getDescription())){
-					piecesDeleted++;
-					//4 walls 4 cases
-					if(i == 0 && j > 0 && j < 10){
-						if(j == 1 || j == 9){
-							if(checkSouth(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2){
-								while(checkWest(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1){
-									if(checkSouth(i, j + 1, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2 && checkWest(i, j + 1, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2){
-										//delete
-										temp = j - piecesDeleted;
-										for(int k = j; k > temp; k--){
-											_buttons[i][k].setIcon(emptyImageIcon);
-										}
-									}
-									else if(checkSouth(i, j + 1, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2){
-										j++;
-										piecesDeleted++;
-										//keep iterating through
-									}
-									else{
-										piecesDeleted = 0;
-										//not a full walls
-										//dont do anything
-									}
-								}
-							}
-							if(checkSouth(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2){
-								while(checkEast(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1){
-									if(checkSouth(i, j - 1, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2 && checkEast(i, j - 1, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2){
-										//delete
-										temp = j + piecesDeleted;
-										for(int k = j; k < temp; k++){
-											_buttons[i][k].setIcon(emptyImageIcon);
-										}
-									}
-									else if(checkSouth(i, j - 1, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2){
-										j--;
-										piecesDeleted++;
-										//keep iterating through
-									}
-									else{
-										piecesDeleted = 0;
-										//not a full walls
-										//dont do anything
-									}
-								}
-							}
-						}
-						else{
-							
-						}
-					}
-				}
-				else if(currentImageIcon.getDescription().equals(kingIcon.getDescription()) || currentImageIcon.getDescription().equals(defenseIcon.getDescription())){
-				}
-			}
-		}
-		return _buttons;
-	}
+
+    public JButton[][] shieldWall(JButton[][] _buttons, ImageIcon axeIcon, ImageIcon emptyImageIcon, ImageIcon kingIcon, ImageIcon defenseIcon) {
+        ImageIcon currentImageIcon;
+        boolean surrounded = false;
+        int piecesDeleted = 0;
+        int temp;
+        for (int i = 0; i < gameWidth; i++) {
+            for (int j = 0; j < gameWidth; j++) {
+                currentImageIcon = (ImageIcon) _buttons[i][j].getIcon();
+                if (currentImageIcon.getDescription().equals(axeIcon.getDescription())) {
+                    piecesDeleted++;
+                    //4 walls 4 cases
+                    if (i == 0 && (j > 0 && j < 10)) {
+                        if (j == 1 || j == 9) {
+                            if (checkEast(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                while (checkSouth(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1 && !surrounded) {
+                                    if (checkEast(i, j + 1, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2 && checkSouth(i, j + 1, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                        //delete
+                                        temp = j - piecesDeleted;
+                                        for (int k = j + 1; k > temp; k--) {
+                                            _buttons[i][k].setIcon(emptyImageIcon);
+                                            surrounded = true;
+                                        }
+                                    } else if (checkEast(i, j + 1, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                        j++;
+                                        piecesDeleted++;
+                                        //keep iterating through
+                                    } else {
+                                        
+                                        piecesDeleted = 0;
+                                        break;
+                                        //not a full walls
+                                        //dont do anything
+                                    }
+                                }
+                                surrounded = false;
+                                piecesDeleted = 0;
+                            }
+                            if (checkEast(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                while (checkNorth(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1 && !surrounded) {
+                                    if (checkEast(i, j - 1, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2 && checkNorth(i, j - 1, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                        //delete
+                                        temp = j + piecesDeleted;
+                                        for (int k = j - 1; k <= temp; k++) {
+                                            _buttons[i][k].setIcon(emptyImageIcon);
+                                            surrounded = true;
+                                        }
+                                    } else if (checkEast(i, j - 1, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                        j--;
+                                        piecesDeleted++;
+                                        //keep iterating through
+                                    } else {
+                                        
+                                        piecesDeleted = 1;
+                                        break;
+                                        //not a full walls
+                                        //dont do anything
+                                    }
+                                }
+                                surrounded = false;
+                                piecesDeleted = 1;
+                            }
+                        } else {
+                            if(checkNorth(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 2){
+                                if (checkEast(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                    while (checkSouth(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1 && !surrounded) {
+                                        if (checkEast(i, j + 1, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2 && checkSouth(i, j + 1, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                            //delete
+                                            temp = j - piecesDeleted;
+                                            for (int k = j + 1; k > temp; k--) {
+                                                _buttons[i][k].setIcon(emptyImageIcon);
+                                                surrounded = true;
+                                            }
+                                        } else if (checkEast(i, j + 1, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                            j++;
+                                            piecesDeleted++;
+                                            //keep iterating through
+                                        } else {
+
+                                            piecesDeleted = 1;
+                                            break;
+                                            //not a full walls
+                                            //dont do anything
+                                        }
+                                    }
+                                    surrounded = false;
+                                    piecesDeleted = 1;
+                                }   
+                            }
+                        }
+                    }
+                    surrounded = false;
+                    piecesDeleted = 1;
+                    if (i == 10 && (j > 0 && j < 10)) {
+                        if (j == 1 || j == 9) {
+                            if (checkWest(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                while (checkSouth(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1 && !surrounded) {
+                                    if (checkWest(i, j + 1, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2 && checkSouth(i, j + 1, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                        //delete
+                                        temp = j - piecesDeleted;
+                                        for (int k = j + 1; k > temp; k--) {
+                                            _buttons[i][k].setIcon(emptyImageIcon);
+                                            surrounded = true;
+                                        }
+                                    } else if (checkWest(i, j + 1, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                        j++;
+                                        piecesDeleted++;
+                                        //keep iterating through
+                                    } else {
+                                        
+                                        piecesDeleted = 1;
+                                        break;
+                                        //not a full walls
+                                        //dont do anything
+                                    }
+                                }
+                                surrounded = false;
+                                piecesDeleted = 1;
+                            }
+                            if (checkWest(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                while (checkNorth(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1 && !surrounded) {
+                                    if (checkWest(i, j - 1, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2 && checkNorth(i, j - 1, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                        //delete
+                                        temp = j + piecesDeleted;
+                                        for (int k = j - 1; k <= temp; k++) {
+                                            _buttons[i][k].setIcon(emptyImageIcon);
+                                            surrounded = true;
+                                        }
+                                    } else if (checkWest(i, j - 1, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                        j--;
+                                        piecesDeleted++;
+                                        //keep iterating through
+                                    } else {
+                                        
+                                        piecesDeleted = 0;
+                                        break;
+                                        //not a full walls
+                                        //dont do anything
+                                    }
+                                }
+                                surrounded = false;
+                                piecesDeleted = 1;
+                            }
+                        } else {
+                            if(checkNorth(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 2){
+                                if (checkWest(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                    while (checkSouth(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1 && !surrounded) {
+                                        if (checkWest(i, j + 1, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2 && checkSouth(i, j + 1, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                            //delete
+                                            temp = j - piecesDeleted;
+                                            for (int k = j + 1; k > temp; k--) {
+                                                _buttons[i][k].setIcon(emptyImageIcon);
+                                                surrounded = true;
+                                            }
+                                        } else if (checkWest(i, j + 1, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                            j++;
+                                            piecesDeleted++;
+                                            //keep iterating through
+                                        } else {
+
+                                            piecesDeleted = 1;
+                                            break;
+                                            //not a full walls
+                                            //dont do anything
+                                        }
+                                    }
+                                    surrounded = false;
+                                    piecesDeleted = 1;
+                                }   
+                            }
+                        }
+                    }
+                    //
+                    surrounded = false;
+                    piecesDeleted = 1;
+                    if (j == 10 && (i > 0 && i < 10)) {
+                        if (i == 1 || i == 9) {
+                            if (checkNorth(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                while (checkEast(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1 && !surrounded) {
+                                    if (checkNorth(i + 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2 && checkEast(i + 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                        //delete
+                                        temp = i - piecesDeleted;
+                                        for (int k = i + 1; k > temp; k--) {
+                                            _buttons[k][j].setIcon(emptyImageIcon);
+                                            surrounded = true;
+                                        }
+                                    } else if (checkNorth(i + 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                        i++;
+                                        piecesDeleted++;
+                                        //keep iterating through
+                                    } else {
+                                        
+                                        piecesDeleted = 1;
+                                        break;
+                                        //not a full walls
+                                        //dont do anything
+                                    }
+                                }
+                                surrounded = false;
+                                piecesDeleted = 1;
+                            }
+                            if (checkNorth(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                while (checkWest(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1 && !surrounded) {
+                                    if (checkNorth(i - 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2 && checkWest(i - 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                        //delete
+                                        temp = i + piecesDeleted;
+                                        for (int k = i - 1; k <= temp; k++) {
+                                            _buttons[k][j].setIcon(emptyImageIcon);
+                                            surrounded = true;
+                                        }
+                                    } else if (checkNorth(i - 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                        i--;
+                                        piecesDeleted++;
+                                        //keep iterating through
+                                    } else {
+                                        
+                                        piecesDeleted = 1;
+                                        break;
+                                        //not a full walls
+                                        //dont do anything
+                                    }
+                                }
+                                surrounded = false;
+                                piecesDeleted = 1;
+                            }
+                        } else {
+                            if(checkWest(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 2){
+                                if (checkNorth(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                    while (checkEast(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1 && !surrounded) {
+                                        if (checkNorth(i + 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2 && checkEast(i + 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                            //delete
+                                            temp = i - piecesDeleted;
+                                            for (int k = i + 1; k > temp; k--) {
+                                                _buttons[k][j].setIcon(emptyImageIcon);
+                                                surrounded = true;
+                                            }
+                                        } else if (checkNorth(i + 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                            i++;
+                                            piecesDeleted++;
+                                            //keep iterating through
+                                        } else {
+
+                                            piecesDeleted = 0;
+                                            break;
+                                            //not a full walls
+                                            //dont do anything
+                                        }
+                                    }
+                                    surrounded = false;
+                                    piecesDeleted = 0;
+                                }   
+                            }
+                        }
+                    }
+                    surrounded = false;
+                    piecesDeleted = 1;
+                    if (j == 0 && (i > 0 && i < 10)) {
+                        if (i == 1 || i == 9) {
+                            if (checkSouth(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                while (checkEast(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1 && !surrounded) {
+                                    if (checkSouth(i + 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2 && checkEast(i + 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                        //delete
+                                        temp = i - piecesDeleted;
+                                        for (int k = i + 1; k > temp; k--) {
+                                            _buttons[k][j].setIcon(emptyImageIcon);
+                                            surrounded = true;
+                                        }
+                                    } else if (checkSouth(i + 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                        i++;
+                                        piecesDeleted++;
+                                        //keep iterating through
+                                    } else {
+                                        
+                                        piecesDeleted = 1;
+                                        break;
+                                        //not a full walls
+                                        //dont do anything
+                                    }
+                                }
+                                surrounded = false;
+                                piecesDeleted = 1;
+                            }
+                            if (checkSouth(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                while (checkWest(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1 && !surrounded) {
+                                    if (checkSouth(i - 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2 && checkWest(i - 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                        //delete
+                                        temp = i + piecesDeleted;
+                                        for (int k = i - 1; k <= temp; k++) {
+                                            _buttons[k][j].setIcon(emptyImageIcon);
+                                            surrounded = true;
+                                        }
+                                    } else if (checkSouth(i - 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                        i--;
+                                        piecesDeleted++;
+                                        //keep iterating through
+                                    } else {
+                                        
+                                        piecesDeleted = 1;
+                                        break;
+                                        //not a full walls
+                                        //dont do anything
+                                    }
+                                }
+                                surrounded = false;
+                                piecesDeleted = 1;
+                            }
+                        } else {
+                            if(checkWest(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 2){
+                                if (checkSouth(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                    while (checkEast(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1 && !surrounded) {
+                                        if (checkSouth(i + 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2 && checkEast(i + 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                            //delete
+                                            temp = i - piecesDeleted;
+                                            for (int k = i + 1; k > temp; k--) {
+                                                _buttons[k][j].setIcon(emptyImageIcon);
+                                                surrounded = true;
+                                            }
+                                        } else if (checkSouth(i + 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2) {
+                                            i++;
+                                            piecesDeleted++;
+                                            //keep iterating through
+                                        } else {
+
+                                            piecesDeleted = 0;
+                                            break;
+                                            //not a full walls
+                                            //dont do anything
+                                        }
+                                    }
+                                    surrounded = false;
+                                    piecesDeleted = 0;
+                                }   
+                            }
+                        }
+                    }
+                } else if (currentImageIcon.getDescription().equals(kingIcon.getDescription()) || currentImageIcon.getDescription().equals(defenseIcon.getDescription())) {
+                    piecesDeleted++;
+                    //4 walls 4 cases
+                    if (i == 0 && (j > 0 && j < 10)) {
+                        if (j == 1 || j == 9) {
+                            if (checkEast(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                while (checkSouth(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2 && !surrounded) {
+                                    if (checkEast(i, j + 1, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1 && checkSouth(i, j + 1, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                        //delete
+                                        temp = j - piecesDeleted;
+                                        for (int k = j + 1; k > temp; k--) {
+                                            _buttons[i][k].setIcon(emptyImageIcon);
+                                            surrounded = true;
+                                        }
+                                    } else if (checkEast(i, j + 1, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                        j++;
+                                        piecesDeleted++;
+                                        //keep iterating through
+                                    } else {
+                                        
+                                        piecesDeleted = 0;
+                                        break;
+                                        //not a full walls
+                                        //dont do anything
+                                    }
+                                }
+                                surrounded = false;
+                                piecesDeleted = 0;
+                            }
+                            if (checkEast(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                while (checkNorth(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2 && !surrounded) {
+                                    if (checkEast(i, j - 1, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1 && checkNorth(i, j - 1, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                        //delete
+                                        temp = j + piecesDeleted;
+                                        for (int k = j - 1; k <= temp; k++) {
+                                            _buttons[i][k].setIcon(emptyImageIcon);
+                                            surrounded = true;
+                                        }
+                                    } else if (checkEast(i, j - 1, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                        j--;
+                                        piecesDeleted++;
+                                        //keep iterating through
+                                    } else {
+                                        
+                                        piecesDeleted = 1;
+                                        break;
+                                        //not a full walls
+                                        //dont do anything
+                                    }
+                                }
+                                surrounded = false;
+                                piecesDeleted = 1;
+                            }
+                        } else {
+                            if(checkNorth(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1){
+                                if (checkEast(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                    while (checkSouth(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2 && !surrounded) {
+                                        if (checkEast(i, j + 1, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1 && checkSouth(i, j + 1, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                            //delete
+                                            temp = j - piecesDeleted;
+                                            for (int k = j + 1; k > temp; k--) {
+                                                _buttons[i][k].setIcon(emptyImageIcon);
+                                                surrounded = true;
+                                            }
+                                        } else if (checkEast(i, j + 1, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                            j++;
+                                            piecesDeleted++;
+                                            //keep iterating through
+                                        } else {
+
+                                            piecesDeleted = 1;
+                                            break;
+                                            //not a full walls
+                                            //dont do anything
+                                        }
+                                    }
+                                    surrounded = false;
+                                    piecesDeleted = 1;
+                                }   
+                            }
+                        }
+                    }
+                    surrounded = false;
+                    piecesDeleted = 1;
+                    if (i == 10 && (j > 0 && j < 10)) {
+                        if (j == 1 || j == 9) {
+                            if (checkWest(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                while (checkSouth(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2 && !surrounded) {
+                                    if (checkWest(i, j + 1, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1 && checkSouth(i, j + 1, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                        //delete
+                                        temp = j - piecesDeleted;
+                                        for (int k = j + 1; k > temp; k--) {
+                                            _buttons[i][k].setIcon(emptyImageIcon);
+                                            surrounded = true;
+                                        }
+                                    } else if (checkWest(i, j + 1, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                        j++;
+                                        piecesDeleted++;
+                                        //keep iterating through
+                                    } else {
+                                        
+                                        piecesDeleted = 1;
+                                        break;
+                                        //not a full walls
+                                        //dont do anything
+                                    }
+                                }
+                                surrounded = false;
+                                piecesDeleted = 1;
+                            }
+                            if (checkWest(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                while (checkNorth(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2 && !surrounded) {
+                                    if (checkWest(i, j - 1, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1 && checkNorth(i, j - 1, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                        //delete
+                                        temp = j + piecesDeleted;
+                                        for (int k = j - 1; k <= temp; k++) {
+                                            _buttons[i][k].setIcon(emptyImageIcon);
+                                            surrounded = true;
+                                        }
+                                    } else if (checkWest(i, j - 1, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                        j--;
+                                        piecesDeleted++;
+                                        //keep iterating through
+                                    } else {
+                                        
+                                        piecesDeleted = 0;
+                                        break;
+                                        //not a full walls
+                                        //dont do anything
+                                    }
+                                }
+                                surrounded = false;
+                                piecesDeleted = 1;
+                            }
+                        } else {
+                            if(checkNorth(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1){
+                                if (checkWest(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                    while (checkSouth(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2 && !surrounded) {
+                                        if (checkWest(i, j + 1, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1 && checkSouth(i, j + 1, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                            //delete
+                                            temp = j - piecesDeleted;
+                                            for (int k = j + 1; k > temp; k--) {
+                                                _buttons[i][k].setIcon(emptyImageIcon);
+                                                surrounded = true;
+                                            }
+                                        } else if (checkWest(i, j + 1, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                            j++;
+                                            piecesDeleted++;
+                                            //keep iterating through
+                                        } else {
+
+                                            piecesDeleted = 1;
+                                            break;
+                                            //not a full walls
+                                            //dont do anything
+                                        }
+                                    }
+                                    surrounded = false;
+                                    piecesDeleted = 1;
+                                }   
+                            }
+                        }
+                    }
+                    //
+                    surrounded = false;
+                    piecesDeleted = 1;
+                    if (j == 10 && (i > 0 && i < 10)) {
+                        if (i == 1 || i == 9) {
+                            if (checkNorth(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                while (checkEast(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2 && !surrounded) {
+                                    if (checkNorth(i + 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1 && checkEast(i + 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                        //delete
+                                        temp = i - piecesDeleted;
+                                        for (int k = i + 1; k > temp; k--) {
+                                            _buttons[k][j].setIcon(emptyImageIcon);
+                                            surrounded = true;
+                                        }
+                                    } else if (checkNorth(i + 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                        i++;
+                                        piecesDeleted++;
+                                        //keep iterating through
+                                    } else {
+                                        
+                                        piecesDeleted = 1;
+                                        break;
+                                        //not a full walls
+                                        //dont do anything
+                                    }
+                                }
+                                surrounded = false;
+                                piecesDeleted = 1;
+                            }
+                            if (checkNorth(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                while (checkWest(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2 && !surrounded) {
+                                    if (checkNorth(i - 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1 && checkWest(i - 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                        //delete
+                                        temp = i + piecesDeleted;
+                                        for (int k = i - 1; k <= temp; k++) {
+                                            _buttons[k][j].setIcon(emptyImageIcon);
+                                            surrounded = true;
+                                        }
+                                    } else if (checkNorth(i - 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                        i--;
+                                        piecesDeleted++;
+                                        //keep iterating through
+                                    } else {
+                                        
+                                        piecesDeleted = 1;
+                                        break;
+                                        //not a full walls
+                                        //dont do anything
+                                    }
+                                }
+                                surrounded = false;
+                                piecesDeleted = 1;
+                            }
+                        } else {
+                            if(checkWest(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1){
+                                if (checkNorth(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                    while (checkEast(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2 && !surrounded) {
+                                        if (checkNorth(i + 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1 && checkEast(i + 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                            //delete
+                                            temp = i - piecesDeleted;
+                                            for (int k = i + 1; k > temp; k--) {
+                                                _buttons[k][j].setIcon(emptyImageIcon);
+                                                surrounded = true;
+                                            }
+                                        } else if (checkNorth(i + 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                            i++;
+                                            piecesDeleted++;
+                                            //keep iterating through
+                                        } else {
+
+                                            piecesDeleted = 0;
+                                            break;
+                                            //not a full walls
+                                            //dont do anything
+                                        }
+                                    }
+                                    surrounded = false;
+                                    piecesDeleted = 0;
+                                }   
+                            }
+                        }
+                    }
+                    surrounded = false;
+                    piecesDeleted = 1;
+                    if (j == 0 && (i > 0 && i < 10)) {
+                        if (i == 1 || i == 9) {
+                            if (checkSouth(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                while (checkEast(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2 && !surrounded) {
+                                    if (checkSouth(i + 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1 && checkEast(i + 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                        //delete
+                                        temp = i - piecesDeleted;
+                                        for (int k = i + 1; k > temp; k--) {
+                                            _buttons[k][j].setIcon(emptyImageIcon);
+                                            surrounded = true;
+                                        }
+                                    } else if (checkSouth(i + 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                        i++;
+                                        piecesDeleted++;
+                                        //keep iterating through
+                                    } else {
+                                        
+                                        piecesDeleted = 1;
+                                        break;
+                                        //not a full walls
+                                        //dont do anything
+                                    }
+                                }
+                                surrounded = false;
+                                piecesDeleted = 1;
+                            }
+                            if (checkSouth(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                while (checkWest(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2 && !surrounded) {
+                                    if (checkSouth(i - 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1 && checkWest(i - 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                        //delete
+                                        temp = i + piecesDeleted;
+                                        for (int k = i - 1; k <= temp; k++) {
+                                            _buttons[k][j].setIcon(emptyImageIcon);
+                                            surrounded = true;
+                                        }
+                                    } else if (checkSouth(i - 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                        i--;
+                                        piecesDeleted++;
+                                        //keep iterating through
+                                    } else {
+                                        
+                                        piecesDeleted = 1;
+                                        break;
+                                        //not a full walls
+                                        //dont do anything
+                                    }
+                                }
+                                surrounded = false;
+                                piecesDeleted = 1;
+                            }
+                        } else {
+                            if(checkWest(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1){
+                                if (checkSouth(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                    while (checkEast(i, j, _buttons, axeIcon, emptyImageIcon, kingIcon) >= 2 && !surrounded) {
+                                        if (checkSouth(i + 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1 && checkEast(i + 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                            //delete
+                                            temp = i - piecesDeleted;
+                                            for (int k = i + 1; k > temp; k--) {
+                                                _buttons[k][j].setIcon(emptyImageIcon);
+                                                surrounded = true;
+                                            }
+                                        } else if (checkSouth(i + 1, j, _buttons, axeIcon, emptyImageIcon, kingIcon) == 1) {
+                                            i++;
+                                            piecesDeleted++;
+                                            //keep iterating through
+                                        } else {
+
+                                            piecesDeleted = 0;
+                                            break;
+                                            //not a full walls
+                                            //dont do anything
+                                        }
+                                    }
+                                    surrounded = false;
+                                    piecesDeleted = 0;
+                                }   
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return _buttons;
+    }
 }

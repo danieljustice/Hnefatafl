@@ -238,4 +238,11 @@ public class HnefataflTests extends Hnefatafl{
         System.out.println(temp);
 		assertEquals(9, temp);
 	}
+	
+	@Test
+	public void testShieldWall(){
+		JButton[][] temp = g.shieldWall(h._buttons, h.axeIcon, h.emptyImageIcon, h.kingIcon, h.defenseIcon);
+        
+		assertEquals(temp[0][0], h._buttons[0][0]);
+	}
 }
