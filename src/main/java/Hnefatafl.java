@@ -345,6 +345,7 @@ public class Hnefatafl{
                 shieldTimer.continueTimerThread();
             }
 
+
             JButton temp = (JButton) e.getSource();
             ImageIcon currentImageIcon = (ImageIcon)temp.getIcon();
             int noPiecesCheck;
@@ -448,6 +449,9 @@ public class Hnefatafl{
                         _secondClick = null;
                     }
                 }
+            }
+            if(gameLogic.exitFort(_buttons)){
+                endGame(shieldWinMessage);
             }
         }
     }
