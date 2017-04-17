@@ -450,6 +450,7 @@ public class Hnefatafl{
             if(gameLogic.exitFort(_buttons)){
                 endGame(shieldWinMessage);
             }
+            System.out.println(gameLogic.encircled(_buttons));
         }
     }
 
