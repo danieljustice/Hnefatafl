@@ -99,7 +99,7 @@ public class HnefataflTests extends Hnefatafl{
 	 */
 	@Test
 	public void piecesLeftTest() {
-		assertEquals(0, g.piecesLeft(h.axeIcon, h.kingIcon, h._buttons));;
+		assertEquals(0, g.piecesLeft(h.axeIcon, h.kingIcon, h.defenseIcon, h._buttons));;
 	}
 
 	/**
@@ -194,5 +194,48 @@ public class HnefataflTests extends Hnefatafl{
 		int[] start = new int[] { 0, 2 };
 		int[] dest = new int[] { 0, 1 };
 		assertTrue(g.isValidMove(start, dest, false, h._buttons));
+	}
+	
+	/**
+	 *  displays the best option
+	 *
+	 */
+	@Test
+	public void testDisplay(){
+		int[] start = {0, 0};
+		int[] destination = {0, 0};
+		JButton[][] temp = g.displayCorrectChoice(start, destination, h._buttons);
+		assertEquals(temp[0][0], h._buttons[0][0]);
+	}
+
+	/**
+	 *  disables the display the best option
+	 *
+	 */
+	@Test
+	public void testRemovalDisplay(){
+		JButton[][] temp = g.removeCorrectChoice(h._buttons);
+		assertEquals(temp[0][0], h._buttons[0][0]);
+	}
+	
+	/** find best option on board
+	 *  
+	 *
+	 */
+	@Test
+	public void testCorrectChoice(){
+		JButton[][] temp = g.showCorrectChoice(h._buttons, h.axeIcon, h.emptyImageIcon, h.kingIcon, h.defenseIcon, h.isFirstPlayer); 
+	
+		assertEquals(temp[0][0], h._buttons[0][0]);
+	}
+    /** get weight of points of each space
+	 *  test both surrounding points and check NESW
+	 *
+	 */
+	@Test
+	public void testScoreAndChecks(){
+		int temp = g.surroundingPoints(0, 0, h.axeIcon, h._buttons, h.axeIcon, h.emptyImageIcon, h.kingIcon);
+        System.out.println(temp);
+		assertEquals(9, temp);
 	}
 }

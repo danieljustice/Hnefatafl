@@ -24,7 +24,7 @@ public interface GameLogicInterface {
     *  @param Not Available
     *  @return returns int 0 for no winning condition, int 1 for king surrounded shields lose, int 2 for axe defeated for no more pieces
     */
-    public int piecesLeft(ImageIcon axeIcon, ImageIcon kingIcon, JButton[][] _buttons);
+    public int piecesLeft(ImageIcon axeIcon, ImageIcon kingIcon, ImageIcon defenseIcon, JButton[][] _buttons);
 
     /**
      * Returns whether a move is valid based on input arrays which store x and y locations
@@ -49,5 +49,57 @@ public interface GameLogicInterface {
      * @return true if the space is occupied by axe, shield or king
      */
     public boolean isSpaceOccupied(int[] destination, JButton[][] _buttons );
+	
+	/** to retrieve remaining pieces
+     *
+     * @return pieces remaining
+     */
+	public int[] numPiecesLeft();
+	
+	/**
+	 *  displays the best option
+	 *
+	 */
+	public JButton[][] displayCorrectChoice(int[] start, int[] destination, JButton[][] _buttons);
+
+	/**
+	 *  disables the display the best option
+	 *
+	 */
+    public JButton[][] removeCorrectChoice(JButton[][] _buttons);
+	/** find best option on board
+	 *  
+	 *
+	 */
+    public JButton[][] showCorrectChoice(JButton[][] _buttons, ImageIcon axeIcon, ImageIcon emptyImageIcon, ImageIcon kingIcon, ImageIcon defenseIcon, boolean isFirstPlayer); 
+	/** get weight of points of each space
+	 *  
+	 *
+	 */
+    public int surroundingPoints(int x, int y, ImageIcon currentImageIcon, JButton[][] _buttons, ImageIcon axeIcon, ImageIcon emptyImageIcon, ImageIcon kingIcon);
+    
+	/** check what is ontop of the button
+	 *  
+	 *
+	 */
+    public int checkNorth(int x, int y, JButton[][] _buttons, ImageIcon axeIcon, ImageIcon emptyImageIcon, ImageIcon kingIcon);
+
+	/** check what is below of the button
+	 *  
+	 *
+	 */
+    public int checkSouth(int x, int y, JButton[][] _buttons, ImageIcon axeIcon, ImageIcon emptyImageIcon, ImageIcon kingIcon);
+
+	/** check what is right of the button
+	 *  
+	 *
+	 */
+    public int checkEast(int x, int y, JButton[][] _buttons, ImageIcon axeIcon, ImageIcon emptyImageIcon, ImageIcon kingIcon);
+
+	/** check what is left of the button
+	 *  
+	 *
+	 */
+    public int checkWest(int x, int y, JButton[][] _buttons, ImageIcon axeIcon, ImageIcon emptyImageIcon, ImageIcon kingIcon);
 
 }
